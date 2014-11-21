@@ -1,0 +1,377 @@
+#+TITLE: Notes
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/worg.css" />
+
+* Shell program
+ Created by:robin1001 <2014-08-02 六>
+
++ -z, -r whether is empty, -s size 0
++ arr
+  #+begin_src bash
+  arr = (1 2 3 4 5) #declare
+  ${#arr[*]} | @    #length
+  unset arr[1]      #delete
+  ${arr:i:j}        #slice, arr:start:len
+  #+end_src
++ case
+  #+begin_src bash
+  case $1 in
+    --* ) echo "--$1";;
+    --*=* ) echo "--*=*";;
+    --*:* ) echo "--*:*";;
+    * ) break;;
+esac
+  #+end_src
+* Emacs & lisp
+ Created by:robin1001 <2014-08-04 一>
+** lisp
+1. '( 1 2 3) & (list 1 2 3)
+2. progn--begin
+3. 宏
+#+begin_src lisp
+;;emacs lisp incr
+(defmacro incr (var)
+"Add one to the named variable."
+ `(setq ,var (+ ,var 1)))
+
+;;common lisp when
+(defmacro when (condition &rest body)
+  `(if (not ,condition) (prong ,@body)))
+;;从宏定义的格式来看，定义宏中的形式体必须使用反引号“`”，表示对该形式体不求值，但是要对新宏的参数求值；
+;;新宏的参数有两类，一个是新宏的形参，一个是新宏的形式体。
+;;这两者的共同点就是都要通过逗号“,”来求值；
+;;不同点有两处，一是形参用逗号直接求值，形式体则用逗号和@ 即 “,@” 去掉对形式体求值后所得到的表达式最外层列表的括号，将这个表达式嵌入到最外围列表的最后面；二是形参要做一系列处理，而形式体则直接求值嵌入，不做任何变化，这是因为这个形式体本来就是新宏的处理语句，定义宏只需要照搬即可，不需要也不应该做其他变化。
+;;阅读宏定义代码或者自己去编写宏定义时，只要能牢牢把握住上面提到的差异，应该比较容易理解那些或简单、或复杂的宏代码了。
+
+;;while
+(defmacro while. (test &rest body)
+  (let ((label (gensym)))
+  `(tagbody
+    ,label
+    (cond (,test ,@body (go ,label))))))
+#+end_src
+** emacs keynotes
++ (global-set-key "M-?" command)，设置全局快捷键
++ load-file：打开emacs lisp文件
++ load-path：emacs load启动，(append load-path ("/your/directory/here")))
++ require provied,像C的include的一样，在别的文件中引用内容
++ autoload，在调用时进行加载
++ message: (message "i am %s %d" "number" 1)
++ buffer-name: 当前buffer name, buffer-file-name
++ current-buffer other-buffer 当前buffer对象和最邻近使用的buffer
++ interactive：M-x函数名或快捷键可以激活
++ 快捷键 (global-set-key (kbd "S-<f12>") 'semantic-ia-fast-jump) or [S-f12] S-C-M
++ add-to-list
++ 函数名重映射 (defalias 'scroll-ahead 'scroll-up)
+** emacs lisp grammer
+*** let
+#+begin_src lisp
+(defun square_add (a b)
+  (let ((x (+ a b))
+		(y (- a b)))
+	(* x y)))
+#+end_src
+
+*** inner function
+#+begin_src lisp
+(defun factorial (n)
+  (defun iter (product counter)
+	(if (> counter n)
+		product
+	  (iter (* product counter) (+ counter 1))))
+  (iter 1 1))
+factorial
+(factorial 10)
+3628800
+#+end_src
+
+*** cond
+#+begin_src cpp
+(defun my_abs (x)
+  (cond ((> x 0) x)
+		((< x 0) (- x))
+		(else 0)))
+my_abs
+(my_abs 2)
+2
+(my_abs -2)
+2
+#+end_src
+** plugin
+*** w3m
+1. w3m-goto-url
+*** emms
+#+begin_src lisp
+;;emms
+(require 'emms-setup)
+(emms-standard)
+(emms-default-players)
+#+end_src
+
+** important functions
+1. isearch-forward(backward): search
+2. help
+3. other-window: next windows, back to recent edit window, (other-window -1)
+
+** Writing Emacs Extensions
+*** Customizing Emacs
+1. lisp的特性，前缀s表达式，list,garbage collection
+2. 定制快捷键
+#+begin_src lisp
+(global-set-key "\M-?" command)
+#+end_src
+*** Simple New Commands
+1. 切换窗口函数定义
+#+begin_src lisp
+(defun other-window-backward ( )
+"Select the previous window."
+(interactive)
+(other-window -1))
+;;interaction with "p", wtih argument
+(defun other-window-backward (n)
+"Select Nth previous window."
+(interactive "p")
+(other-window (- n)))
+;;
+(defun other-window-backward (&optional n)
+"Select Nth previous window."
+(interactive "p")
+(if n
+(other-window (- n))
+;ifn s non-nil
+(other-window -1)))
+;ifn snil
+#+end_src
+*** minor mode
+#+begin_src lisp
+(if evil-mode
+	(message "yes")
+  (message "no"))
+#+end_src
+* The Design of The Unix Operating System
+ Created by:robin1001 <2014-08-28 四>
+
+** file system
+*** structure
+| boot block | super block | inode list | data blocks |
++ boot block
++ super block: 文件系统的状态，文件数量，空闲空间等等
++ inode list: 文件系统初始化时决定inode数量， root inode
++ data blocks: 数据区
+* Google C++ Style Guide
+1. 函数超过10行时不要使用內联
+2. -inl.h內联函数实现文件 | 定义函数模板
+3. 输入：const型，输出参数：指针
+4. 最好给纯接口类加上Interface后缀
+5. 名称为foo_的变量其访问函数为foo()，而其修改器(mutator)则为set_foo()，访问器常在头文件中定义为内联函数。
+6. 请按下面的规则次序来定义类：公共成员位于私有成员前；方法位于数据成员前(变量)等等。
+7. scoped_ptr | shared_ptr
+8. 使用cpplint.py来检测风格错误
+9. 类型转换(Casting),需要类型转换时请使用static_cast<>()
+10. 类成员以下划线结束 int val_;
+11. 禁止使用异常
+* cpp
+** stream stringstream, kaldi log
+** <algorithm>
+*** 非修改性质序列操作
++ for\_each: 通常和函数对象结合使用
++ find
++ count
++ equal
++ binary\_search
+*** 修改性质
++ swap
++ reverse
+*** 序列排序
++ sort
++ stable\_sort
+*** 集合算法
++ include
++ set\_union
++ set\_intersection
++ set\_difference
++ rand\_shufle
+*** 堆操作
++ make\_heap
++ push\_heap
++ pop\_head
++ sort\_head
+*** 最大和最小
++ min
++ max
++ min\_element
++ max\_element
+
+*** 函数对象
+* 链接
+链接库环境变量LD\_LIBRARY\_PATH
+* Programming Language
+** Course
+*** Section 1
+**** ML Variable Binding and Expression
+1. comment (* *)
+2. dynamic environment: Env
+3. static enviroment: type, type check
+**** Rules for Expression
+1. syntax
+2. type checking: static env
+3. evaluation: dynamic env
+**** function
+#+begin_src sml
+fun cube(x: int) = x * x * x;
+fun my_mul(x: int, y: int) = x * y;
+#+end_src
+**** pair & tuple
+#+begin_src sml
+val x = (2, 3);
+val a = #1 x;
+val b = #2 x;
+
+fun swap(x: int * int) = (#2 x, #1 x);
+#+end_src
+**** lists
+1. cons: 5::[1, 3, 5];
+2. null: null e;
+3. hd: car;
+4. tl: cdr;
+**** let
+1. let ... in ... end
+2. let & scope
+*** Racket
+**** quote
++ like strings, but fast in eq?
++ 可以是任意序列的字符
+**** struct
++ better style and more concise
++ have type not list
+#+begin_src lisp 
+(struct foo (bar baz quux))
+(define x (foo 1 2 3))
+(foo? x)
+(fool-bar x)
+#+end_src 
+**** implementing
++ what your interpreter can and cannot assume
+check & error &
++ implement variables & enviroment
+(define (eval e env))
++ implementing closure
+lack of magic: the interpreter uses a closure data stucture(with two parts)to keep the enviroment it will need to use later
+(struct closure (env fun))
+evaluate a function expression
+1. a function is not a value, a closure is a value, so evaluating a funciton returns a closure
+2. create a funciton out of the function a and b the current enviroment when the function was evaluate 
+** python的函数式特性
+*** 函数赋值
+#+begin_src python
+def square(n):
+    return n*n
+f = square
+square(10)
+#+end_src
+*** lambda
+#+begin_src python
+square = lambda x: x*x;
+square(10)
+#+end_src
+
+*** 内置函数
+#+begin_src python
+map(square, [1, 2, 3])
+reduce & filter
+#+end_src
+
+*** 消除控制流
+#+begin_src python
+def func1(lst) :
+  new_lst = []
+  for n in lst :
+    if odd(n) :
+      new_lst.append(square(n))
+  return new_lst
+可以改进为
+def func2(lst) :
+  return map(square, filter(odd, lst))
+#+end_src
+
+*** 列表推导
+#+begin_src python
+[x for x in lis if x % 2 == 0]
+#+end_src
+
+*** 闭包，计算函数的导数
+#+begin_src python
+def d(f) :
+  def calc(x) :
+    dx = 0.000001  # 表示无穷小的Δx
+    return (f(x+dx) - f(x)) / dx  # 计算斜率。注意，此处引用了外层作用域的变量 f
+  return calc  # 此处用函数作为返回值（也就是函数 f 的导数）
+
+f = lambda x : x**2 + x + 1  # 先把二次函数用代码表达出来
+f1 = d(f)  # 这个f1 就是 f 的一阶导数啦。注意，导数依然是个函数
+
+f1(3)
+#+end_src
+* Natural Language Processing
+** Stanford
+*** 参考书籍
++ 朱拉夫斯基和曼宁《语音与语言处理》
++ 曼宁、舒策、拉哈万《信息检索导论》（2008）
++ 伯德、克莱因、洛普《使用Python进行自然语言处理》（2009）
+
+*** Basic Text Processing
+**** Regular Expression
++ []: [wW]oodchuck, [0-9], [a-z]
++ [^]: not, [\^a-z]
++ |: or
++ ?, *, +, .: times 
++ ^, &: start & end
+**** Word Tokenization
+***** shakespeare
+tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
++ 将非单词替换为\n
++ 排序
++ 去重，并统计出现次数， uniq -c
++ 按出现次数排序，逆序输出
++ 如何统计每个单词的重复出现次数 tr -s "\t| " "\n" < word.txt | sort | uniq -c
+***** 中文的分词
++ max-match
+
+**** Word Normaliztion & Stemming
++ stem: Porter's algorithm
++ affix
+
+**** Sentence Segmentation
++ ?, !: 通常没有歧义
++ .: 存在歧义，如Dr. 2014.12等。 解决方法，使用决策树判断.是否为句子结束
+
+*** Edit Distance
+1. Levenshtein distance: 替换代价为2,可以理解为先删除再插入
+2. 算法: 动态规划, 通过回溯二维数组pre[i,j] = DOWN, LEFT, DIAG来记录回溯信息
+3. 加权Edit Distance 
++ confusion matrix, a容易被拼写为e;
++ 物理键盘的布局
+#+ATTR_HTML: :width 80%  
+[[./nlp/confusion_matrix.png]]
+#+ATTR_HTML: :width 80% 
+[[./nlp/weighted_edit.png]]
+
+*** Language Modeling
++ 机器翻译, Spell Correction, 语音识别
++ 一些工具 SRILM, Google N-Gram Release
++ a) Markov假设, b)取log避免下溢
+**** Perplexity，如何评价一个语言模型
++ P[P(W)] = P(W)^1/N, 取对数即为1/NlogP(W)
++ Perplexity越小，better model
+**** 数据稀疏问题，测试数据中出现训练集不存在的语法怎么办？
++ add-one, 假如为二元文法，V为所有bigram个数
+#+ATTR_HTML: :width 40%
+[[./nlp/add_one.png]]
++ Good-Turing Estimate(参考数学之美)
+基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
+*** Spelling Correction
++ w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
++ P(x|w)中包含了transpose error，confusion matrix
+
+*** homework
+1. regular expression
+2. autocorrect(edit distance, language model)

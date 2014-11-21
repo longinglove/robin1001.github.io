@@ -1,0 +1,1152 @@
+---
+title: Notes
+---
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Notes</title>
+<!-- 2014-11-21 五 11:46 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="robin1001" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="css/worg.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Notes</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Shell program</a></li>
+<li><a href="#sec-2">2. Emacs &amp; lisp</a>
+<ul>
+<li><a href="#sec-2-1">2.1. lisp</a></li>
+<li><a href="#sec-2-2">2.2. emacs keynotes</a></li>
+<li><a href="#sec-2-3">2.3. emacs lisp grammer</a>
+<ul>
+<li><a href="#sec-2-3-1">2.3.1. let</a></li>
+<li><a href="#sec-2-3-2">2.3.2. inner function</a></li>
+<li><a href="#sec-2-3-3">2.3.3. cond</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-4">2.4. plugin</a>
+<ul>
+<li><a href="#sec-2-4-1">2.4.1. w3m</a></li>
+<li><a href="#sec-2-4-2">2.4.2. emms</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-5">2.5. important functions</a></li>
+<li><a href="#sec-2-6">2.6. Writing Emacs Extensions</a>
+<ul>
+<li><a href="#sec-2-6-1">2.6.1. Customizing Emacs</a></li>
+<li><a href="#sec-2-6-2">2.6.2. Simple New Commands</a></li>
+<li><a href="#sec-2-6-3">2.6.3. minor mode</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-3">3. The Design of The Unix Operating System</a>
+<ul>
+<li><a href="#sec-3-1">3.1. file system</a>
+<ul>
+<li><a href="#sec-3-1-1">3.1.1. structure</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Google C++ Style Guide</a></li>
+<li><a href="#sec-5">5. cpp</a>
+<ul>
+<li><a href="#sec-5-1">5.1. stream stringstream, kaldi log</a></li>
+<li><a href="#sec-5-2">5.2. &lt;algorithm&gt;</a>
+<ul>
+<li><a href="#sec-5-2-1">5.2.1. 非修改性质序列操作</a></li>
+<li><a href="#sec-5-2-2">5.2.2. 修改性质</a></li>
+<li><a href="#sec-5-2-3">5.2.3. 序列排序</a></li>
+<li><a href="#sec-5-2-4">5.2.4. 集合算法</a></li>
+<li><a href="#sec-5-2-5">5.2.5. 堆操作</a></li>
+<li><a href="#sec-5-2-6">5.2.6. 最大和最小</a></li>
+<li><a href="#sec-5-2-7">5.2.7. 函数对象</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-6">6. 链接</a></li>
+<li><a href="#sec-7">7. Programming Language</a>
+<ul>
+<li><a href="#sec-7-1">7.1. Course</a>
+<ul>
+<li><a href="#sec-7-1-1">7.1.1. Section 1</a></li>
+<li><a href="#sec-7-1-2">7.1.2. Racket</a></li>
+</ul>
+</li>
+<li><a href="#sec-7-2">7.2. python的函数式特性</a>
+<ul>
+<li><a href="#sec-7-2-1">7.2.1. 函数赋值</a></li>
+<li><a href="#sec-7-2-2">7.2.2. lambda</a></li>
+<li><a href="#sec-7-2-3">7.2.3. 内置函数</a></li>
+<li><a href="#sec-7-2-4">7.2.4. 消除控制流</a></li>
+<li><a href="#sec-7-2-5">7.2.5. 列表推导</a></li>
+<li><a href="#sec-7-2-6">7.2.6. 闭包，计算函数的导数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#sec-8">8. Natural Language Processing</a>
+<ul>
+<li><a href="#sec-8-1">8.1. Stanford</a>
+<ul>
+<li><a href="#sec-8-1-1">8.1.1. 参考书籍</a></li>
+<li><a href="#sec-8-1-2">8.1.2. Basic Text Processing</a></li>
+<li><a href="#sec-8-1-3">8.1.3. Edit Distance</a></li>
+<li><a href="#sec-8-1-4">8.1.4. Language Modeling</a></li>
+<li><a href="#sec-8-1-5">8.1.5. Spelling Correction</a></li>
+<li><a href="#sec-8-1-6">8.1.6. homework</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Shell program</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Created by:robin1001 <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-08-02 六&gt;</span></span>
+</p>
+
+<ul class="org-ul">
+<li>-z, -r whether is empty, -s size 0
+</li>
+<li>arr
+<div class="org-src-container">
+
+<pre class="src src-bash">arr = (1 2 3 4 5) #declare
+${#arr[*]} | @    #length
+unset arr[1]      #delete
+${arr:i:j}        #slice, arr:start:len
+</pre>
+</div>
+</li>
+<li>case
+<div class="org-src-container">
+
+<pre class="src src-bash">  case $1 in
+	--* ) echo "--$1";;
+	--*=* ) echo "--*=*";;
+	--*:* ) echo "--*:*";;
+	* ) break;;
+esac
+</pre>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Emacs &amp; lisp</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Created by:robin1001 <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-08-04 一&gt;</span></span>
+</p>
+</div>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> lisp</h3>
+<div class="outline-text-3" id="text-2-1">
+<ol class="org-ol">
+<li>'( 1 2 3) &amp; (list 1 2 3)
+</li>
+<li>progn&#x2013;begin
+</li>
+<li>宏
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-lisp"><span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">emacs lisp incr</span>
+(<span style="color: #40e0d0; font-weight: bold;">defmacro</span> <span style="color: #1e90ff; font-weight: bold;">incr</span> (var)
+<span style="color: #ff0000;">"Add one to the named variable."</span>
+ `(setq ,var (+ ,var 1)))
+
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">common lisp when</span>
+(<span style="color: #40e0d0; font-weight: bold;">defmacro</span> <span style="color: #1e90ff; font-weight: bold;">when</span> (condition <span style="color: #9ac0cd;">&amp;rest</span> body)
+  `(<span style="color: #40e0d0; font-weight: bold;">if</span> (not ,condition) (prong ,@body)))
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">&#20174;&#23439;&#23450;&#20041;&#30340;&#26684;&#24335;&#26469;&#30475;&#65292;&#23450;&#20041;&#23439;&#20013;&#30340;&#24418;&#24335;&#20307;&#24517;&#39035;&#20351;&#29992;&#21453;&#24341;&#21495;&#8220;`&#8221;&#65292;&#34920;&#31034;&#23545;&#35813;&#24418;&#24335;&#20307;&#19981;&#27714;&#20540;&#65292;&#20294;&#26159;&#35201;&#23545;&#26032;&#23439;&#30340;&#21442;&#25968;&#27714;&#20540;&#65307;</span>
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">&#26032;&#23439;&#30340;&#21442;&#25968;&#26377;&#20004;&#31867;&#65292;&#19968;&#20010;&#26159;&#26032;&#23439;&#30340;&#24418;&#21442;&#65292;&#19968;&#20010;&#26159;&#26032;&#23439;&#30340;&#24418;&#24335;&#20307;&#12290;</span>
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">&#36825;&#20004;&#32773;&#30340;&#20849;&#21516;&#28857;&#23601;&#26159;&#37117;&#35201;&#36890;&#36807;&#36887;&#21495;&#8220;,&#8221;&#26469;&#27714;&#20540;&#65307;</span>
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">&#19981;&#21516;&#28857;&#26377;&#20004;&#22788;&#65292;&#19968;&#26159;&#24418;&#21442;&#29992;&#36887;&#21495;&#30452;&#25509;&#27714;&#20540;&#65292;&#24418;&#24335;&#20307;&#21017;&#29992;&#36887;&#21495;&#21644;@ &#21363; &#8220;,@&#8221; &#21435;&#25481;&#23545;&#24418;&#24335;&#20307;&#27714;&#20540;&#21518;&#25152;&#24471;&#21040;&#30340;&#34920;&#36798;&#24335;&#26368;&#22806;&#23618;&#21015;&#34920;&#30340;&#25324;&#21495;&#65292;&#23558;&#36825;&#20010;&#34920;&#36798;&#24335;&#23884;&#20837;&#21040;&#26368;&#22806;&#22260;&#21015;&#34920;&#30340;&#26368;&#21518;&#38754;&#65307;&#20108;&#26159;&#24418;&#21442;&#35201;&#20570;&#19968;&#31995;&#21015;&#22788;&#29702;&#65292;&#32780;&#24418;&#24335;&#20307;&#21017;&#30452;&#25509;&#27714;&#20540;&#23884;&#20837;&#65292;&#19981;&#20570;&#20219;&#20309;&#21464;&#21270;&#65292;&#36825;&#26159;&#22240;&#20026;&#36825;&#20010;&#24418;&#24335;&#20307;&#26412;&#26469;&#23601;&#26159;&#26032;&#23439;&#30340;&#22788;&#29702;&#35821;&#21477;&#65292;&#23450;&#20041;&#23439;&#21482;&#38656;&#35201;&#29031;&#25644;&#21363;&#21487;&#65292;&#19981;&#38656;&#35201;&#20063;&#19981;&#24212;&#35813;&#20570;&#20854;&#20182;&#21464;&#21270;&#12290;</span>
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">&#38405;&#35835;&#23439;&#23450;&#20041;&#20195;&#30721;&#25110;&#32773;&#33258;&#24049;&#21435;&#32534;&#20889;&#23439;&#23450;&#20041;&#26102;&#65292;&#21482;&#35201;&#33021;&#29282;&#29282;&#25226;&#25569;&#20303;&#19978;&#38754;&#25552;&#21040;&#30340;&#24046;&#24322;&#65292;&#24212;&#35813;&#27604;&#36739;&#23481;&#26131;&#29702;&#35299;&#37027;&#20123;&#25110;&#31616;&#21333;&#12289;&#25110;&#22797;&#26434;&#30340;&#23439;&#20195;&#30721;&#20102;&#12290;</span>
+
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">while</span>
+(<span style="color: #40e0d0; font-weight: bold;">defmacro</span> <span style="color: #1e90ff; font-weight: bold;">while.</span> (test <span style="color: #9ac0cd;">&amp;rest</span> body)
+  (<span style="color: #40e0d0; font-weight: bold;">let</span> ((label (gensym)))
+  `(<span style="color: #40e0d0; font-weight: bold;">tagbody</span>
+    ,label
+    (<span style="color: #40e0d0; font-weight: bold;">cond</span> (,test ,@body (<span style="color: #40e0d0; font-weight: bold;">go</span> ,label))))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> emacs keynotes</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li>(global-set-key "M-?" command)，设置全局快捷键
+</li>
+<li>load-file：打开emacs lisp文件
+</li>
+<li>load-path：emacs load启动，(append load-path ("/your/directory/here")))
+</li>
+<li>require provied,像C的include的一样，在别的文件中引用内容
+</li>
+<li>autoload，在调用时进行加载
+</li>
+<li>message: (message "i am %s %d" "number" 1)
+</li>
+<li>buffer-name: 当前buffer name, buffer-file-name
+</li>
+<li>current-buffer other-buffer 当前buffer对象和最邻近使用的buffer
+</li>
+<li>interactive：M-x函数名或快捷键可以激活
+</li>
+<li>快捷键 (global-set-key (kbd "S-&lt;f12&gt;") 'semantic-ia-fast-jump) or [S-f12] S-C-M
+</li>
+<li>add-to-list
+</li>
+<li>函数名重映射 (defalias 'scroll-ahead 'scroll-up)
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> emacs lisp grammer</h3>
+<div class="outline-text-3" id="text-2-3">
+</div><div id="outline-container-sec-2-3-1" class="outline-4">
+<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> let</h4>
+<div class="outline-text-4" id="text-2-3-1">
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">square_add</span> (a b)
+  (<span style="color: #40e0d0; font-weight: bold;">let</span> ((x (+ a b))
+        (y (- a b)))
+    (* x y)))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3-2" class="outline-4">
+<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> inner function</h4>
+<div class="outline-text-4" id="text-2-3-2">
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">factorial</span> (n)
+  (<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">iter</span> (product counter)
+    (<span style="color: #40e0d0; font-weight: bold;">if</span> (&gt; counter n)
+        product
+      (iter (* product counter) (+ counter 1))))
+  (iter 1 1))
+factorial
+(factorial 10)
+3628800
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3-3" class="outline-4">
+<h4 id="sec-2-3-3"><span class="section-number-4">2.3.3</span> cond</h4>
+<div class="outline-text-4" id="text-2-3-3">
+<div class="org-src-container">
+
+<pre class="src src-cpp">(<span style="color: #9ac0cd;">defun</span> my_abs (x)
+  (cond ((&gt; x 0) x)
+        ((&lt; x 0) (- x))
+        (<span style="color: #40e0d0; font-weight: bold;">else</span> 0)))
+my_abs
+(my_abs 2)
+2
+(my_abs -2)
+2
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> plugin</h3>
+<div class="outline-text-3" id="text-2-4">
+</div><div id="outline-container-sec-2-4-1" class="outline-4">
+<h4 id="sec-2-4-1"><span class="section-number-4">2.4.1</span> w3m</h4>
+<div class="outline-text-4" id="text-2-4-1">
+<ol class="org-ol">
+<li>w3m-goto-url
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-2-4-2" class="outline-4">
+<h4 id="sec-2-4-2"><span class="section-number-4">2.4.2</span> emms</h4>
+<div class="outline-text-4" id="text-2-4-2">
+<div class="org-src-container">
+
+<pre class="src src-lisp"><span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">emms</span>
+(<span style="color: #40e0d0; font-weight: bold;">require</span> '<span style="color: #ff6347; font-weight: bold;">emms-setup</span>)
+(emms-standard)
+(emms-default-players)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> important functions</h3>
+<div class="outline-text-3" id="text-2-5">
+<ol class="org-ol">
+<li>isearch-forward(backward): search
+</li>
+<li>help
+</li>
+<li>other-window: next windows, back to recent edit window, (other-window -1)
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Writing Emacs Extensions</h3>
+<div class="outline-text-3" id="text-2-6">
+</div><div id="outline-container-sec-2-6-1" class="outline-4">
+<h4 id="sec-2-6-1"><span class="section-number-4">2.6.1</span> Customizing Emacs</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<ol class="org-ol">
+<li>lisp的特性，前缀s表达式，list,garbage collection
+</li>
+<li>定制快捷键
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(global-set-key <span style="color: #ff0000;">"\M-?"</span> command)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-6-2" class="outline-4">
+<h4 id="sec-2-6-2"><span class="section-number-4">2.6.2</span> Simple New Commands</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<ol class="org-ol">
+<li>切换窗口函数定义
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">other-window-backward</span> ( )
+<span style="color: #ff0000;">"Select the previous window."</span>
+(interactive)
+(other-window -1))
+<span style="color: #ee82ee;">;;</span><span style="color: #ee82ee;">interaction with "p", wtih argument</span>
+(<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">other-window-backward</span> (n)
+<span style="color: #ff0000;">"Select Nth previous window."</span>
+(interactive <span style="color: #ff0000;">"p"</span>)
+(other-window (- n)))
+<span style="color: #ee82ee;">;;</span>
+(<span style="color: #40e0d0; font-weight: bold;">defun</span> <span style="color: #1e90ff; font-weight: bold;">other-window-backward</span> (<span style="color: #9ac0cd;">&amp;optional</span> n)
+<span style="color: #ff0000;">"Select Nth previous window."</span>
+(interactive <span style="color: #ff0000;">"p"</span>)
+(<span style="color: #40e0d0; font-weight: bold;">if</span> n
+(other-window (- n))
+<span style="color: #ee82ee;">;</span><span style="color: #ee82ee;">ifn s non-nil</span>
+(other-window -1)))
+<span style="color: #ee82ee;">;</span><span style="color: #ee82ee;">ifn snil</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-6-3" class="outline-4">
+<h4 id="sec-2-6-3"><span class="section-number-4">2.6.3</span> minor mode</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #40e0d0; font-weight: bold;">if</span> evil-mode
+    (message <span style="color: #ff0000;">"yes"</span>)
+  (message <span style="color: #ff0000;">"no"</span>))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> The Design of The Unix Operating System</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Created by:robin1001 <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-08-28 四&gt;</span></span>
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> file system</h3>
+<div class="outline-text-3" id="text-3-1">
+</div><div id="outline-container-sec-3-1-1" class="outline-4">
+<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> structure</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">boot block</td>
+<td class="left">super block</td>
+<td class="left">inode list</td>
+<td class="left">data blocks</td>
+</tr>
+
+<tr>
+<td class="left">定义函数模板</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Google C++ Style Guide</h2>
+<div class="outline-text-2" id="text-4">
+<ol class="org-ol">
+<li>函数超过10行时不要使用內联
+</li>
+<li>-inl.h內联函数实现文件 | 定义函数模板
+</li>
+<li>输入：const型，输出参数：指针
+</li>
+<li>最好给纯接口类加上Interface后缀
+</li>
+<li>名称为foo<sub>的变量其访问函数为foo</sub>()，而其修改器(mutator)则为set<sub>foo</sub>()，访问器常在头文件中定义为内联函数。
+</li>
+<li>请按下面的规则次序来定义类：公共成员位于私有成员前；方法位于数据成员前(变量)等等。
+</li>
+<li>scoped<sub>ptr</sub> | shared<sub>ptr</sub>
+</li>
+<li>使用cpplint.py来检测风格错误
+</li>
+<li>类型转换(Casting),需要类型转换时请使用static<sub>cast</sub>&lt;&gt;()
+</li>
+<li>类成员以下划线结束 int val_;
+</li>
+<li>禁止使用异常
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> cpp</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> stream stringstream, kaldi log</h3>
+</div>
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> &lt;algorithm&gt;</h3>
+<div class="outline-text-3" id="text-5-2">
+</div><div id="outline-container-sec-5-2-1" class="outline-4">
+<h4 id="sec-5-2-1"><span class="section-number-4">5.2.1</span> 非修改性质序列操作</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<ul class="org-ul">
+<li>for\<sub>each</sub>: 通常和函数对象结合使用
+</li>
+<li>find
+</li>
+<li>count
+</li>
+<li>equal
+</li>
+<li>binary\<sub>search</sub>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-5-2-2" class="outline-4">
+<h4 id="sec-5-2-2"><span class="section-number-4">5.2.2</span> 修改性质</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<ul class="org-ul">
+<li>swap
+</li>
+<li>reverse
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-5-2-3" class="outline-4">
+<h4 id="sec-5-2-3"><span class="section-number-4">5.2.3</span> 序列排序</h4>
+<div class="outline-text-4" id="text-5-2-3">
+<ul class="org-ul">
+<li>sort
+</li>
+<li>stable\<sub>sort</sub>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-5-2-4" class="outline-4">
+<h4 id="sec-5-2-4"><span class="section-number-4">5.2.4</span> 集合算法</h4>
+<div class="outline-text-4" id="text-5-2-4">
+<ul class="org-ul">
+<li>include
+</li>
+<li>set\<sub>union</sub>
+</li>
+<li>set\<sub>intersection</sub>
+</li>
+<li>set\<sub>difference</sub>
+</li>
+<li>rand\<sub>shufle</sub>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-5-2-5" class="outline-4">
+<h4 id="sec-5-2-5"><span class="section-number-4">5.2.5</span> 堆操作</h4>
+<div class="outline-text-4" id="text-5-2-5">
+<ul class="org-ul">
+<li>make\<sub>heap</sub>
+</li>
+<li>push\<sub>heap</sub>
+</li>
+<li>pop\<sub>head</sub>
+</li>
+<li>sort\<sub>head</sub>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-5-2-6" class="outline-4">
+<h4 id="sec-5-2-6"><span class="section-number-4">5.2.6</span> 最大和最小</h4>
+<div class="outline-text-4" id="text-5-2-6">
+<ul class="org-ul">
+<li>min
+</li>
+<li>max
+</li>
+<li>min\<sub>element</sub>
+</li>
+<li>max\<sub>element</sub>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-5-2-7" class="outline-4">
+<h4 id="sec-5-2-7"><span class="section-number-4">5.2.7</span> 函数对象</h4>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> 链接</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+链接库环境变量LD\<sub>LIBRARY\</sub><sub>PATH</sub>
+</p>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Programming Language</h2>
+<div class="outline-text-2" id="text-7">
+</div><div id="outline-container-sec-7-1" class="outline-3">
+<h3 id="sec-7-1"><span class="section-number-3">7.1</span> Course</h3>
+<div class="outline-text-3" id="text-7-1">
+</div><div id="outline-container-sec-7-1-1" class="outline-4">
+<h4 id="sec-7-1-1"><span class="section-number-4">7.1.1</span> Section 1</h4>
+<div class="outline-text-4" id="text-7-1-1">
+</div><ol class="org-ol"><li><a id="sec-7-1-1-1" name="sec-7-1-1-1"></a>ML Variable Binding and Expression<br  /><div class="outline-text-5" id="text-7-1-1-1">
+<ol class="org-ol">
+<li>comment (* *)
+</li>
+<li>dynamic environment: Env
+</li>
+<li>static enviroment: type, type check
+</li>
+</ol>
+</div>
+</li>
+<li><a id="sec-7-1-1-2" name="sec-7-1-1-2"></a>Rules for Expression<br  /><div class="outline-text-5" id="text-7-1-1-2">
+<ol class="org-ol">
+<li>syntax
+</li>
+<li>type checking: static env
+</li>
+<li>evaluation: dynamic env
+</li>
+</ol>
+</div>
+</li>
+<li><a id="sec-7-1-1-3" name="sec-7-1-1-3"></a>function<br  /><div class="outline-text-5" id="text-7-1-1-3">
+<div class="org-src-container">
+
+<pre class="src src-sml"><span style="color: #40e0d0; font-weight: bold;">fun</span> cube(x: int) = x * x * x;
+<span style="color: #40e0d0; font-weight: bold;">fun</span> my_mul(x: int, y: int) = x * y;
+</pre>
+</div>
+</div>
+</li>
+<li><a id="sec-7-1-1-4" name="sec-7-1-1-4"></a>pair &amp; tuple<br  /><div class="outline-text-5" id="text-7-1-1-4">
+<div class="org-src-container">
+
+<pre class="src src-sml"><span style="color: #40e0d0; font-weight: bold;">val</span> <span style="color: #bebebe; font-weight: bold;">x</span> = (2, 3);
+<span style="color: #40e0d0; font-weight: bold;">val</span> <span style="color: #bebebe; font-weight: bold;">a</span> = #1 x;
+<span style="color: #40e0d0; font-weight: bold;">val</span> <span style="color: #bebebe; font-weight: bold;">b</span> = #2 x;
+
+<span style="color: #40e0d0; font-weight: bold;">fun</span> swap(x: int * int) = (#2 x, #1 x);
+</pre>
+</div>
+</div>
+</li>
+<li><a id="sec-7-1-1-5" name="sec-7-1-1-5"></a>lists<br  /><div class="outline-text-5" id="text-7-1-1-5">
+<ol class="org-ol">
+<li>cons: 5::[1, 3, 5];
+</li>
+<li>null: null e;
+</li>
+<li>hd: car;
+</li>
+<li>tl: cdr;
+</li>
+</ol>
+</div>
+</li>
+<li><a id="sec-7-1-1-6" name="sec-7-1-1-6"></a>let<br  /><div class="outline-text-5" id="text-7-1-1-6">
+<ol class="org-ol">
+<li>let &#x2026; in &#x2026; end
+</li>
+<li>let &amp; scope
+</li>
+</ol>
+</div>
+</li></ol>
+</div>
+<div id="outline-container-sec-7-1-2" class="outline-4">
+<h4 id="sec-7-1-2"><span class="section-number-4">7.1.2</span> Racket</h4>
+<div class="outline-text-4" id="text-7-1-2">
+</div><ol class="org-ol"><li><a id="sec-7-1-2-1" name="sec-7-1-2-1"></a>quote<br  /><div class="outline-text-5" id="text-7-1-2-1">
+<ul class="org-ul">
+<li>like strings, but fast in eq?
+</li>
+<li>可以是任意序列的字符
+</li>
+</ul>
+</div>
+</li>
+<li><a id="sec-7-1-2-2" name="sec-7-1-2-2"></a>struct<br  /><div class="outline-text-5" id="text-7-1-2-2">
+<ul class="org-ul">
+<li>better style and more concise
+</li>
+<li>have type not list
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(struct foo (bar baz quux))
+(define x (foo 1 2 3))
+(foo? x)
+(fool-bar x)
+</pre>
+</div>
+</div>
+</li>
+<li><a id="sec-7-1-2-3" name="sec-7-1-2-3"></a>implementing<br  /><div class="outline-text-5" id="text-7-1-2-3">
+<ul class="org-ul">
+<li>what your interpreter can and cannot assume
+</li>
+</ul>
+<p>
+check &amp; error &amp;
+</p>
+<ul class="org-ul">
+<li>implement variables &amp; enviroment
+</li>
+</ul>
+<p>
+(define (eval e env))
+</p>
+<ul class="org-ul">
+<li>implementing closure
+</li>
+</ul>
+<p>
+lack of magic: the interpreter uses a closure data stucture(with two parts)to keep the enviroment it will need to use later
+(struct closure (env fun))
+evaluate a function expression
+</p>
+<ol class="org-ol">
+<li>a function is not a value, a closure is a value, so evaluating a funciton returns a closure
+</li>
+<li>create a funciton out of the function a and b the current enviroment when the function was evaluate 
+</li>
+</ol>
+</div>
+</li></ol>
+</div>
+</div>
+<div id="outline-container-sec-7-2" class="outline-3">
+<h3 id="sec-7-2"><span class="section-number-3">7.2</span> python的函数式特性</h3>
+<div class="outline-text-3" id="text-7-2">
+</div><div id="outline-container-sec-7-2-1" class="outline-4">
+<h4 id="sec-7-2-1"><span class="section-number-4">7.2.1</span> 函数赋值</h4>
+<div class="outline-text-4" id="text-7-2-1">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">square</span>(n):
+        <span style="color: #40e0d0; font-weight: bold;">return</span> n*n
+<span style="color: #bebebe; font-weight: bold;">f</span> = square
+square(10)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-7-2-2" class="outline-4">
+<h4 id="sec-7-2-2"><span class="section-number-4">7.2.2</span> lambda</h4>
+<div class="outline-text-4" id="text-7-2-2">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #bebebe; font-weight: bold;">square</span> = <span style="color: #40e0d0; font-weight: bold;">lambda</span> x: x*x;
+square(10)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7-2-3" class="outline-4">
+<h4 id="sec-7-2-3"><span class="section-number-4">7.2.3</span> 内置函数</h4>
+<div class="outline-text-4" id="text-7-2-3">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">map</span>(square, [1, 2, 3])
+<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">reduce</span> &amp; <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">filter</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7-2-4" class="outline-4">
+<h4 id="sec-7-2-4"><span class="section-number-4">7.2.4</span> 消除控制流</h4>
+<div class="outline-text-4" id="text-7-2-4">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">func1</span>(lst) :
+  <span style="color: #bebebe; font-weight: bold;">new_lst</span> = []
+  <span style="color: #40e0d0; font-weight: bold;">for</span> n <span style="color: #40e0d0; font-weight: bold;">in</span> lst :
+        <span style="color: #40e0d0; font-weight: bold;">if</span> odd(n) :
+          new_lst.append(square(n))
+  <span style="color: #40e0d0; font-weight: bold;">return</span> new_lst
+&#21487;&#20197;&#25913;&#36827;&#20026;
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">func2</span>(lst) :
+  <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">map</span>(square, <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">filter</span>(odd, lst))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7-2-5" class="outline-4">
+<h4 id="sec-7-2-5"><span class="section-number-4">7.2.5</span> 列表推导</h4>
+<div class="outline-text-4" id="text-7-2-5">
+<div class="org-src-container">
+
+<pre class="src src-python">[x <span style="color: #40e0d0; font-weight: bold;">for</span> x <span style="color: #40e0d0; font-weight: bold;">in</span> lis <span style="color: #40e0d0; font-weight: bold;">if</span> x % 2 == 0]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-7-2-6" class="outline-4">
+<h4 id="sec-7-2-6"><span class="section-number-4">7.2.6</span> 闭包，计算函数的导数</h4>
+<div class="outline-text-4" id="text-7-2-6">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">d</span>(f) :
+  <span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">calc</span>(x) :
+        <span style="color: #bebebe; font-weight: bold;">dx</span> = 0.000001  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#34920;&#31034;&#26080;&#31351;&#23567;&#30340;&#916;x</span>
+        <span style="color: #40e0d0; font-weight: bold;">return</span> (f(x+dx) - f(x)) / dx  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#35745;&#31639;&#26012;&#29575;&#12290;&#27880;&#24847;&#65292;&#27492;&#22788;&#24341;&#29992;&#20102;&#22806;&#23618;&#20316;&#29992;&#22495;&#30340;&#21464;&#37327; f</span>
+  <span style="color: #40e0d0; font-weight: bold;">return</span> calc  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#27492;&#22788;&#29992;&#20989;&#25968;&#20316;&#20026;&#36820;&#22238;&#20540;&#65288;&#20063;&#23601;&#26159;&#20989;&#25968; f &#30340;&#23548;&#25968;&#65289;</span>
+
+<span style="color: #bebebe; font-weight: bold;">f</span> = <span style="color: #40e0d0; font-weight: bold;">lambda</span> x : x**2 + x + 1  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#20808;&#25226;&#20108;&#27425;&#20989;&#25968;&#29992;&#20195;&#30721;&#34920;&#36798;&#20986;&#26469;</span>
+<span style="color: #bebebe; font-weight: bold;">f1</span> = d(f)  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#36825;&#20010;f1 &#23601;&#26159; f &#30340;&#19968;&#38454;&#23548;&#25968;&#21862;&#12290;&#27880;&#24847;&#65292;&#23548;&#25968;&#20381;&#28982;&#26159;&#20010;&#20989;&#25968;</span>
+
+f1(3)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Natural Language Processing</h2>
+<div class="outline-text-2" id="text-8">
+</div><div id="outline-container-sec-8-1" class="outline-3">
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> Stanford</h3>
+<div class="outline-text-3" id="text-8-1">
+</div><div id="outline-container-sec-8-1-1" class="outline-4">
+<h4 id="sec-8-1-1"><span class="section-number-4">8.1.1</span> 参考书籍</h4>
+<div class="outline-text-4" id="text-8-1-1">
+<ul class="org-ul">
+<li>朱拉夫斯基和曼宁《语音与语言处理》
+</li>
+<li>曼宁、舒策、拉哈万《信息检索导论》（2008）
+</li>
+<li>伯德、克莱因、洛普《使用Python进行自然语言处理》（2009）
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-8-1-2" class="outline-4">
+<h4 id="sec-8-1-2"><span class="section-number-4">8.1.2</span> Basic Text Processing</h4>
+<div class="outline-text-4" id="text-8-1-2">
+</div><ol class="org-ol"><li><a id="sec-8-1-2-1" name="sec-8-1-2-1"></a>Regular Expression<br  /><div class="outline-text-5" id="text-8-1-2-1">
+<ul class="org-ul">
+<li>[]: [wW]oodchuck, [0-9], [a-z]
+</li>
+<li>[<sup>]</sup>: not, [\<sup>a</sup>-z]
+</li>
+<li>|: or
+</li>
+<li>?, *, +, .: times 
+</li>
+<li>^, &amp;: start &amp; end
+</li>
+</ul>
+</div>
+</li>
+<li><a id="sec-8-1-2-2" name="sec-8-1-2-2"></a>Word Tokenization<br  /><ol class="org-ol"><li><a id="sec-8-1-2-2-1" name="sec-8-1-2-2-1"></a>shakespeare<br  /><div class="outline-text-6" id="text-8-1-2-2-1">
+<p>
+tr -sc 'a-zA-Z' '\n' &lt; shakespeare.txt | sort | uniq -c | sort -n -r | less
+</p>
+<ul class="org-ul">
+<li>将非单词替换为\n
+</li>
+<li>排序
+</li>
+<li>去重，并统计出现次数， uniq -c
+</li>
+<li>按出现次数排序，逆序输出
+</li>
+<li>如何统计每个单词的重复出现次数 tr -s "\t| " "\n" &lt; word.txt | sort | uniq -c
+</li>
+</ul>
+</div>
+</li>
+<li><a id="sec-8-1-2-2-2" name="sec-8-1-2-2-2"></a>中文的分词<br  /><div class="outline-text-6" id="text-8-1-2-2-2">
+<ul class="org-ul">
+<li>max-match
+</li>
+</ul>
+</div>
+</li></ol>
+</li>
+
+<li><a id="sec-8-1-2-3" name="sec-8-1-2-3"></a>Word Normaliztion &amp; Stemming<br  /><div class="outline-text-5" id="text-8-1-2-3">
+<ul class="org-ul">
+<li>stem: Porter's algorithm
+</li>
+<li>affix
+</li>
+</ul>
+</div>
+</li>
+
+<li><a id="sec-8-1-2-4" name="sec-8-1-2-4"></a>Sentence Segmentation<br  /><div class="outline-text-5" id="text-8-1-2-4">
+<ul class="org-ul">
+<li>?, !: 通常没有歧义
+</li>
+<li>.: 存在歧义，如Dr. 2014.12等。 解决方法，使用决策树判断.是否为句子结束
+</li>
+</ul>
+</div>
+</li></ol>
+</div>
+
+<div id="outline-container-sec-8-1-3" class="outline-4">
+<h4 id="sec-8-1-3"><span class="section-number-4">8.1.3</span> Edit Distance</h4>
+<div class="outline-text-4" id="text-8-1-3">
+<ol class="org-ol">
+<li>Levenshtein distance: 替换代价为2,可以理解为先删除再插入
+</li>
+<li>算法: 动态规划, 通过回溯二维数组pre[i,j] = DOWN, LEFT, DIAG来记录回溯信息
+</li>
+<li>加权Edit Distance 
+</li>
+<li>confusion matrix, a容易被拼写为e;
+</li>
+<li>物理键盘的布局
+</li>
+</ol>
+
+<div class="figure">
+<p><img src="./nlp/confusion_matrix.png" alt="confusion_matrix.png" width="80%" />
+</p>
+</div>
+
+<div class="figure">
+<p><img src="./nlp/weighted_edit.png" alt="weighted_edit.png" width="80%" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-8-1-4" class="outline-4">
+<h4 id="sec-8-1-4"><span class="section-number-4">8.1.4</span> Language Modeling</h4>
+<div class="outline-text-4" id="text-8-1-4">
+<ul class="org-ul">
+<li>机器翻译, Spell Correction, 语音识别
+</li>
+<li>一些工具 SRILM, Google N-Gram Release
+</li>
+<li>a) Markov假设, b)取log避免下溢
+</li>
+</ul>
+</div>
+<ol class="org-ol"><li><a id="sec-8-1-4-1" name="sec-8-1-4-1"></a>Perplexity，如何评价一个语言模型<br  /><div class="outline-text-5" id="text-8-1-4-1">
+<ul class="org-ul">
+<li>P[P(W)] = P(W)<sup>1</sup>/N, 取对数即为1/NlogP(W)
+</li>
+<li>Perplexity越小，better model
+</li>
+</ul>
+</div>
+</li>
+<li><a id="sec-8-1-4-2" name="sec-8-1-4-2"></a>数据稀疏问题，测试数据中出现训练集不存在的语法怎么办？<br  /><div class="outline-text-5" id="text-8-1-4-2">
+<ul class="org-ul">
+<li>add-one, 假如为二元文法，V为所有bigram个数
+</li>
+</ul>
+
+<div class="figure">
+<p><img src="./nlp/add_one.png" alt="add_one.png" width="40%" />
+</p>
+</div>
+<ul class="org-ul">
+<li>Good-Turing Estimate(参考数学之美)
+</li>
+</ul>
+<p>
+基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
+</p>
+</div>
+</li></ol>
+</div>
+<div id="outline-container-sec-8-1-5" class="outline-4">
+<h4 id="sec-8-1-5"><span class="section-number-4">8.1.5</span> Spelling Correction</h4>
+<div class="outline-text-4" id="text-8-1-5">
+<ul class="org-ul">
+<li>w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
+</li>
+<li>P(x|w)中包含了transpose error，confusion matrix
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-8-1-6" class="outline-4">
+<h4 id="sec-8-1-6"><span class="section-number-4">8.1.6</span> homework</h4>
+<div class="outline-text-4" id="text-8-1-6">
+<ol class="org-ol">
+<li>regular expression
+</li>
+<li>autocorrect(edit distance, language model)
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: robin1001</p>
+<p class="date">Created: 2014-11-21 五 11:46</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
