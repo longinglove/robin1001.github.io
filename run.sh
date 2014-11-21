@@ -16,7 +16,7 @@ for x in $org/*.html; do
 	if ! [ -f $x ]; then continue; fi
 	#check name
 	nu=`echo $x | grep -P "(\d{4})-(\d{2})-(\d{2})-.*" | wc -l`
-	if [ -z $nu ]; then
+	if [ $nu -ne 1 ]; then
 		echo "file name ${x} is illegal" && exit -1
 	fi
 	name=`basename $x`
