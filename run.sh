@@ -26,6 +26,8 @@ for x in $org/*.html; do
 	else
 		echo "modify file $x" >> $log 
 	fi
+	#correct img export
+	sed -i "s:file\://::" $x
 	#add jekyll header
 	org_file=`echo $x | sed -e "s:html:org:"`
 	title=`grep -i -P '#\+title' $org_file | awk '{print $2}'`
