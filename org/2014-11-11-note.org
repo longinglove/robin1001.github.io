@@ -1,5 +1,5 @@
 #+TITLE: Notes
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/worg.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
 
 * Shell program
  Created by:robin1001 <2014-08-02 六>
@@ -351,9 +351,9 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 + confusion matrix, a容易被拼写为e;
 + 物理键盘的布局
 #+ATTR_HTML: :width 80%  
-[[./nlp/confusion_matrix.png]]
+[[/img/nlp/confusion_matrix.png]]
 #+ATTR_HTML: :width 80% 
-[[./nlp/weighted_edit.png]]
+[[/img/nlp/weighted_edit.png]]
 
 *** Language Modeling
 + 机器翻译, Spell Correction, 语音识别
@@ -365,7 +365,7 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 **** 数据稀疏问题，测试数据中出现训练集不存在的语法怎么办？
 + add-one, 假如为二元文法，V为所有bigram个数
 #+ATTR_HTML: :width 40%
-[[./nlp/add_one.png]]
+[[/img/nlp/add_one.png]]
 + Good-Turing Estimate(参考数学之美)
 基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
 *** Spelling Correction
