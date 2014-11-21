@@ -351,7 +351,7 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 + confusion matrix, a容易被拼写为e;
 + 物理键盘的布局
 #+ATTR_HTML: :width 80%  
-[[/img/nlp/confusion_matrix.png]]
+x[[/img/nlp/confusion_matrix.png]]
 #+ATTR_HTML: :width 80% 
 [[/img/nlp/weighted_edit.png]]
 
