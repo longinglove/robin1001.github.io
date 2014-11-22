@@ -1,0 +1,81 @@
+#+TITLE: Natural Language Processing
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+STARTUP: indent
+#+OPTIONS: ^:{}
+
+* Stanford
+** 参考书籍
++ 朱拉夫斯基和曼宁《语音与语言处理》
++ 曼宁、舒策、拉哈万《信息检索导论》（2008）
++ 伯德、克莱因、洛普《使用Python进行自然语言处理》（2009）
+
+** Basic Text Processing
+*** Regular Expression
++ []: [wW]oodchuck, [0-9], [a-z]
++ [^]: not, [\^a-z]
++ |: or
++ ?, *, +, .: times 
++ ^, &: start & end
+*** Word Tokenization
+**** shakespeare
+#+begin_src sh
+tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
+#+end_src
+ + 将非单词替换为\n
+ + 排序
+ + 去重，并统计出现次数， uniq -c
+ + 按出现次数排序，逆序输出
+ + 如何统计每个单词的重复出现次数 tr -s "\t| " "\n" < word.txt | sort | uniq -c
+**** 中文的分词
+ + max-match
+
+*** Word Normaliztion & Stemming
++ stem: Porter's algorithm
++ affix
+
+**** Sentence Segmentation
++ ?, !: 通常没有歧义
++ .: 存在歧义，如Dr. 2014.12等。 解决方法，使用决策树判断.是否为句子结束
+
+** Edit Distance
+1. Levenshtein distance: 替换代价为2,可以理解为先删除再插入
+2. 算法: 动态规划, 通过回溯二维数组pre[i,j] = DOWN, LEFT, DIAG来记录回溯信息
+3. 加权Edit Distance 
+ + confusion matrix, a容易被拼写为e;
+ + 物理键盘的布局
+#+ATTR_HTML: :width 80%  
+[[/img/nlp/confusion_matrix.png]]
+#+ATTR_HTML: :width 80% 
+[[/img/nlp/weighted_edit.png]]
+
+** Language Modeling
++ 机器翻译, Spell Correction, 语音识别
++ 一些工具 SRILM, Google N-Gram Release
++ a) Markov假设, b)取log避免下溢
+*** Perplexity，如何评价一个语言模型
++ P[P(W)] = P(W)^1/N, 取对数即为1/NlogP(W)
++ Perplexity越小，better model
+*** 数据稀疏问题，测试数据中出现训练集不存在的语法怎么办？
++ add-one, 假如为二元文法，V为所有bigram个数
+#+ATTR_HTML: :width 40%
+[[/img/nlp/add_one.png]]
++ Good-Turing Estimate(参考数学之美)
+基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
+** Spelling Correction
++ w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
++ P(x|w)中包含了transpose error，confusion matrix
+
+** homework
+1. regular expression
+2. autocorrect(edit distance, language model)
+3. test
+#+BEGIN_VERSE
+;;不同点有两处，一是形参用逗号直接求值，形式体则用逗号和@ 即 “,@” 去掉对形式体求值后所得到的表达式最外层列表的括号，将这个表达式嵌入到最外围列表的最后面；二是形参要做一系列处理，而形式体则直接求值嵌入，不做任何变化，这是因为这个形式体本来就是新宏的处理语句，定义宏只需要照搬即可，不需要也不应该做其他变化。
+#+END_VERSE
+#+BEGIN_QUOTE
+缩进区块
+#+END_QUOTE
+#+BEGIN_CENTER
+Everything should be made as simple as possible, but not any simpler
+#+END_CENTER
+
