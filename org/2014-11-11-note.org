@@ -1,6 +1,6 @@
 #+TITLE: Notes
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
-
+#+STARTUP: indent
 * Shell program
  Created by:robin1001 <2014-08-02 六>
 

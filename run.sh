@@ -30,7 +30,7 @@ for x in $org/*.html; do
 	sed -i "s:file\://::" $x
 	#add jekyll header
 	org_file=`echo $x | sed -e "s:html:org:"`
-	title=`grep -i -P '#\+title' $org_file | awk '{print $2}'`
+	title=`grep -i -P '#\+title' $org_file | awk -F ':' '{print $2}'`
 	echo "---" > $posts/$name
 	echo "title: ${title}" >> $posts/$name
 	echo "---" >> $posts/$name
