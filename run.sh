@@ -6,14 +6,14 @@ log=run.log
 
 #check & move
 for x in $org $posts; do
-	if ! [ -d $x ]; then
+	if [ ! -d $x ]; then
 		echo "error dir ${x} not exist" && exit -1
 	fi
 done
 
 echo "commit info" > $log 
 for x in $org/*.html; do
-	if ! [ -f $x ]; then continue; fi
+	if [ ! -f $x ]; then continue; fi
 	#check name
 	nu=`echo $x | grep -P "(\d{4})-(\d{2})-(\d{2})-.*" | wc -l`
 	if [ $nu -ne 1 ]; then
