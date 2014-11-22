@@ -39,7 +39,7 @@ for x in $org/*.html; do
 	rm $x 
 done	
 
-#log info
+#log info, emacs vc test
 info=`cat $log`
 echo $info
 #git add && commit && push
