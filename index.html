@@ -33,7 +33,7 @@ title: robin1001
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
-			<li class="active"><a href="index.html">Notes</a></li>
+			<li class="active"><a href="#">Notes</a></li>
             <li class="active"><a href="favorite.html">Favorite</a></li>
             <li><a href="https://github.com/robin1001">GitHub</a></li>
             </ul>
@@ -50,15 +50,11 @@ title: robin1001
           <h3 class="panel-title">Keep it Simple & Stupid</h3>
         </div>
         <ul class="list-group">
-		   <li class="list-group-item title">
-            <a href="http://www.yinwang.org/blog-cn/2014/04/11/hacker-culture">对 Go 语言的综合评价</a>
-           </li>
-		   <li class="list-group-item title">
-            <a href="http://yinwang.org/blog-cn/2014/04/18/golang">对 Go 语言的综合评价</a>
-           </li>
-		   <li class="list-group-item title">
-            <a href="http://yinwang.org/blog-cn/2013/03/26/lisp-dead-alive">Lisp 已死，Lisp 万岁！</a>
-           </li>
+		  {% for post in site.posts %}
+			  <li class="list-group-item title">
+				<a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+			  </li>
+		  {% endfor %}
         </ul>
       </div>
     </div>
