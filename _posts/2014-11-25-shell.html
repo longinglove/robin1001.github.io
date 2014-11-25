@@ -7,7 +7,7 @@ title:  Shell & Tools
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Shell &amp; Tools</title>
-<!-- 2014-11-25 二 11:17 -->
+<!-- 2014-11-25 二 11:47 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -263,6 +263,80 @@ for the JavaScript code in this tag.
 }
 </pre>
 </div>
+<ul class="org-ul">
+<li>getline close(在脚本中要两次读取同一文件时要close)
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#23558;&#25340;&#38899;&#32423;&#30340;&#25220;&#26412;&#26597;&#34920;&#36716;&#25442;&#25104;&#38899;&#32032;&#32423;&#25220;&#26412;</span>
+<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">!/bin/bash</span>
+
+<span style="color: #40e0d0; font-weight: bold;">if</span> [ $<span style="color: #bebebe; font-weight: bold;">#</span> -ne 2 ]; <span style="color: #40e0d0; font-weight: bold;">then</span>
+    <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">echo</span> <span style="color: #ff0000;">"Usage: pinyin2phone.sh dict_file pinyin2phone"</span>
+    <span style="color: #40e0d0; font-weight: bold;">exit</span> -1
+<span style="color: #40e0d0; font-weight: bold;">fi</span>
+
+<span style="color: #bebebe; font-weight: bold;">dict</span>=$<span style="color: #bebebe; font-weight: bold;">1</span>
+awk -v <span style="color: #bebebe; font-weight: bold;">phone_map</span>=$<span style="color: #bebebe; font-weight: bold;">2</span> <span style="color: #ff0000;">\</span>
+<span style="color: #ff0000;">'BEGIN {</span>
+<span style="color: #ff0000;">    while (getline &lt; phone_map) {</span>
+<span style="color: #ff0000;">        t = "";</span>
+<span style="color: #ff0000;">        for (i=2; i&lt;=NF; i++)</span>
+<span style="color: #ff0000;">            t = t " " $i;</span>
+<span style="color: #ff0000;">        map[$1] = t;</span>
+<span style="color: #ff0000;">        #print $1, t</span>
+<span style="color: #ff0000;">    }</span>
+<span style="color: #ff0000;">    close(phone_map) #&#27492;&#22788;&#20063;&#21487;&#20197;&#19981;&#20889;</span>
+<span style="color: #ff0000;">}</span>
+<span style="color: #ff0000;">{</span>
+<span style="color: #ff0000;">    line = $1;</span>
+<span style="color: #ff0000;">    for (i=2; i&lt;=NF; i++)</span>
+<span style="color: #ff0000;">        line = line " " map[$i];</span>
+<span style="color: #ff0000;">    print line;</span>
+<span style="color: #ff0000;">}</span>
+<span style="color: #ff0000;">'</span> $<span style="color: #bebebe; font-weight: bold;">dict</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>字符串处理函数
+</li>
+</ul>
+<pre class="example">
+gsub(r,s)    在整个$0中用s替代r
+gsub(r,s,t)    在整个t中用s替代r
+index(s,t)    返回s中字符串t的第一位置
+length(s)    返回s长度
+match(s,r)    测试s是否包含匹配r的字符串
+split(s,a,fs)    在fs上将s分成序列a
+sprint(fmt,exp)    返回经fmt格式化后的exp
+sub(r,s)    用$0中最左边最长的子串代替s
+substr(s,p)    返回字符串s中从p开始的后缀部分
+substr(s,p,n)    返回字符串s中从p开始长度为n的后缀部分
+</pre>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#20165;&#20165;&#20351;&#29992;begin&#22312;shell&#20013;&#26684;&#24335;&#21270;&#23383;&#31526;&#20018;</span>
+awk <span style="color: #bebebe; font-weight: bold;">x</span>=10 <span style="color: #ff0000;">'BEGIN{printf("S%04d", x)}</span>
+<span style="color: #ff0000;">awk '</span>BEGIN{print split(<span style="color: #ff0000;">"123#456#678"</span>, myarray, <span style="color: #ff0000;">"#"</span>)}<span style="color: #ff0000;">'</span>
+<span style="color: #ff0000;">awk '</span>{BEGIN {print match(<span style="color: #ff0000;">"ANCD"</span>, /d/)}<span style="color: #ff0000;">'</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>system,调用shell命令
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">function system(expr) uses /bin/sh to execute expr and returns the exit status of the command expr.</span>
+<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#20551;&#35774;&#25991;&#20214;file&#20013;&#27599;&#19968;&#34892;&#22343;&#20026;&#25991;&#20214;&#21517;&#65292;cat&#25152;&#26377;&#25991;&#20214;</span>
+$ awk <span style="color: #ff0000;">'{system("cat" " "  $0)}'</span> file
+</pre>
+</div>
+<ul class="org-ul">
+<li><b>莫给NR，NF加$,经常犯这个错</b>
+</li>
+</ul>
 </div>
 </div>
 <div id="outline-container-sec-3" class="outline-2">
@@ -313,7 +387,7 @@ sed <span style="color: #ff0000;">"s:.*/\(.*\)\.wav:\1:"</span>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-25 二 11:17</p>
+<p class="date">Created: 2014-11-25 二 11:47</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
