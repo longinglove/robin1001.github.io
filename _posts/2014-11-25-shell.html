@@ -7,7 +7,7 @@ title:  Shell & Tools
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Shell &amp; Tools</title>
-<!-- 2014-11-25 二 11:47 -->
+<!-- 2014-11-25 二 13:16 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -189,22 +189,238 @@ for the JavaScript code in this tag.
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. shell program</a></li>
-<li><a href="#sec-2">2. awk</a></li>
-<li><a href="#sec-3">3. sed</a></li>
-<li><a href="#sec-4">4. grep</a></li>
-<li><a href="#sec-5">5. cut</a></li>
+<li><a href="#sec-2">2. sed</a></li>
+<li><a href="#sec-3">3. grep</a></li>
+<li><a href="#sec-4">4. cut(default tab)</a></li>
+<li><a href="#sec-5">5. tr</a></li>
 <li><a href="#sec-6">6. find</a></li>
+<li><a href="#sec-7">7. awk</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> shell program</h2>
-</div>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>$*引用所有参数, $#存放参数的个数, $0引用程序名, $i第i个参数
+</li>
+<li>数学计算
+</li>
+</ul>
+<div class="org-src-container">
 
+<pre class="src src-sh">$ <span style="color: #bebebe; font-weight: bold;">var</span>=1+1 error <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">error,"1+1"</span>
+$ let <span style="color: #bebebe; font-weight: bold;">var</span>+=1 | <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">let</span> <span style="color: #ff0000;">"var+=1"</span>
+$ <span style="color: #bebebe; font-weight: bold;">var</span>=<span style="color: #fa8072;">`expr $var + 1`</span> 
+$ ((<span style="color: #bebebe; font-weight: bold;">var</span>+=1)) 
+$ <span style="color: #bebebe; font-weight: bold;">var</span>=$[$<span style="color: #bebebe; font-weight: bold;">var</span>+1] <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#33258;&#24049;&#25512;&#33616;&#20351;&#29992;&#36825;&#20010;&#21704;</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>数组
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #bebebe; font-weight: bold;">a</span>=(1 2 3 4 5)   <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">() &#25968;&#32452;</span>
+a[1] = 100      <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#36171;&#20540;</span>
+<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">echo</span> ${#<span style="color: #bebebe; font-weight: bold;">a</span>[*]}   <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">length</span>
+<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">echo</span> ${<span style="color: #bebebe; font-weight: bold;">a</span>[*]}    <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">all element</span>
+<span style="color: #bebebe; font-weight: bold;">c</span>=(${<span style="color: #bebebe; font-weight: bold;">a</span>[@]:1:4}) <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">${&#25968;&#32452;&#21517;[@&#25110;*]:&#36215;&#22987;&#20301;&#32622;:&#38271;&#24230;} &#20999;&#29255;&#21407;&#20808;&#25968;&#32452;</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>() {}
+</li>
+</ul>
+<pre class="example">
+() 为了在子shell中执行一组命令，可以用命令分隔符(即",")隔开每一个命令，并把所有的命令用圆括号()括起来。 
+{} 如果使用{}来代替()，那么相应的命令将在当前shell中作为一个整体被执行
+</pre>
+<ul class="org-ul">
+<li>字符串
+</li>
+</ul>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">表达式</th>
+<th scope="col" class="left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">${#string}</td>
+<td class="left">$string的长度</td>
+</tr>
+
+<tr>
+<td class="left">${string:position}</td>
+<td class="left">在$string中, 从位置$position开始提取子串</td>
+</tr>
+
+<tr>
+<td class="left">${string:position:length}</td>
+<td class="left">在$string中, 从位置$position开始提取长度为$length的子串</td>
+</tr>
+
+<tr>
+<td class="left">${string#substring}</td>
+<td class="left">从变量$string的开头, 删除最短匹配$substring的子串</td>
+</tr>
+
+<tr>
+<td class="left">${string##substring}</td>
+<td class="left">从变量$string的开头, 删除最长匹配$substring的子串</td>
+</tr>
+
+<tr>
+<td class="left">${string%substring}</td>
+<td class="left">从变量$string的结尾, 删除最短匹配$substring的子串</td>
+</tr>
+
+<tr>
+<td class="left">${string%%substring}</td>
+<td class="left">从变量$string的结尾, 删除最长匹配$substring的子串</td>
+</tr>
+
+<tr>
+<td class="left">${string/substring/replacement}</td>
+<td class="left">使用$replacement, 来代替第一个匹配的$substring</td>
+</tr>
+
+<tr>
+<td class="left">${string//substring/replacement}</td>
+<td class="left">使用$replacement, 代替所有匹配的$substring</td>
+</tr>
+
+<tr>
+<td class="left">${string/#substring/replacement}</td>
+<td class="left">如果$string的前缀匹配$substring, 那么就用$replacement来代替匹配到的$substring</td>
+</tr>
+
+<tr>
+<td class="left">${string/%substring/replacement}</td>
+<td class="left">如果$string的后缀匹配$substring, 那么就用$replacemen</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> awk</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> sed</h2>
 <div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>-e 连续执行多个编辑
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh">sed -e <span style="color: #ff0000;">"s:aa:bb:"</span> -e <span style="color: #ff0000;">"s:\d::"</span> file
+</pre>
+</div>
+<ul class="org-ul">
+<li>-i 在源文件上进行替换
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#21024;&#38500;windows&#19979;&#25991;&#20214;&#30340;^M&#26174;&#31034;</span>
+sed -i <span style="color: #ff0000;">'s/^M//g'</span> filename
+</pre>
+</div>
+<ul class="org-ul">
+<li>\(\)表示分组，_1,_2引用，标准正则表达式使用()
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#26681;&#25454;&#36335;&#24452;&#21462;x.wav&#30340;&#25991;&#20214;&#21517;</span>
+sed <span style="color: #ff0000;">"s:.*/\(.*\)\.wav:\1:"</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> grep</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>-P perl形式的正则表达式
+</li>
+<li>-v 不匹配的项
+</li>
+<li>-H 显示文件名
+</li>
+<li>-f 从文件中取得模式
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> cut(default tab)</h2>
+<div class="outline-text-2" id="text-4">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">-d&#20998;&#21106;&#31526;, -f&#22495;</span>
+$ cut -d<span style="color: #ff0000;">' '</span> -f2
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> tr</h2>
+<div class="outline-text-2" id="text-5">
+<ol class="org-ol">
+<li>只接收标准输入
+</li>
+<li>tr set1 set2
+</li>
+<li>tr " " "\n" 将空格换成回车
+</li>
+<li>tr "a-z" "A-Z" 或者 tr [:lower:] [:upper:] 大小写转换
+</li>
+<li>tr -s " " 将多个空格替换为1个
+</li>
+<li>tr -d 删除, tr -cd '[a-z]'
+</li>
+<li>tr -sc 'a-z' '\n', -c取不是‘a-z', 所以将不是a-z的字符替换为换行
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> find</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>-L 包含链接文件，默认不查找链接文件
+</li>
+<li>-name 文件名
+</li>
+<li>-type (f d l)
+</li>
+<li>-mmin 最近修改时间
+</li>
+<li>-maxdepth 
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh">$ find -L . -name <span style="color: #ff0000;">"*.sh"</span> -type f
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> awk</h2>
+<div class="outline-text-2" id="text-7">
 <ul class="org-ul">
 <li>以awk文件方式运行, -f
 </li>
@@ -336,58 +552,30 @@ $ awk <span style="color: #ff0000;">'{system("cat" " "  $0)}'</span> file
 <ul class="org-ul">
 <li><b>莫给NR，NF加$,经常犯这个错</b>
 </li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> sed</h2>
-<div class="outline-text-2" id="text-3">
-<ul class="org-ul">
-<li>-e 连续执行多个编辑
+<li>other example
 </li>
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-sh">sed -e <span style="color: #ff0000;">"s:aa:bb:"</span> -e <span style="color: #ff0000;">"s:\d::"</span> file
-</pre>
-</div>
-<ul class="org-ul">
-<li>-i 在源文件上进行替换
-</li>
-</ul>
-<div class="org-src-container">
+<pre class="src src-sh">1. emulate cat.
 
-<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#21024;&#38500;windows&#19979;&#25991;&#20214;&#30340;^M&#26174;&#31034;</span>
-sed -i <span style="color: #ff0000;">'s/^M//g'</span> filename
-</pre>
-</div>
-<ul class="org-ul">
-<li>\(\)表示分组，_1,_2引用，标准正则表达式使用()
-</li>
-</ul>
-<div class="org-src-container">
+     { print }
 
-<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#26681;&#25454;&#36335;&#24452;&#21462;x.wav&#30340;&#25991;&#20214;&#21517;</span>
-sed <span style="color: #ff0000;">"s:.*/\(.*\)\.wav:\1:"</span>
+2. emulate wc.
+
+     { chars += length($<span style="color: #bebebe; font-weight: bold;">0</span>) + 1  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">add one for the \n</span>
+       words += NF
+     }
+
+     END{ print NR, words, chars }
 </pre>
 </div>
 </div>
-</div>
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> grep</h2>
-</div>
-
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> cut</h2>
-</div>
-
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> find</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-25 二 11:47</p>
+<p class="date">Created: 2014-11-25 二 13:16</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

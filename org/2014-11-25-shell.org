@@ -4,7 +4,84 @@
 #+STARTUP: indent
 
 * shell program
-
++ $*引用所有参数, $#存放参数的个数, $0引用程序名, $i第i个参数
++ 数学计算
+#+BEGIN_SRC sh
+$ var=1+1 error # error,"1+1"
+$ let var+=1 | let "var+=1"
+$ var=`expr $var + 1` 
+$ ((var+=1)) 
+$ var=$[$var+1] #自己推荐使用这个哈
+#+END_SRC
++ 数组
+#+BEGIN_SRC sh
+a=(1 2 3 4 5)   #() 数组
+a[1] = 100      #赋值
+echo ${#a[*]}   #length
+echo ${a[*]}    #all element
+c=(${a[@]:1:4}) #${数组名[@或*]:起始位置:长度} 切片原先数组  
+#+END_SRC
++ () {}
+#+BEGIN_EXAMPLE
+() 为了在子shell中执行一组命令，可以用命令分隔符(即",")隔开每一个命令，并把所有的命令用圆括号()括起来。 
+{} 如果使用{}来代替()，那么相应的命令将在当前shell中作为一个整体被执行
+#+END_EXAMPLE
++ 字符串
+| 表达式                           | 含义                                                                          |
+|----------------------------------+-------------------------------------------------------------------------------|
+| ${#string}                       | $string的长度                                                                 |
+| ${string:position}               | 在$string中, 从位置$position开始提取子串                                      |
+| ${string:position:length}        | 在$string中, 从位置$position开始提取长度为$length的子串                       |
+| ${string#substring}              | 从变量$string的开头, 删除最短匹配$substring的子串                             |
+| ${string##substring}             | 从变量$string的开头, 删除最长匹配$substring的子串                             |
+| ${string%substring}              | 从变量$string的结尾, 删除最短匹配$substring的子串                             |
+| ${string%%substring}             | 从变量$string的结尾, 删除最长匹配$substring的子串                             |
+| ${string/substring/replacement}  | 使用$replacement, 来代替第一个匹配的$substring                                |
+| ${string//substring/replacement} | 使用$replacement, 代替所有匹配的$substring                                    |
+| ${string/#substring/replacement} | 如果$string的前缀匹配$substring, 那么就用$replacement来代替匹配到的$substring |
+| ${string/%substring/replacement} | 如果$string的后缀匹配$substring, 那么就用$replacemen                          |
+* sed
++ -e 连续执行多个编辑
+#+begin_src sh
+sed -e "s:aa:bb:" -e "s:\d::" file
+#+end_src
++ -i 在源文件上进行替换
+#+begin_src sh
+#如删除windows下文件的^M显示
+sed -i 's/^M//g' filename 
+#+end_src
++ \(\)表示分组，_1,_2引用，标准正则表达式使用()
+#+begin_src sh
+#如根据路径取x.wav的文件名
+sed "s:.*/\(.*\)\.wav:\1:"
+#+end_src
+* grep
++ -P perl形式的正则表达式
++ -v 不匹配的项
++ -H 显示文件名
++ -f 从文件中取得模式
+* cut(default tab)
+#+begin_src sh
+#-d分割符, -f域
+$ cut -d' ' -f2
+#+end_src
+* tr
+1. 只接收标准输入
+2. tr set1 set2
+3. tr " " "\n" 将空格换成回车
+4. tr "a-z" "A-Z" 或者 tr [:lower:] [:upper:] 大小写转换
+5. tr -s " " 将多个空格替换为1个
+6. tr -d 删除, tr -cd '[a-z]'
+7. tr -sc 'a-z' '\n', -c取不是‘a-z', 所以将不是a-z的字符替换为换行
+* find
++ -L 包含链接文件，默认不查找链接文件
++ -name 文件名
++ -type (f d l)
++ -mmin 最近修改时间
++ -maxdepth 
+#+begin_src sh
+$ find -L . -name "*.sh" -type f
+#+end_src
 * awk
 + 以awk文件方式运行, -f
 #+begin_src awk
@@ -97,24 +174,18 @@ awk '{BEGIN {print match("ANCD", /d/)}'
 $ awk '{system("cat" " "  $0)}' file
 #+end_src
 + *莫给NR，NF加$,经常犯这个错*
-* sed
-+ -e 连续执行多个编辑
-#+begin_src sh
-sed -e "s:aa:bb:" -e "s:\d::" file
-#+end_src
-+ -i 在源文件上进行替换
-#+begin_src sh
-#如删除windows下文件的^M显示
-sed -i 's/^M//g' filename 
-#+end_src
-+ \(\)表示分组，_1,_2引用，标准正则表达式使用()
-#+begin_src sh
-#如根据路径取x.wav的文件名
-sed "s:.*/\(.*\)\.wav:\1:"
-#+end_src
-* grep
++ other example
+#+BEGIN_SRC sh
+1. emulate cat.
 
-* cut
+     { print }
 
-* find
+2. emulate wc.
+
+     { chars += length($0) + 1  # add one for the \n
+       words += NF
+     }
+
+     END{ print NR, words, chars }
+#+END_SRC
 
