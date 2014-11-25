@@ -1,0 +1,20 @@
+#+TITLE: Shell & Tools
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+OPTIONS: ^:{}
+#+STARTUP: indent
+
+* shell program
+
+* awk
++ 运行方式
++ print printf
+#+begin_src awk
+#+end_src
+* sed
+
+* grep
+
+* cut
+
+* find
+
