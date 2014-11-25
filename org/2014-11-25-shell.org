@@ -27,6 +27,7 @@ c=(${a[@]:1:4}) #${数组名[@或*]:起始位置:长度} 切片原先数组
 {} 如果使用{}来代替()，那么相应的命令将在当前shell中作为一个整体被执行
 #+END_EXAMPLE
 + 字符串
+#+BEGIN_CENTER
 | 表达式                           | 含义                                                                          |
 |----------------------------------+-------------------------------------------------------------------------------|
 | ${#string}                       | $string的长度                                                                 |
@@ -40,6 +41,7 @@ c=(${a[@]:1:4}) #${数组名[@或*]:起始位置:长度} 切片原先数组
 | ${string//substring/replacement} | 使用$replacement, 代替所有匹配的$substring                                    |
 | ${string/#substring/replacement} | 如果$string的前缀匹配$substring, 那么就用$replacement来代替匹配到的$substring |
 | ${string/%substring/replacement} | 如果$string的后缀匹配$substring, 那么就用$replacemen                          |
+#+END_CENTER
 * sed
 + -e 连续执行多个编辑
 #+begin_src sh
