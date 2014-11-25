@@ -6,12 +6,56 @@
 * shell program
 
 * awk
-+ 运行方式
-+ print printf
++ 以awk文件方式运行, -f
 #+begin_src awk
+#!/bin/awk
+{print $0}
+#+end_src
+#+begin_src sh
+awk -f strcat.awk if.sh
+#+end_src
++ 字符串连接 a ("" | "+") b
++ print printf
+#+begin_src sh
+{print $0}
+{printf("%04d %s", NR, $0)} 
+#+end_src
++ -v 可带输入变量
+#+begin_src sh
+awk -v num=10 '{print num}'
+#+end_src
++ 关联数组
+#+begin_src awk
+#!/bin/awk
+#word count
+BEGIN {
+	FS="[^a-zA-Z]"
+}
+{
+	for(i=1; i<=NF; i++)
+		words[tolower($i)]++;
+}
+END {
+	delete words[""]
+	for (x in words)
+		print x, words[x];
+}
 #+end_src
 * sed
-
++ -e 连续执行多个编辑
+#+begin_src sh
+sed -e "s:aa:bb:" -e "s:\d::" file
+#+end_src
++ -i 在源文件上进行替换
+#+begin_src sh
+#如删除windows下文件的^M显示
+sed -i 's/^M//g' filename 
+#+end_src
++ \(\)表示分组，_1,_2引用，标准正则表达式使用()
+#+begin_src sh
+#如根据路径取x.wav的文件名
+sed "s:.*/\(.*\)\.wav:\1:"
+#+end_src
 * grep
 
 * cut

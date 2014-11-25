@@ -7,7 +7,7 @@ title:  Shell & Tools
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Shell &amp; Tools</title>
-<!-- 2014-11-25 二 10:51 -->
+<!-- 2014-11-25 二 11:17 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -138,6 +138,48 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 <div id="content">
@@ -164,21 +206,99 @@ for the JavaScript code in this tag.
 <h2 id="sec-2"><span class="section-number-2">2</span> awk</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
-<li>运行方式
+<li>以awk文件方式运行, -f
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-awk"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">!/bin/awk</span>
+{<span style="color: #ff6347; font-weight: bold;">print</span> $0}
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-sh">awk -f strcat.awk if.sh
+</pre>
+</div>
+<ul class="org-ul">
+<li>字符串连接 a ("" | "+") b
 </li>
 <li>print printf
 </li>
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-awk"></pre>
+<pre class="src src-sh">{print $<span style="color: #bebebe; font-weight: bold;">0</span>}
+{<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">printf</span>(<span style="color: #ff0000;">"%04d %s"</span>, NR, $<span style="color: #bebebe; font-weight: bold;">0</span>)}
+</pre>
+</div>
+<ul class="org-ul">
+<li>-v 可带输入变量
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh">awk -v <span style="color: #bebebe; font-weight: bold;">num</span>=10 <span style="color: #ff0000;">'{print num}'</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>关联数组
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-awk"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">!/bin/awk</span>
+<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">word count</span>
+<span style="color: #40e0d0; font-weight: bold;">BEGIN</span> {
+    <span style="color: #bebebe; font-weight: bold;">FS</span>=<span style="color: #ff0000;">"[^a-zA-Z]"</span>
+}
+{
+    <span style="color: #40e0d0; font-weight: bold;">for</span>(i=1; i&lt;=<span style="color: #bebebe; font-weight: bold;">NF</span>; i++)
+        words[<span style="color: #ff6347; font-weight: bold;">tolower</span>($i)]++;
+}
+<span style="color: #40e0d0; font-weight: bold;">END</span> {
+    <span style="color: #40e0d0; font-weight: bold;">delete</span> words[<span style="color: #ff0000;">""</span>]
+    <span style="color: #40e0d0; font-weight: bold;">for</span> (x <span style="color: #40e0d0; font-weight: bold;">in</span> words)
+        <span style="color: #ff6347; font-weight: bold;">print</span> x, words[x];
+}
+</pre>
 </div>
 </div>
 </div>
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> sed</h2>
-</div>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>-e 连续执行多个编辑
+</li>
+</ul>
+<div class="org-src-container">
 
+<pre class="src src-sh">sed -e <span style="color: #ff0000;">"s:aa:bb:"</span> -e <span style="color: #ff0000;">"s:\d::"</span> file
+</pre>
+</div>
+<ul class="org-ul">
+<li>-i 在源文件上进行替换
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#21024;&#38500;windows&#19979;&#25991;&#20214;&#30340;^M&#26174;&#31034;</span>
+sed -i <span style="color: #ff0000;">'s/^M//g'</span> filename
+</pre>
+</div>
+<ul class="org-ul">
+<li>\(\)表示分组，_1,_2引用，标准正则表达式使用()
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#22914;&#26681;&#25454;&#36335;&#24452;&#21462;x.wav&#30340;&#25991;&#20214;&#21517;</span>
+sed <span style="color: #ff0000;">"s:.*/\(.*\)\.wav:\1:"</span>
+</pre>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> grep</h2>
 </div>
@@ -193,7 +313,7 @@ for the JavaScript code in this tag.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-25 二 10:51</p>
+<p class="date">Created: 2014-11-25 二 11:17</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
