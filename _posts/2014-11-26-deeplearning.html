@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Deep Learning</title>
-<!-- 2014-11-26 三 21:43 -->
+<!-- 2014-11-26 三 21:49 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -164,7 +164,7 @@ for the JavaScript code in this tag.
 </div>
 </div>
 <p>
-直接上代码去理解，别搞虚头八脑的东西，听别人胡扯。
+直接上代码去理解，不搞虚头八脑的东西，不听别人胡扯啦。
 </p>
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 梯度下降</h2>
@@ -389,7 +389,8 @@ nn.p{<span style="color: #ff6347; font-weight: bold;">i</span>}     = zeros(1, n
 <span style="color: #ee82ee;">%nnbp</span>
 <span style="color: #40e0d0; font-weight: bold;">if</span>(nn.nonSparsityPenalty<span style="color: #9ac0cd;">&gt;</span>0)
     <span style="color: #ff6347; font-weight: bold;">pi</span> = repmat(nn.p{<span style="color: #ff6347; font-weight: bold;">i</span>}, size(nn.a{<span style="color: #ff6347; font-weight: bold;">i</span>}, 1), 1);
-    sparsityError = [zeros(size(nn.a{<span style="color: #ff6347; font-weight: bold;">i</span>},1),1) nn.nonSparsityPenalty <span style="color: #9ac0cd;">*</span> (<span style="color: #9ac0cd;">-</span>nn.sparsityTarget <span style="color: #9ac0cd;">./</span> <span style="color: #ff6347; font-weight: bold;">pi</span> <span style="color: #9ac0cd;">+</span> (1 <span style="color: #9ac0cd;">-</span> nn.sparsityTarget) <span style="color: #9ac0cd;">./</span> (1 <span style="color: #9ac0cd;">-</span> <span style="color: #ff6347; font-weight: bold;">pi</span>))];
+    sparsityError = [zeros(size(nn.a{<span style="color: #ff6347; font-weight: bold;">i</span>},1),1) nn.nonSparsityPenalty <span style="text-decoration: underline;">...</span><span style="color: #ee82ee;"> </span>
+                    <span style="color: #9ac0cd;">*</span> (<span style="color: #9ac0cd;">-</span>nn.sparsityTarget <span style="color: #9ac0cd;">./</span> <span style="color: #ff6347; font-weight: bold;">pi</span> <span style="color: #9ac0cd;">+</span> (1 <span style="color: #9ac0cd;">-</span> nn.sparsityTarget) <span style="color: #9ac0cd;">./</span> (1 <span style="color: #9ac0cd;">-</span> <span style="color: #ff6347; font-weight: bold;">pi</span>))];
 <span style="color: #40e0d0; font-weight: bold;">end</span>
 </pre>
 </div>
@@ -398,7 +399,7 @@ nn.p{<span style="color: #ff6347; font-weight: bold;">i</span>}     = zeros(1, n
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-26 三 21:43</p>
+<p class="date">Created: 2014-11-26 三 21:49</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
