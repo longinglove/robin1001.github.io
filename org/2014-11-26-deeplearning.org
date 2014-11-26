@@ -170,6 +170,7 @@ end
 %nnbp
 if(nn.nonSparsityPenalty>0)
     pi = repmat(nn.p{i}, size(nn.a{i}, 1), 1);
-    sparsityError = [zeros(size(nn.a{i},1),1) nn.nonSparsityPenalty * (-nn.sparsityTarget ./ pi + (1 - nn.sparsityTarget) ./ (1 - pi))];
+    sparsityError = [zeros(size(nn.a{i},1),1) nn.nonSparsityPenalty ... 
+                    * (-nn.sparsityTarget ./ pi + (1 - nn.sparsityTarget) ./ (1 - pi))];
 end
 #+END_SRC
