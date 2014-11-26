@@ -1,0 +1,175 @@
+#+TITLE: Deep Learning
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+OPTIONS: ^:{}
+#+STARTUP: indent
+#+CATEGORY: note
+
+直接上代码去理解，别搞虚头八脑的东西，听别人胡扯。
+* 梯度下降
+在整个数据进行梯度下降， 模型精度高，但每轮计算量大。随机梯度下降计算量小，模型精度不够。minibatch很好的结合了二者的优点，又易于并行。
+#+BEGIN_SRC matlab
+times = 1000;
+[m, n] = size(x);
+w = zeros(n, 1); % init with 1
+%简单梯度下降
+for i=1:times
+    delta = 1.0/m * x' * (x*w - y);
+    w = w - alpha * delta;
+end
+%SGD
+for i=1:times
+    for j=1:m
+        delta = 1.0/m * x(j, :)' * (x(j, :) * w - y(j));
+        w = w - alpha * delta;
+    end
+end
+%minibatch
+batch = 10;
+for i=1:times
+    for j=1:batch:m-1
+        delta = 1.0/m * x(j:j+batch-1, :)' * (x(j:j+batch-1, :) * w - y(j:j+batch-1));
+        w = w - alpha * delta;
+    end
+end
+#+END_SRC
+
+* 神经网络
+** 训练流程
+#+BEGIN_SRC matlab
+%L the sum squared error for each training batch
+nn.learningRate = 2; %typically needs to be lower when using 'sigm' activation function and non-normalized inputs.
+nn.scaling_learningRate = 1; %Scaling factor for the learning rate (each epoch)
+L = zeros(numepochs*numbatches,1);
+n = 1;
+for i = 1 : numepochs
+    %shuffle, 有木有啊
+    kk = randperm(m);
+    for l = 1 : numbatches
+        batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+        batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+        %前向计算
+        nn = nnff(nn, batch_x, batch_y);
+        %反向计算梯度
+        nn = nnbp(nn);
+        %修正权值
+        nn = nnapplygrads(nn);
+        L(n) = nn.L;     
+        n = n + 1;
+    end
+    nn.learningRate = nn.learningRate * nn.scaling_learningRate;
+end
+#+END_SRC
+
+** 前向计算(以sigmod函数和softmax为例)
+#+BEGIN_SRC matlab
+function nn = nnff(nn, x, y)
+    m = size(x, 1);
+    x = [ones(m,1) x];
+    nn.a{1} = x;
+    %计算所有隐层输入    
+    for i = 2 : n-1
+        nn.a{i} = sigm(nn.a{i - 1} * nn.W{i - 1}');
+        %Add the bias term
+        nn.a{i} = [ones(m,1) nn.a{i}];
+    end
+    %softmax， 计算损失
+end
+#+END_SRC
+
+** 反向计算梯度(sigmod)
+#+BEGIN_SRC matlab
+function nn = nnbp(nn)
+    d{n} = - nn.e;
+    %反向传播到第2层
+    for i = (n - 1) : -1 : 2
+        d_act = nn.a{i} .* (1 - nn.a{i});              
+        d{i} = (d{i + 1} * nn.W{i}) .* d_act;
+    end
+    for i = 1 : (n - 1)
+        if i+1==n
+            nn.dW{i} = (d{i + 1}' * nn.a{i}) / size(d{i + 1}, 1);
+        else
+            nn.dW{i} = (d{i + 1}(:,2:end)' * nn.a{i}) / size(d{i + 1}, 1);      
+        end
+    end
+end
+#+END_SRC
+** 梯度下降
+#+BEGIN_SRC matlab
+function nn = nnapplygrads(nn)   
+    for i = 1 : (nn.n - 1)
+        nn.W{i} = nn.W{i} - nn.learningRate * dW
+    end
+end
+#+END_SRC
+* Dropout
+#+BEGIN_SRC matlab
+%初始化参数时
+nn.dropoutFraction = 0.5;   %  Dropout fraction 
+%in nnff前向计算
+if(nn.dropoutFraction > 0)
+    if(nn.testing)
+        %测试时这是什么意思
+        nn.a{i} = nn.a{i}.*(1 - nn.dropoutFraction);
+    else
+        %相当与随机在输入向量中采点，即仅一部分用来特征计算下一层
+        nn.dropOutMask{i} = (rand(size(nn.a{i}))>nn.dropoutFraction);
+        nn.a{i} = nn.a{i}.*nn.dropOutMask{i};
+    end
+end
+%in 反向计算梯度
+%计算梯度时用相同的mask, 即有的输出不产生上一层的梯度
+if(nn.dropoutFraction>0)
+    d{i} = d{i} .* [ones(size(d{i},1),1) nn.dropOutMask{i}];
+end
+#+END_SRC
+* Stacked Auto Encoder
+作预训练，逐层初始化整个网络，即为w取得比较好的初值。
+#+BEGIN_SRC matlab
+function sae = saesetup(size)
+    for u = 2 : numel(size)
+        sae.ae{u-1} = nnsetup([size(u-1) size(u) size(u-1)]);
+    end
+end
+
+function sae = saetrain(sae, x, opts)
+    for i = 1 : numel(sae.ae);
+        %逐层初始化，这一层输出t.a{1}=x, t.a{2}输出
+        disp(['Training AE ' num2str(i) '/' num2str(numel(sae.ae))]);
+        %每一次三层网络，输入与输出相等，取前2层的w
+        sae.ae{i} = nntrain(sae.ae{i}, x, x, opts);
+        t = nnff(sae.ae{i}, x, x);
+        x = t.a{2};
+        %remove bias term
+        x = x(:,2:end);
+    end
+end
+#+END_SRC
+* Momentum冲量
+#+BEGIN_SRC matlab
+%初始化时
+nn.momentum = 0.5;
+nn.vW{i - 1} = zeros(size(nn.W{i - 1}));
+%梯度下降nnapplygrads
+if(nn.momentum>0)
+    nn.vW{i} = nn.momentum*nn.vW{i} + dW;
+    dW = nn.vW{i};
+end
+#+END_SRC
+* Spars
+#+BEGIN_SRC matlab
+%init
+nn.nonSparsityPenalty = 0; %  Non sparsity penalty
+nn.sparsityTarget = 0.05;  %  Sparsity target
+nn.inputZeroMaskedFraction = 0; %  Used for Denoising AutoEncoders
+nn.p{i}     = zeros(1, nn.size(i));
+%nnff
+if(nn.nonsparsitypenalty>0)
+    nn.p{i} = 0.99 * nn.p{i} + 0.01 * mean(nn.a{i}, 1);
+end
+%nnbp
+if(nn.nonSparsityPenalty>0)
+    pi = repmat(nn.p{i}, size(nn.a{i}, 1), 1);
+    sparsityError = [zeros(size(nn.a{i},1),1) nn.nonSparsityPenalty * (-nn.sparsityTarget ./ pi + (1 - nn.sparsityTarget) ./ (1 - pi))];
+end
+#+END_SRC
