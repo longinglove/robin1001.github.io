@@ -1,6 +1,6 @@
 #+TITLE: Kaldi学习笔记
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
-#+OPTIONS: ^:{} H:2
+#+OPTIONS: ^:{} H:3
 #+STARTUP: indent
 #+CATEGORY: note
 * keynotes
