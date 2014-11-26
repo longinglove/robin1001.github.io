@@ -34,6 +34,7 @@ for x in $org/*.html; do
 	category=`grep -i -P '#\+category' $org_file | awk -F ':' '{print $2}'`
 	echo "---" > $posts/$name
 	echo "title: ${title}" >> $posts/$name
+	echo "category: ${category}" >> $posts/$name
 	echo "---" >> $posts/$name
 	cat $x >> $posts/$name
 	#rm tmp html file
@@ -41,7 +42,8 @@ for x in $org/*.html; do
 done	
 
 #log info, emacs vc test
-info=`cat $log`
+date >> $log
+info=`cat $log | tr '\n' ' '`
 echo $info
 #git add && commit && push
 git add org/*.org _posts/*
