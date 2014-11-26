@@ -2,7 +2,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
 #+OPTIONS: ^:{}
 #+STARTUP: indent
-
+#+CATEGORY: note
 * shell program
 + $*引用所有参数, $#存放参数的个数, $0引用程序名, $i第i个参数
 + 数学计算
