@@ -1,4 +1,4 @@
-#+TITLE: 西工大计算机专业本科三年学习感悟[一]
+#+TITLE: (转)西工大计算机专业本科三年学习感悟[一]
 #+OPTIONS: ^:{} num:nil html-style:nil H:2 html-postamble:nil
 #+HTML_HEAD: <link href="/css/blog.css" rel="stylesheet" type="text/css">
 #+CATEGORY: blog
