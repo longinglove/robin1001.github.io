@@ -6,7 +6,7 @@
 		font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
 		font-size: 18px;
 		margin: 5% 20% 5% 20%;
-		padding: 5% 5% 5% 5%;
+		padding: 2% 5% 5% 5%;
 		width: 60%;
 		line-height: 150%;
 		border: 1px solid LightGrey;
@@ -14,9 +14,9 @@
     
 	body #content {
 	padding-top: 0px;
-	max-width: 80%;
+	/*max-width: 80%;*/
 	/* min-width: 700px; */
-	margin-left: 20px;
+	/*margin-left: 20px;*/
 	background-color: white;
 	padding: 2em;
 	/* box-shadow: 3px 3px 5px #888; */
@@ -80,7 +80,6 @@
 	padding:0 0 10px 0;
 	margin-top: 60px;
 	margin-bottom: 40px;
-	margin-right: 7%;
 	/*    color: #6C5D4F; */
 	color:  #666666;
 	border-bottom: 2px LightGrey solid;
