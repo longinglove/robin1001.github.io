@@ -77,7 +77,7 @@ function nn = nnff(nn, x, y)
 end
 #+END_SRC
 
-** 反向计算梯度(sigmod)
+** 反向计算梯度
 #+BEGIN_SRC matlab
 function nn = nnbp(nn)
     d{n} = - nn.e;
