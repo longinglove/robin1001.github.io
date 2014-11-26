@@ -50,7 +50,7 @@ title: robin1001
           <h3 class="panel-title">Keep it Simple & Stupid</h3>
         </div>
         <ul class="list-group">
-		  {% for post in site.tag.note %}
+		  {% for post in site.categories.note %}
 			  <li class="list-group-item title">
 				<a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
 			  </li>
