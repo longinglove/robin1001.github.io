@@ -1,26 +1,9 @@
 #+TITLE: Notes
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+OPTIONS: ^:{}
 #+STARTUP: indent
-* Shell program
- Created by:robin1001 <2014-08-02 六>
+#+CATEGORY: note
 
-+ -z, -r whether is empty, -s size 0
-+ arr
-  #+begin_src bash
-  arr = (1 2 3 4 5) #declare
-  ${#arr[*]} | @    #length
-  unset arr[1]      #delete
-  ${arr:i:j}        #slice, arr:start:len
-  #+end_src
-+ case
-  #+begin_src bash
-  case $1 in
-    --* ) echo "--$1";;
-    --*=* ) echo "--*=*";;
-    --*:* ) echo "--*:*";;
-    * ) break;;
-esac
-  #+end_src
 * Emacs & lisp
  Created by:robin1001 <2014-08-04 一>
 ** lisp

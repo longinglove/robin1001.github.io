@@ -2,7 +2,7 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
 #+OPTIONS: ^:{}
 #+STARTUP: indent
-
+#+CATEGORY: note
 * keynotes
 #+begin_example
 1. train_cmd在cmd.sh中定义，训练方式选择

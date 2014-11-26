@@ -1,7 +1,8 @@
 #+TITLE: Natural Language Processing
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
-#+STARTUP: indent
 #+OPTIONS: ^:{}
+#+STARTUP: indent
+#+CATEGORY: note
 
 * Stanford
 ** 参考书籍

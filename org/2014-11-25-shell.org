@@ -62,6 +62,7 @@ sed "s:.*/\(.*\)\.wav:\1:"
 + -v 不匹配的项
 + -H 显示文件名
 + -f 从文件中取得模式
++ -i 忽略大小写
 * cut(default tab)
 #+begin_src sh
 #-d分割符, -f域

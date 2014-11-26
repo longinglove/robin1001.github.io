@@ -31,6 +31,7 @@ for x in $org/*.html; do
 	#add jekyll header
 	org_file=`echo $x | sed -e "s:html:org:"`
 	title=`grep -i -P '#\+title' $org_file | awk -F ':' '{print $2}'`
+	category=`grep -i -P '#\+category' $org_file | awk -F ':' '{print $2}'`
 	echo "---" > $posts/$name
 	echo "title: ${title}" >> $posts/$name
 	echo "---" >> $posts/$name
