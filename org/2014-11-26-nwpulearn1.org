@@ -1,7 +1,7 @@
 #+TITLE: 西工大计算机专业本科三年学习感悟[一]
 #+OPTIONS: ^:{} num:nil html-style:nil H:2 html-postamble:nil
 #+HTML_HEAD: <link href="/css/blog.css" rel="stylesheet" type="text/css">
-#+CATEGORY: favorite
+#+CATEGORY: blog
 
 (注：此文不是大学感悟，也不是人生感悟，只是对计算机本科不全面也未必正确的的学习感悟.)
 

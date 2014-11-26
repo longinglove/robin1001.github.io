@@ -45,9 +45,10 @@ title: robin1001
   <div class="container center-block">
     <div class="col-md-2"></div>
     <div class="col-md-8 col-sm-12">
-      <div class="panel panel-default">
+
+	<div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Keep it Simple & Stupid</h3>
+          <h3 class="panel-title">Notes</h3>
         </div>
         <ul class="list-group">
 		  {% for post in site.categories.note %}
@@ -56,8 +57,22 @@ title: robin1001
 			  </li>
 		  {% endfor %}
         </ul>
-      </div>
     </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Blogs</h3>
+        </div>
+        <ul class="list-group">
+		  {% for post in site.categories.blog %}
+			  <li class="list-group-item title">
+				<a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+			  </li>
+		  {% endfor %}
+        </ul>
+    </div>
+
+   </div>
 
     <div class="col-md-2">
     </div>
