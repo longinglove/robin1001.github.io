@@ -60,8 +60,9 @@ for i = 1 : numepochs
 end
 #+END_SRC
 
-** 前向计算(以sigmod函数和softmax为例)
+** 前向计算
 #+BEGIN_SRC matlab
+%以sigmod函数和softmax为例
 function nn = nnff(nn, x, y)
     m = size(x, 1);
     x = [ones(m,1) x];

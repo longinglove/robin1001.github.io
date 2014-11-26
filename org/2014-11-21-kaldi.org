@@ -1,6 +1,6 @@
 #+TITLE: Kaldi学习笔记
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
-#+OPTIONS: ^:{}
+#+OPTIONS: ^:{} H:2
 #+STARTUP: indent
 #+CATEGORY: note
 * keynotes
@@ -501,11 +501,11 @@ for (; !example_reader.Done(); example_reader.Next(), num_examples++)
 ** Getting Results
 运行RESULTS文件， RESULTS中含有统计识别率脚本和标准测试结果
 * kaldi doc
-*** kaldi tutorial
-**** Reading and modifying the code
+** kaldi tutorial
+*** Reading and modifying the code
 + kaldi中使用-O0,调试可以使用gdb调试
 + 可以在Makefile TESTFILES中添加自己的test，然后make test
-*** Kaldi I/O mechanisms
+** Kaldi I/O mechanisms
 1. io
 #+begin_src cpp
 class SomeKaldiClass {
@@ -529,7 +529,7 @@ class SomeKaldiClass {
 #+end_src
 2. binary vs text: binary start '\0B'
 3. 
-*** The Kaldi Matrix library
+** The Kaldi Matrix library
 + 包装库 BLAS & LAPACK
 + Vector 向量
 + Matrix 矩阵
@@ -543,18 +543,18 @@ for(int i=0; i < 9; i++) {
 Matrix<float> M(10,9);
 M.AddVecVec(1.0, v, w);
 #+end_src
-*** The build process(how Kaldi is compiled)
-**** kaldi.mk
+** The build process(how Kaldi is compiled)
+*** kaldi.mk
 + 默认编译选项：-g -O0 -DKALDI_PARANOID
-**** Makefile
+*** Makefile
 + make test
 + 
-*** Parsing command-line Options
-**** parse-option(util, ParseOption类)
+** Parsing command-line Options
+*** parse-option(util, ParseOption类)
 + Read()
 
-*** Kaldi logging and error-reporting
-**** kaldi log(base/kaldi-error.h)
+** Kaldi logging and error-reporting
+*** kaldi log(base/kaldi-error.h)
 #+BEGIN_SRC cpp
 class KaldiLogMessage {
  public:
@@ -573,13 +573,13 @@ KaldiLogMessage::KaldiLogMessage(const char *func, const char *file,
                  << GetShortFileName(file) << ':' << line << ") ";
 }
  #+END_SRC
-*** Decoders used in the Kaldi toolkit
-**** DecodableInterface
+** Decoders used in the Kaldi toolkit
+*** DecodableInterface
   virtual BaseFloat LogLikelihood(int32 frame, int32 index);
   virtual bool IsLastFrame(int32 frame);
   virtual int32 NumIndices();
   
-**** SimpleDecoder
+*** SimpleDecoder
 #+begin_src cpp
 class Token {
    public:
@@ -719,8 +719,8 @@ bool GetLinearSymbolSequence(const Fst<Arc> &fst,
 6. 在解码处理上算法简单化，数据结构更加抽象
 7. 代码看起来很清晰哈
 
-*** HMM topology and transition modeling
-**** HMM topology
+** HMM topology and transition modeling
+*** HMM topology
 #+BEGIN_EXAMPLE
  <Topology>
  <TopologyEntry>
@@ -758,8 +758,8 @@ class HmmTopology{
 };
 #+END_SRC
 
-**** Pdf-classes
-**** Transition models (the TransitionModel object)
+*** Pdf-classes
+*** Transition models (the TransitionModel object)
 #+begin_example
 //             (phone, HMM-state, pdf-id) -> transition-state
 //   (transition-state, transition-index) -> transition-id
@@ -787,7 +787,7 @@ why???
 ***** transition-id as input label
 ***** Alignments in Kaldi
 + vector<int32>, which contains a sequence of transition-ids
-*** How decision trees are used in Kaldi
+** How decision trees are used in Kaldi
 #+begin_example
 we have a number of ways we can split the data by asking about, say, the left phone, 
 the right phone, the central phone, the state we're in, and so on. 
@@ -802,9 +802,9 @@ kPdfClass=-1,一个音素生成TableEventMap(kPdfClass, map)
 一个音素的所有状态生成一个table，每个状态生成一个ConstEventMap,id作为key
 #+end_example
 
-*** Decision tree internals
+** Decision tree internals
 + An event is just a set of (key,value) pairs, with no key repeated
-**** 数据结构
+*** 数据结构
 ***** EventMap
 + EventKeyType: int
 + EventValueType: int
@@ -833,7 +833,7 @@ MaxResult: 共多少个节点，返回最大节点编号
 + InitializeProbs: 计算trans_id的log prob
 + exp/mono/tree 格式： CE TE SE
 
-**** Clusterable
+*** Clusterable
 #+begin_src cpp
 class GaussClusterable: public Clusterable {
 public:
@@ -846,14 +846,14 @@ Matrix<double> stats_; // two rows: sum, then sum-squared.
 double var_floor_; // should be common for all objects created.
 #+end_src
 
-**** 计算似然和似然增益
+*** 计算似然和似然增益
 #+ATTR_HTML: :width 80% 
 [[/img/kaldi/tree_objf.png]]
 #+ATTR_HTML: :width 80%
 [[/img/kaldi/tree_1.png]]
 #+ATTR_HTML: :width 80%
 [[/img/kaldi/tree_2.png]]
-**** tools & core code
+*** tools & core code
 ***** acc-tree-stats
 #+begin_src cpp
   for (int i = -N; i < static_cast<int>(split_alignment.size()); i++) {
@@ -1079,8 +1079,8 @@ BaseFloat ComputeInitialSplit(const std::vector<Clusterable*> &summed_stats,
   return best_objf_change;
 }
 #+end_src
-*** Decoding graph construction in Kaldi
-*** Decoding-graph creation recipe(training time)
+** Decoding graph construction in Kaldi
+** Decoding-graph creation recipe(training time)
 #+begin_example
 compile-train-graphs: 为每个语句训练一个wfst,即H*C*L*G，其中G为根据每条语句
 生成的一个acceptor，利用这个fst在这个语句mfcc特征上进行解码，然后反向得到对齐
@@ -1089,17 +1089,17 @@ gmm-align-compiled：
 具体步骤可参考：Internals of graph creation
 #+end_example
 
-*** Other kaldi utilities
-**** hash-list(util/hash-list.h)
-**** kaldi-table(util/kaldi-table)
+** Other kaldi utilities
+*** hash-list(util/hash-list.h)
+*** kaldi-table(util/kaldi-table)
 实现w和r的参数解析
 make valgrind
 
-*** Clustering mechanisms in Kaldi
+** Clustering mechanisms in Kaldi
 + Clusterable接口
 + Clustering algorithms
 
-*** Acoustic modeling code
+** Acoustic modeling code
 + DiagGmmNormal
 + DiagGmm 一个对角混合高斯模型
 #+begin_src cpp
@@ -1117,20 +1117,20 @@ make valgrind
 + FullGmm: Full-covariance GMMs
 + AmSgmm: Subspace Gaussian Mixture Models (SGMMs)
 
-*** Deep Neural Networks in Kaldi
-**** 两种不同实现
+** Deep Neural Networks in Kaldi
+*** 两种不同实现
 + Karel's:效果好，不并行，使用预训练和交叉验证集。
 + Dan's: 并行，无预训练，使用固定训练轮数
-**** Dan's DNN implementation
+*** Dan's DNN implementation
 
 * 训练方式
-*** lda(Linear Discriminant Analysis)
+** lda(Linear Discriminant Analysis)
 + 降维，且降维后使S_b 类间距要大,类内距离S_w 要小，等价于求WS_b W/WS_w W, 经推导最终
 等价于求S_w 的逆乘S_b 的特征值和特征向量。
 + 经典HMM状态内帧间独立性的假设使得帧间相关的信息在HMM模型中没有得到很好的利用,而帧间
 线性判别分析相关信息对识别率的提高有很重要的作用。
 
-*** mllt(Maximum Likelihood Linear Transformation)
+** mllt(Maximum Likelihood Linear Transformation)
 目前的语音识别系统大多都采用隐马尔可夫模型(Hidden Markov Model, HMM),但在实际应用中为了减少存
 储空间和降低计算量,通常会假设输入HMM的协方差矩阵仅为对角线上有值(其他元素均为 0)。这样,通过PCA和LDA
 得到的协方差矩阵不符合应用 HMM 的假设,造成失真从而影响识别率。本文引进最大似然线性转换(Maximum
@@ -1138,11 +1138,11 @@ Likelihood Linear Transformation, MLLT)改进PCA和LDA。与PCA和LDA相似,MLLT
 变换矢量空间, MLLT不会对数据进行降维,但可使变换后模式样本的协方差矩阵对角化。这样,通过MLLT后得到的
 协方差矩阵就可以满足应用 HMM 的假设了。
 
-*** sat
+** sat
 自适应
-*** sgmm(subspace gmm)
+** sgmm(subspace gmm)
 这个是什么原理，不懂哈
-*** mmi
+** mmi
 Maximum Mutual Information(MMI)
 
 Minimum Phone Error(MPE)
