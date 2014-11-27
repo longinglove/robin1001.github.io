@@ -948,6 +948,10 @@ content: "*** "
 	z-index: -1000;
     }
 
+	.footpara:nth-child(2) { display: inline; }
+	.footpara { display: block; }
+	.footdef  { margin-bottom: 1em; }
+
 } /* END OF @media all */
 
 
