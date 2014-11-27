@@ -9,7 +9,7 @@
 + 朱拉夫斯基和曼宁《语音与语言处理》
 + 曼宁、舒策、拉哈万《信息检索导论》（2008）
 + 伯德、克莱因、洛普《使用Python进行自然语言处理》（2009）
-
++ 做实验的数据可以在[[http://norvig.com/ngrams/][Peter Norvig]]查找
 ** Basic Text Processing
 *** Regular Expression
 + []: [wW]oodchuck, [0-9], [a-z]
