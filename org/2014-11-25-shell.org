@@ -192,3 +192,12 @@ $ awk '{system("cat" " "  $0)}' file
      END{ print NR, words, chars }
 #+END_SRC
 
+* BRE vs ERE
+#+BEGIN_EXAMPLE
+Basic vs Extended Regular Expressions
+In basic regular expressions the meta-characters ?, +, {, |, (, and ) lose their special meaning; instead use the backslashed
+versions \?, \+, \{, \|, \(, and \)
+#+END_EXAMPLE
++ 注意与linux命令中通配符区分 *\*在命令中表示任意字符重复任意次*
++ grep sed awk均使用BRE，grep在-E选项时可使用ERE
++ 所以sed ":.*/\(.*\).wav:\1:"就比较好理解了 
