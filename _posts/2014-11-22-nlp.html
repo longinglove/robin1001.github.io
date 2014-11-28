@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Natural Language Processing</title>
-<!-- 2014-11-28 五 11:18 -->
+<!-- 2014-11-28 五 11:44 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -408,6 +408,39 @@ V个人感觉应为所有uigram即单词个数,不论是几元文法
 </li>
 </ul>
 </div>
+</li>
+<li><a id="sec-1-4-3-3" name="sec-1-4-3-3"></a>Stupid Backoff<br  /><div class="outline-text-5" id="text-1-4-3-3">
+<p>
+思想很简单找得到直接mle，找不到回退，乘以0.4作为惩罚。
+</p>
+
+<p>
+如计算bigram如下若该bigram存在，则直接计算score，不存在则回退计算其unigram score， 0.4作为惩罚因子。
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">score</span>(<span style="color: #40e0d0; font-weight: bold;">self</span>, sentence):
+   <span style="color: #ff0000;">""" Takes a list of strings as argument and returns the log-probability</span>
+<span style="color: #ff0000;">   of the sentence using your language model. Use whatever data you</span>
+<span style="color: #ff0000;">   computed in train() here."""</span>
+   <span style="color: #bebebe; font-weight: bold;">score</span> = 0.0
+   <span style="color: #bebebe; font-weight: bold;">previous</span> = sentence[0]
+   <span style="color: #40e0d0; font-weight: bold;">for</span> token <span style="color: #40e0d0; font-weight: bold;">in</span> sentence[1:]:
+           <span style="color: #bebebe; font-weight: bold;">bicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.bigramCounts[(previous, token)]
+           <span style="color: #bebebe; font-weight: bold;">bi_unicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.unigramCounts[previous]
+           <span style="color: #bebebe; font-weight: bold;">unicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.unigramCounts[token]
+           <span style="color: #40e0d0; font-weight: bold;">if</span> bicount &gt; 0:
+                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(bicount)
+                   <span style="color: #bebebe; font-weight: bold;">score</span> -= math.log(bi_unicount)
+           <span style="color: #40e0d0; font-weight: bold;">else</span>:
+                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(0.4)
+                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(unicount + 1)
+                   <span style="color: #bebebe; font-weight: bold;">score</span> -= math.log(<span style="color: #40e0d0; font-weight: bold;">self</span>.total + <span style="color: #40e0d0; font-weight: bold;">self</span>.vocab_size)
+           <span style="color: #bebebe; font-weight: bold;">previous</span> = token
+   <span style="color: #40e0d0; font-weight: bold;">return</span> score
+</pre>
+</div>
+</div>
 </li></ol>
 </div>
 </div>
@@ -475,7 +508,7 @@ Everything should be made as simple as possible, but not any simpler
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-28 五 11:18</p>
+<p class="date">Created: 2014-11-28 五 11:44</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

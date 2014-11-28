@@ -74,6 +74,31 @@ V个人感觉应为所有uigram即单词个数,不论是几元文法
 + 基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
 + 改进策略就是“对出现次数超过某个阈值的gram，不进行平滑，阈值一般取8~10”
 + 估计P_{0},就得先统计N_{0}
+**** Stupid Backoff
+思想很简单找得到直接mle，找不到回退，乘以0.4作为惩罚。
+
+如计算bigram如下若该bigram存在，则直接计算score，不存在则回退计算其unigram score， 0.4作为惩罚因子。
+#+BEGIN_SRC python
+def score(self, sentence):
+   """ Takes a list of strings as argument and returns the log-probability
+   of the sentence using your language model. Use whatever data you
+   computed in train() here."""
+   score = 0.0
+   previous = sentence[0]
+   for token in sentence[1:]:
+       bicount = self.bigramCounts[(previous, token)]
+       bi_unicount = self.unigramCounts[previous]
+       unicount = self.unigramCounts[token]
+       if bicount > 0:
+           score += math.log(bicount)
+           score -= math.log(bi_unicount)
+       else:
+           score += math.log(0.4)
+           score += math.log(unicount + 1)
+           score -= math.log(self.total + self.vocab_size)
+       previous = token
+   return score
+#+END_SRC
 ** Spelling Correction
 *** 拼写错误 
 #+BEGIN_EXAMPLE
