@@ -50,22 +50,43 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 [[/img/nlp/weighted_edit.png]]
 
 ** Language Modeling
+*** 理论 & 应用
 + 机器翻译, Spell Correction, 语音识别
 + 一些工具 SRILM, Google N-Gram Release
 + a) Markov假设, b)取log避免下溢
 *** Perplexity，如何评价一个语言模型
 + P[P(W)] = P(W)^1/N, 取对数即为1/NlogP(W)
 + Perplexity越小，better model
-*** 数据稀疏问题，测试数据中出现训练集不存在的语法怎么办？
-+ add-one, 假如为二元文法，V为所有bigram个数
+*** 数据稀疏
+#+BEGIN_CENTER
+测试数据中出现训练集不存在的语法怎么办？
+#+END_CENTER
+**** Add-One Smoothing
+V个人感觉应为所有uigram即单词个数,不论是几元文法
 #+ATTR_HTML: :width 40%
 [[/img/nlp/add_one.png]]
-+ Good-Turing Estimate(参考数学之美)
-基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
+#+BEGIN_QUOTE
+在V >> c(wi-1)时，即训练语料库中绝大部分n-gram未出现的情况（一般都是如此），Add-one Smoothing后有些“喧宾夺主”的现象，效果不佳。
+所以n-gram中一般不使用，但在文本分类中使用
+#+END_QUOTE
+**** Good-Turing Estimate(参考数学之美)
++ 一般来说，出现一次的词的数量比出现两次的多，出现两次的比出现三次的多。这种定律成为Zipf定律。
++ 基本思想是利用频率的类别信息对频率进行平滑。调整出现频率为c的n-gram频率
++ 改进策略就是“对出现次数超过某个阈值的gram，不进行平滑，阈值一般取8~10”
++ 估计P_{0},就得先统计N_{0}
 ** Spelling Correction
+*** 拼写错误 
+#+BEGIN_EXAMPLE
+据统计，80%的拼写错误编辑距离为1，几乎所有的拼写错误编辑距离小于等于2
+Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
+#+END_EXAMPLE
++ 拼写错误类型，Non-word和Real-word(虽然拼写错误，但仍出现在词典中)
 + w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
 + P(x|w)中包含了transpose error，confusion matrix
-
+*** 如何写一个拼写检查器
++ 根据编辑距离对x生成候选集合{w}, 并计算P(x|w)
++ 选择语言模型(unigram | bigram | ...)
++ w = arg max P(x|w)P(w)
 ** homework
 1. regular expression
 2. autocorrect(edit distance, language model)
