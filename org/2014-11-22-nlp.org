@@ -4,20 +4,19 @@
 #+STARTUP: indent
 #+CATEGORY: note
 
-* Stanford
-** 参考书籍
+* 参考书籍
 + 朱拉夫斯基和曼宁《语音与语言处理》
 + 曼宁、舒策、拉哈万《信息检索导论》（2008）
 + 伯德、克莱因、洛普《使用Python进行自然语言处理》（2009）
 + 做实验的数据可以在[[http://norvig.com/ngrams/][Peter Norvig]]查找
-** Basic Text Processing
-*** Regular Expression
+* Basic Text Processing
+** Regular Expression
 + []: [wW]oodchuck, [0-9], [a-z]
 + [^]: not, [\^a-z]
 + |: or
 + ?, *, +, .: times 
 + ^, &: start & end
-*** Word Tokenization
+** Word Tokenization
 **** shakespeare
 #+begin_src sh
 tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
@@ -30,7 +29,7 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 **** 中文的分词
  + max-match
 
-*** Word Normaliztion & Stemming
+** Word Normaliztion & Stemming
 + stem: Porter's algorithm
 + affix
 
@@ -38,7 +37,7 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 + ?, !: 通常没有歧义
 + .: 存在歧义，如Dr. 2014.12等。 解决方法，使用决策树判断.是否为句子结束
 
-** Edit Distance
+* Edit Distance
 1. Levenshtein distance: 替换代价为2,可以理解为先删除再插入
 2. 算法: 动态规划, 通过回溯二维数组pre[i,j] = DOWN, LEFT, DIAG来记录回溯信息
 3. 加权Edit Distance 
@@ -49,15 +48,15 @@ tr -sc 'a-zA-Z' '\n' < shakespeare.txt | sort | uniq -c | sort -n -r | less
 #+ATTR_HTML: :width 80% 
 [[/img/nlp/weighted_edit.png]]
 
-** Language Modeling
-*** 理论 & 应用
+* Language Modeling
+** 理论 & 应用
 + 机器翻译, Spell Correction, 语音识别
 + 一些工具 SRILM, Google N-Gram Release
 + a) Markov假设, b)取log避免下溢
-*** Perplexity，如何评价一个语言模型
+** Perplexity，如何评价一个语言模型
 + P[P(W)] = P(W)^1/N, 取对数即为1/NlogP(W)
 + Perplexity越小，better model
-*** 数据稀疏
+** 数据稀疏
 #+BEGIN_CENTER
 测试数据中出现训练集不存在的语法怎么办？
 #+END_CENTER
@@ -99,8 +98,8 @@ def score(self, sentence):
        previous = token
    return score
 #+END_SRC
-** Spelling Correction
-*** 拼写错误 
+* Spelling Correction
+** 拼写错误 
 #+BEGIN_EXAMPLE
 据统计，80%的拼写错误编辑距离为1，几乎所有的拼写错误编辑距离小于等于2
 Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
@@ -108,11 +107,11 @@ Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
 + 拼写错误类型，Non-word和Real-word(虽然拼写错误，但仍出现在词典中)
 + w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
 + P(x|w)中包含了transpose error，confusion matrix
-*** 如何写一个拼写检查器
+** 如何写一个拼写检查器
 + 根据编辑距离对x生成候选集合{w}, 并计算$P(x|w)$
 + 选择语言模型(unigram | bigram | ...)
 + $w = arg max P(x|w)P(w)$
-*** Peter Norvig Corrector
+** Peter Norvig Corrector
 参考[[http://norvig.com/spell-correct.html][How to Write a Spelling Corrector]]，这段代码非常简洁优美。
 #+BEGIN_SRC python
 import re, collections
@@ -149,7 +148,7 @@ if __name__ == '__main__':
     while True:
         print correct(raw_input(">"))
 #+END_SRC
-** homework
+* homework
 1. regular expression
 2. autocorrect(edit distance, language model)
 3. test
