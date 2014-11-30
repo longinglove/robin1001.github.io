@@ -109,9 +109,46 @@ Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
 + w = arg max P(x|w)P(w), 前者为channel(error) model, 后者为language model, 可以使用unigram, bigram and on
 + P(x|w)中包含了transpose error，confusion matrix
 *** 如何写一个拼写检查器
-+ 根据编辑距离对x生成候选集合{w}, 并计算P(x|w)
++ 根据编辑距离对x生成候选集合{w}, 并计算$P(x|w)$
 + 选择语言模型(unigram | bigram | ...)
-+ w = arg max P(x|w)P(w)
++ $w = arg max P(x|w)P(w)$
+*** Peter Norvig Corrector
+参考[[http://norvig.com/spell-correct.html][How to Write a Spelling Corrector]]，这段代码非常简洁优美。
+#+BEGIN_SRC python
+import re, collections
+
+def words(text): return re.findall('[a-z]+', text.lower()) 
+
+def train(features):
+    model = collections.defaultdict(lambda: 1)
+    for f in features:
+        model[f] += 1
+    return model
+
+NWORDS = train(words(file('big.txt').read()))
+
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
+
+def edits1(word):
+    n = len(word)
+    return set([word[0:i]+word[i+1:] for i in range(n)] +                     # deletion
+               [word[0:i]+word[i+1]+word[i]+word[i+2:] for i in range(n-1)] + # transposition
+               [word[0:i]+c+word[i+1:] for i in range(n) for c in alphabet] + # alteration
+               [word[0:i]+c+word[i:] for i in range(n+1) for c in alphabet])  # insertion
+
+def known_edits2(word):
+    return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in NWORDS)
+
+def known(words): return set(w for w in words if w in NWORDS)
+
+def correct(word):
+    candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
+    return max(candidates, key=lambda w: NWORDS[w])
+
+if __name__ == '__main__':
+    while True:
+        print correct(raw_input(">"))
+#+END_SRC
 ** homework
 1. regular expression
 2. autocorrect(edit distance, language model)

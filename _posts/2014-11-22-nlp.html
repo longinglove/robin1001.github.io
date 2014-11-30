@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Natural Language Processing</title>
-<!-- 2014-11-28 五 11:44 -->
+<!-- 2014-11-30 日 10:08 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -211,6 +211,7 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1-5-1">1.5.1. 拼写错误</a></li>
 <li><a href="#sec-1-5-2">1.5.2. 如何写一个拼写检查器</a></li>
+<li><a href="#sec-1-5-3">1.5.3. Peter Norvig Corrector</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-6">1.6. homework</a></li>
@@ -468,13 +469,58 @@ Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
 <h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> 如何写一个拼写检查器</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <ul class="org-ul">
-<li>根据编辑距离对x生成候选集合{w}, 并计算P(x|w)
+<li>根据编辑距离对x生成候选集合{w}, 并计算\(P(x|w)\)
 </li>
 <li>选择语言模型(unigram | bigram | &#x2026;)
 </li>
-<li>w = arg max P(x|w)P(w)
+<li>\(w = arg max P(x|w)P(w)\)
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-sec-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> Peter Norvig Corrector</h4>
+<div class="outline-text-4" id="text-1-5-3">
+<p>
+参考<a href="http://norvig.com/spell-correct.html">How to Write a Spelling Corrector</a>，这段代码非常简洁优美。
+</p>
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">import</span> re, collections
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">words</span>(text): <span style="color: #40e0d0; font-weight: bold;">return</span> re.findall(<span style="color: #ff0000;">'[a-z]+'</span>, text.lower()) 
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">train</span>(features):
+        <span style="color: #bebebe; font-weight: bold;">model</span> = collections.defaultdict(<span style="color: #40e0d0; font-weight: bold;">lambda</span>: 1)
+        <span style="color: #40e0d0; font-weight: bold;">for</span> f <span style="color: #40e0d0; font-weight: bold;">in</span> features:
+                <span style="color: #bebebe; font-weight: bold;">model</span>[f] += 1
+        <span style="color: #40e0d0; font-weight: bold;">return</span> model
+
+<span style="color: #bebebe; font-weight: bold;">NWORDS</span> = train(words(<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">file</span>(<span style="color: #ff0000;">'big.txt'</span>).read()))
+
+<span style="color: #bebebe; font-weight: bold;">alphabet</span> = <span style="color: #ff0000;">'abcdefghijklmnopqrstuvwxyz'</span>
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">edits1</span>(word):
+        <span style="color: #bebebe; font-weight: bold;">n</span> = <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">len</span>(word)
+        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>([word[0:i]+word[i+1:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n)] +                     <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">deletion</span>
+                           [word[0:i]+word[i+1]+word[i]+word[i+2:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n-1)] + <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">transposition</span>
+                           [word[0:i]+c+word[i+1:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n) <span style="color: #40e0d0; font-weight: bold;">for</span> c <span style="color: #40e0d0; font-weight: bold;">in</span> alphabet] + <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">alteration</span>
+                           [word[0:i]+c+word[i:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n+1) <span style="color: #40e0d0; font-weight: bold;">for</span> c <span style="color: #40e0d0; font-weight: bold;">in</span> alphabet])  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">insertion</span>
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">known_edits2</span>(word):
+        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>(e2 <span style="color: #40e0d0; font-weight: bold;">for</span> e1 <span style="color: #40e0d0; font-weight: bold;">in</span> edits1(word) <span style="color: #40e0d0; font-weight: bold;">for</span> e2 <span style="color: #40e0d0; font-weight: bold;">in</span> edits1(e1) <span style="color: #40e0d0; font-weight: bold;">if</span> e2 <span style="color: #40e0d0; font-weight: bold;">in</span> NWORDS)
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">known</span>(words): <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>(w <span style="color: #40e0d0; font-weight: bold;">for</span> w <span style="color: #40e0d0; font-weight: bold;">in</span> words <span style="color: #40e0d0; font-weight: bold;">if</span> w <span style="color: #40e0d0; font-weight: bold;">in</span> NWORDS)
+
+<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">correct</span>(word):
+        <span style="color: #bebebe; font-weight: bold;">candidates</span> = known([word]) <span style="color: #40e0d0; font-weight: bold;">or</span> known(edits1(word)) <span style="color: #40e0d0; font-weight: bold;">or</span> known_edits2(word) <span style="color: #40e0d0; font-weight: bold;">or</span> [word]
+        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">max</span>(candidates, key=<span style="color: #40e0d0; font-weight: bold;">lambda</span> w: NWORDS[w])
+
+<span style="color: #40e0d0; font-weight: bold;">if</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">__name__</span> == <span style="color: #ff0000;">'__main__'</span>:
+        <span style="color: #40e0d0; font-weight: bold;">while</span> <span style="color: #ff6347; font-weight: bold;">True</span>:
+                <span style="color: #40e0d0; font-weight: bold;">print</span> correct(<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">raw_input</span>(<span style="color: #ff0000;">"&gt;"</span>))
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -508,7 +554,7 @@ Everything should be made as simple as possible, but not any simpler
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-11-28 五 11:44</p>
+<p class="date">Created: 2014-11-30 日 10:08</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
