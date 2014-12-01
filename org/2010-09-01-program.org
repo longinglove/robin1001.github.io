@@ -1,0 +1,78 @@
+#+TITLE: Kaldi学习笔记
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+OPTIONS: ^:{} H:3
+#+STARTUP: indent
+#+CATEGORY: note
+
+* python的函数式特性
+** 函数赋值
+#+begin_src python
+def square(n):
+    return n*n
+f = square
+square(10)
+#+end_src
+** lambda
+#+begin_src python
+square = lambda x: x*x;
+square(10)
+#+end_src
+
+** 内置函数
+#+begin_src python
+map(square, [1, 2, 3])
+reduce & filter
+#+end_src
+
+** 消除控制流
+#+begin_src python
+def func1(lst) :
+  new_lst = []
+  for n in lst :
+    if odd(n) :
+      new_lst.append(square(n))
+  return new_lst
+可以改进为
+def func2(lst) :
+  return map(square, filter(odd, lst))
+#+end_src
+
+** 列表推导
+#+begin_src python
+[x for x in lis if x % 2 == 0]
+#+end_src
+
+** 闭包，计算函数的导数
+#+begin_src python
+def d(f) :
+  def calc(x) :
+    dx = 0.000001  # 表示无穷小的Δx
+    return (f(x+dx) - f(x)) / dx  # 计算斜率。注意，此处引用了外层作用域的变量 f
+  return calc  # 此处用函数作为返回值（也就是函数 f 的导数）
+
+f = lambda x : x**2 + x + 1  # 先把二次函数用代码表达出来
+f1 = d(f)  # 这个f1 就是 f 的一阶导数啦。注意，导数依然是个函数
+
+f1(3)
+#+end_src
+* Google C++ Style Guide
+1. 函数超过10行时不要使用內联
+2. -inl.h內联函数实现文件 | 定义函数模板
+3. 输入：const型，输出参数：指针
+4. 最好给纯接口类加上Interface后缀
+5. 名称为foo_的变量其访问函数为foo()，而其修改器(mutator)则为set_foo()，访问器常在头文件中定义为内联函数。
+6. 请按下面的规则次序来定义类：公共成员位于私有成员前；方法位于数据成员前(变量)等等。
+7. scoped_ptr | shared_ptr
+8. 使用cpplint.py来检测风格错误
+9. 类型转换(Casting),需要类型转换时请使用static_cast<>()
+10. 类成员以下划线结束 int val_;
+11. 禁止使用异常
+12. 常量命名, 在名称前加k：kDaysInAWeek
+#+BEGIN_SRC cpp
+const int kDaysInAWeek = 7;
+#+END_SRC
+13. 函数形式参数位置和花括号位置
+#+BEGIN_SRC cpp
+ReturnType ClassName::ReallyLongFunctionName(Type par_name1) {
+}
+#+END_SRC
