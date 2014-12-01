@@ -1,4 +1,4 @@
-#+TITLE: Kaldi学习笔记
+#+TITLE: 编程杂记
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
 #+OPTIONS: ^:{} H:3
 #+STARTUP: indent
