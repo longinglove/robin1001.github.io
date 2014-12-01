@@ -1541,7 +1541,7 @@ $$id=arg max w_{k}$$
 $$w_{n}=w_{max}/2$$
 $$\mu_{n}=\mu_{id}$$
 $$\Sigma_{n}= \Sigma_{id}$$
-w_{n}为新加入高斯权值，\mu均值，\Sigma方差
+$w_{n}$ 为新加入高斯权值，$\mu$ 均值， $\Sigma$ 方差
 #+BEGIN_EXAMPLE
 大侠的解释：从EM的角度考虑如何给GMM加高斯，为了增加模型的精度，所以需分割权值最大的Gauss，根据上面的公式计算，
 但是这样EM迭代时，新加入Gauss会与原Gauss一样，所以还需加入扰动。

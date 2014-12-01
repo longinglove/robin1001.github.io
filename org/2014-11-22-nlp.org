@@ -149,7 +149,23 @@ if __name__ == '__main__':
         print correct(raw_input(">"))
 #+END_SRC
 * Text Classification
-
+** 方法(Naive Bayes, SVM)
+** Naive Bayes
+基本和原来机器学习时内容一致，几个在实践时需要关注的问题
++ 取log，避免下溢
++ Add-One Smoothing
++ 频率为统计频率，not boolean freqency
+* Sentiment Anylasis
+** 其他名称
+Opnion Extraction, Opnion Mining, Sentiment Mining, Subjectivity Anylasis
+** Steps
++ tokenize
++ Feature Extraction
++ 分类器，这里分类器可以使用Naive Bayes, Svm, MatEnt等，后两者效果要好。
+** Naive Bayes in Sentiment
+主题仅与词出现有关系，和出现次数关系不大。所以这里使用Boolean Multinomial Naive Bayes(Mutivariate Benoulli Naive Bayes),
+即贝努利频率，相应的Add-one方法更改为Add-delta
+$$P(w|c) = \frac{n_{k}+\alpha} {n+\alpha|V|}$$
 * homework
 1. regular expression
 2. autocorrect(edit distance, language model)
