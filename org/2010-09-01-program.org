@@ -68,9 +68,6 @@ f1(3)
 10. 类成员以下划线结束 int val_;
 11. 禁止使用异常
 12. 常量命名, 在名称前加k：kDaysInAWeek
-#+BEGIN_SRC cpp
-const int kDaysInAWeek = 7;
-#+END_SRC
 13. 函数形式参数位置和花括号位置
 #+BEGIN_SRC cpp
 ReturnType ClassName::ReallyLongFunctionName(Type par_name1) {
