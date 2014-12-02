@@ -55,7 +55,8 @@ f1 = d(f)  # 这个f1 就是 f 的一阶导数啦。注意，导数依然是个�
 
 f1(3)
 #+end_src
-* Google C++ Style Guide
+* cc
+** Google C++ Style Guide
 1. 函数超过10行时不要使用內联
 2. -inl.h內联函数实现文件 | 定义函数模板
 3. 输入：const型，输出参数：指针
@@ -72,4 +73,42 @@ f1(3)
 #+BEGIN_SRC cpp
 ReturnType ClassName::ReallyLongFunctionName(Type par_name1) {
 }
+#+END_SRC
+
+** 标准库比较接口
+1. 函数形式
+#+BEGIN_SRC cpp
+int compare(int a, int b) {
+    return a < b;
+}
+#+END_SRC
+2. 函数对象
+#+BEGIN_SRC cpp
+struct Node {
+	int left, right, parent;
+	int w;
+	char ch;
+	int id;
+	Node(): left(-1), right(-1), parent(-1), w(0) {}
+    Node(int l, int r, int ww): left(l), right(r), w(ww), parent(-1) {}
+};
+
+struct NodeCmp{
+	bool operator () ( const Node *n1, const Node *n2 ) {
+		return n1->w > n2->w;
+	}
+};
+priority_queue<Node *, vector<Node *>, NodeCmp> que;
+#+END_SRC
+3. 友元形式
+#+BEGIN_SRC cpp
+struct Distance {
+	int node_id;
+	int dis;
+	friend bool operator < (Distance d1, Distance d2) {
+		return d1.dis > d2.dis;
+	}
+	Distance() {}
+};
+priority_queue<Distance> que;
 #+END_SRC

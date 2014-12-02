@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>编程杂记</title>
-<!-- 2014-12-01 一 23:52 -->
+<!-- 2014-12-02 二 21:14 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -157,7 +157,12 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-6">1.6. 闭包，计算函数的导数</a></li>
 </ul>
 </li>
-<li><a href="#sec-2">2. Google C++ Style Guide</a></li>
+<li><a href="#sec-2">2. cc</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Google C++ Style Guide</a></li>
+<li><a href="#sec-2-2">2.2. 标准库比较接口</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -170,9 +175,9 @@ for the JavaScript code in this tag.
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">square</span>(n):
-        <span style="color: #40e0d0; font-weight: bold;">return</span> n*n
-<span style="color: #bebebe; font-weight: bold;">f</span> = square
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">square</span>(n):
+        <span style="color: #a020f0;">return</span> n*n
+<span style="color: #a0522d;">f</span> = square
 square(10)
 </pre>
 </div>
@@ -183,7 +188,7 @@ square(10)
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #bebebe; font-weight: bold;">square</span> = <span style="color: #40e0d0; font-weight: bold;">lambda</span> x: x*x;
+<pre class="src src-python"><span style="color: #a0522d;">square</span> = <span style="color: #a020f0;">lambda</span> x: x*x;
 square(10)
 </pre>
 </div>
@@ -195,8 +200,8 @@ square(10)
 <div class="outline-text-3" id="text-1-3">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">map</span>(square, [1, 2, 3])
-<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">reduce</span> &amp; <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">filter</span>
+<pre class="src src-python"><span style="color: #483d8b;">map</span>(square, [1, 2, 3])
+<span style="color: #483d8b;">reduce</span> &amp; <span style="color: #483d8b;">filter</span>
 </pre>
 </div>
 </div>
@@ -207,15 +212,15 @@ square(10)
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">func1</span>(lst) :
-  <span style="color: #bebebe; font-weight: bold;">new_lst</span> = []
-  <span style="color: #40e0d0; font-weight: bold;">for</span> n <span style="color: #40e0d0; font-weight: bold;">in</span> lst :
-        <span style="color: #40e0d0; font-weight: bold;">if</span> odd(n) :
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">func1</span>(lst) :
+  <span style="color: #a0522d;">new_lst</span> = []
+  <span style="color: #a020f0;">for</span> n <span style="color: #a020f0;">in</span> lst :
+        <span style="color: #a020f0;">if</span> odd(n) :
           new_lst.append(square(n))
-  <span style="color: #40e0d0; font-weight: bold;">return</span> new_lst
+  <span style="color: #a020f0;">return</span> new_lst
 &#21487;&#20197;&#25913;&#36827;&#20026;
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">func2</span>(lst) :
-  <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">map</span>(square, <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">filter</span>(odd, lst))
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">func2</span>(lst) :
+  <span style="color: #a020f0;">return</span> <span style="color: #483d8b;">map</span>(square, <span style="color: #483d8b;">filter</span>(odd, lst))
 </pre>
 </div>
 </div>
@@ -226,7 +231,7 @@ square(10)
 <div class="outline-text-3" id="text-1-5">
 <div class="org-src-container">
 
-<pre class="src src-python">[x <span style="color: #40e0d0; font-weight: bold;">for</span> x <span style="color: #40e0d0; font-weight: bold;">in</span> lis <span style="color: #40e0d0; font-weight: bold;">if</span> x % 2 == 0]
+<pre class="src src-python">[x <span style="color: #a020f0;">for</span> x <span style="color: #a020f0;">in</span> lis <span style="color: #a020f0;">if</span> x % 2 == 0]
 </pre>
 </div>
 </div>
@@ -237,14 +242,14 @@ square(10)
 <div class="outline-text-3" id="text-1-6">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">d</span>(f) :
-  <span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">calc</span>(x) :
-        <span style="color: #bebebe; font-weight: bold;">dx</span> = 0.000001  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#34920;&#31034;&#26080;&#31351;&#23567;&#30340;&#916;x</span>
-        <span style="color: #40e0d0; font-weight: bold;">return</span> (f(x+dx) - f(x)) / dx  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#35745;&#31639;&#26012;&#29575;&#12290;&#27880;&#24847;&#65292;&#27492;&#22788;&#24341;&#29992;&#20102;&#22806;&#23618;&#20316;&#29992;&#22495;&#30340;&#21464;&#37327; f</span>
-  <span style="color: #40e0d0; font-weight: bold;">return</span> calc  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#27492;&#22788;&#29992;&#20989;&#25968;&#20316;&#20026;&#36820;&#22238;&#20540;&#65288;&#20063;&#23601;&#26159;&#20989;&#25968; f &#30340;&#23548;&#25968;&#65289;</span>
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">d</span>(f) :
+  <span style="color: #a020f0;">def</span> <span style="color: #0000ff;">calc</span>(x) :
+        <span style="color: #a0522d;">dx</span> = 0.000001  <span style="color: #b22222;"># </span><span style="color: #b22222;">&#34920;&#31034;&#26080;&#31351;&#23567;&#30340;&#916;x</span>
+        <span style="color: #a020f0;">return</span> (f(x+dx) - f(x)) / dx  <span style="color: #b22222;"># </span><span style="color: #b22222;">&#35745;&#31639;&#26012;&#29575;&#12290;&#27880;&#24847;&#65292;&#27492;&#22788;&#24341;&#29992;&#20102;&#22806;&#23618;&#20316;&#29992;&#22495;&#30340;&#21464;&#37327; f</span>
+  <span style="color: #a020f0;">return</span> calc  <span style="color: #b22222;"># </span><span style="color: #b22222;">&#27492;&#22788;&#29992;&#20989;&#25968;&#20316;&#20026;&#36820;&#22238;&#20540;&#65288;&#20063;&#23601;&#26159;&#20989;&#25968; f &#30340;&#23548;&#25968;&#65289;</span>
 
-<span style="color: #bebebe; font-weight: bold;">f</span> = <span style="color: #40e0d0; font-weight: bold;">lambda</span> x : x**2 + x + 1  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#20808;&#25226;&#20108;&#27425;&#20989;&#25968;&#29992;&#20195;&#30721;&#34920;&#36798;&#20986;&#26469;</span>
-<span style="color: #bebebe; font-weight: bold;">f1</span> = d(f)  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">&#36825;&#20010;f1 &#23601;&#26159; f &#30340;&#19968;&#38454;&#23548;&#25968;&#21862;&#12290;&#27880;&#24847;&#65292;&#23548;&#25968;&#20381;&#28982;&#26159;&#20010;&#20989;&#25968;</span>
+<span style="color: #a0522d;">f</span> = <span style="color: #a020f0;">lambda</span> x : x**2 + x + 1  <span style="color: #b22222;"># </span><span style="color: #b22222;">&#20808;&#25226;&#20108;&#27425;&#20989;&#25968;&#29992;&#20195;&#30721;&#34920;&#36798;&#20986;&#26469;</span>
+<span style="color: #a0522d;">f1</span> = d(f)  <span style="color: #b22222;"># </span><span style="color: #b22222;">&#36825;&#20010;f1 &#23601;&#26159; f &#30340;&#19968;&#38454;&#23548;&#25968;&#21862;&#12290;&#27880;&#24847;&#65292;&#23548;&#25968;&#20381;&#28982;&#26159;&#20010;&#20989;&#25968;</span>
 
 f1(3)
 </pre>
@@ -253,8 +258,11 @@ f1(3)
 </div>
 </div>
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Google C++ Style Guide</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> cc</h2>
 <div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Google C++ Style Guide</h3>
+<div class="outline-text-3" id="text-2-1">
 <ol class="org-ol">
 <li>函数超过10行时不要使用內联
 </li>
@@ -285,16 +293,74 @@ f1(3)
 </ol>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">ReturnType</span> <span style="color: #ff6347; font-weight: bold;">ClassName</span>::<span style="color: #1e90ff; font-weight: bold;">ReallyLongFunctionName</span>(<span style="color: #9ac0cd;">Type</span> <span style="color: #bebebe; font-weight: bold;">par_name1</span>) {
+<pre class="src src-cpp"><span style="color: #228b22;">ReturnType</span> <span style="color: #008b8b;">ClassName</span>::<span style="color: #0000ff;">ReallyLongFunctionName</span>(<span style="color: #228b22;">Type</span> <span style="color: #a0522d;">par_name1</span>) {
 }
 </pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 标准库比较接口</h3>
+<div class="outline-text-3" id="text-2-2">
+<ol class="org-ol">
+<li>函数形式
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #228b22;">int</span> <span style="color: #0000ff;">compare</span>(<span style="color: #228b22;">int</span> <span style="color: #a0522d;">a</span>, <span style="color: #228b22;">int</span> <span style="color: #a0522d;">b</span>) {
+    <span style="color: #a020f0;">return</span> a &lt; b;
+}
+</pre>
+</div>
+<ol class="org-ol">
+<li>函数对象
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">Node</span> {
+    <span style="color: #228b22;">int</span> <span style="color: #a0522d;">left</span>, <span style="color: #a0522d;">right</span>, <span style="color: #a0522d;">parent</span>;
+    <span style="color: #228b22;">int</span> <span style="color: #a0522d;">w</span>;
+    <span style="color: #228b22;">char</span> <span style="color: #a0522d;">ch</span>;
+    <span style="color: #228b22;">int</span> <span style="color: #a0522d;">id</span>;
+    <span style="color: #0000ff;">Node</span>(): left(-1), <span style="color: #0000ff;">right</span>(-1), <span style="color: #0000ff;">parent</span>(-1), <span style="color: #0000ff;">w</span>(0) {}
+    <span style="color: #0000ff;">Node</span>(<span style="color: #228b22;">int</span> <span style="color: #a0522d;">l</span>, <span style="color: #228b22;">int</span> <span style="color: #a0522d;">r</span>, <span style="color: #228b22;">int</span> <span style="color: #a0522d;">ww</span>): left(l), <span style="color: #228b22;">right</span>(<span style="color: #a0522d;">r</span>), <span style="color: #228b22;">w</span>(<span style="color: #a0522d;">ww</span>), parent(-1) {}
+};
+
+<span style="color: #a020f0;">struct</span> <span style="color: #228b22;">NodeCmp</span>{
+    <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span> <span style="color: #0000ff;">()</span> ( <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Node</span> *<span style="color: #a0522d;">n1</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Node</span> *<span style="color: #a0522d;">n2</span> ) {
+        <span style="color: #a020f0;">return</span> n1-&gt;w &gt; n2-&gt;w;
+    }
+};
+<span style="color: #228b22;">priority_queue</span>&lt;<span style="color: #228b22;">Node</span> *, <span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">Node</span> *&gt;, <span style="color: #228b22;">NodeCmp</span>&gt; <span style="color: #a0522d;">que</span>;
+</pre>
+</div>
+<ol class="org-ol">
+<li>友元形式
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">Distance</span> {
+    <span style="color: #228b22;">int</span> <span style="color: #a0522d;">node_id</span>;
+    <span style="color: #228b22;">int</span> <span style="color: #a0522d;">dis</span>;
+    <span style="color: #a020f0;">friend</span> <span style="color: #228b22;">bool</span> <span style="color: #a020f0;">operator</span> <span style="color: #0000ff;">&lt;</span> (<span style="color: #228b22;">Distance</span> <span style="color: #a0522d;">d1</span>, <span style="color: #228b22;">Distance</span> <span style="color: #a0522d;">d2</span>) {
+        <span style="color: #a020f0;">return</span> d1.dis &gt; d2.dis;
+    }
+    <span style="color: #0000ff;">Distance</span>() {}
+};
+<span style="color: #228b22;">priority_queue</span>&lt;<span style="color: #228b22;">Distance</span>&gt; <span style="color: #a0522d;">que</span>;
+</pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-12-01 一 23:52</p>
+<p class="date">Created: 2014-12-02 二 21:14</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
