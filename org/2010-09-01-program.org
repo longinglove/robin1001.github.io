@@ -57,32 +57,32 @@ f1(3)
 #+end_src
 * cc
 ** Google C++ Style Guide
-1. 函数超过10行时不要使用內联
-2. -inl.h內联函数实现文件 | 定义函数模板
-3. 输入：const型，输出参数：指针
-4. 最好给纯接口类加上Interface后缀
-5. 名称为foo_的变量其访问函数为foo()，而其修改器(mutator)则为set_foo()，访问器常在头文件中定义为内联函数。
-6. 请按下面的规则次序来定义类：公共成员位于私有成员前；方法位于数据成员前(变量)等等。
-7. scoped_ptr | shared_ptr
-8. 使用cpplint.py来检测风格错误
-9. 类型转换(Casting),需要类型转换时请使用static_cast<>()
-10. 类成员以下划线结束 int val_;
-11. 禁止使用异常
-12. 常量命名, 在名称前加k：kDaysInAWeek
-13. 函数形式参数位置和花括号位置
++ 函数超过10行时不要使用內联
++ -inl.h內联函数实现文件 | 定义函数模板
++ 输入：const型，输出参数：指针
++ 最好给纯接口类加上Interface后缀
++ 名称为foo_的变量其访问函数为foo()，而其修改器(mutator)则为set_foo()，访问器常在头文件中定义为内联函数。
++ 请按下面的规则次序来定义类：公共成员位于私有成员前；方法位于数据成员前(变量)等等。
++ scoped_ptr | shared_ptr
++ 使用cpplint.py来检测风格错误
++ 类型转换(Casting),需要类型转换时请使用static_cast<>()
++ 类成员以下划线结束 int val_;
++ 禁止使用异常
++ 常量命名, 在名称前加k：kDaysInAWeek
++ 函数形式参数位置和花括号位置
 #+BEGIN_SRC cpp
 ReturnType ClassName::ReallyLongFunctionName(Type par_name1) {
 }
 #+END_SRC
 
 ** 标准库比较接口
-1. 函数形式
++ 函数形式
 #+BEGIN_SRC cpp
 int compare(int a, int b) {
     return a < b;
 }
 #+END_SRC
-2. 函数对象
++  函数对象
 #+BEGIN_SRC cpp
 struct Node {
 	int left, right, parent;
@@ -100,7 +100,7 @@ struct NodeCmp{
 };
 priority_queue<Node *, vector<Node *>, NodeCmp> que;
 #+END_SRC
-3. 友元形式
++ 友元形式
 #+BEGIN_SRC cpp
 struct Distance {
 	int node_id;
