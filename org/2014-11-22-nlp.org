@@ -166,6 +166,13 @@ Opnion Extraction, Opnion Mining, Sentiment Mining, Subjectivity Anylasis
 主题仅与词出现有关系，和出现次数关系不大。所以这里使用Boolean Multinomial Naive Bayes(Mutivariate Benoulli Naive Bayes),
 即贝努利频率，相应的Add-one方法更改为Add-delta
 $$P(w|c) = \frac{n_{k}+\alpha} {n+\alpha|V|}$$
+** 情感词典
+*** 成熟开放的情感词典
++ GI（The General Inquirer）
++ LIWC (Linguistic Inquiry and Word Count)
++ ...
+*** Learning Sentiment Lexicons
++ 利用and和but连接词的词性关系(这个想法很棒)
 * homework
 1. regular expression
 2. autocorrect(edit distance, language model)

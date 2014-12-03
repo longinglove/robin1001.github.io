@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Natural Language Processing</title>
-<!-- 2014-12-01 一 18:38 -->
+<!-- 2014-12-03 三 20:06 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -223,6 +223,12 @@ for the JavaScript code in this tag.
 <li><a href="#sec-7-1">7.1. 其他名称</a></li>
 <li><a href="#sec-7-2">7.2. Steps</a></li>
 <li><a href="#sec-7-3">7.3. Naive Bayes in Sentiment</a></li>
+<li><a href="#sec-7-4">7.4. 情感词典</a>
+<ul>
+<li><a href="#sec-7-4-1">7.4.1. 成熟开放的情感词典</a></li>
+<li><a href="#sec-7-4-2">7.4.2. Learning Sentiment Lexicons</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-8">8. homework</a></li>
@@ -271,7 +277,7 @@ for the JavaScript code in this tag.
 </div><ol class="org-ol"><li><a id="sec-2-2-0-1" name="sec-2-2-0-1"></a>shakespeare<br  /><div class="outline-text-5" id="text-2-2-0-1">
 <div class="org-src-container">
 
-<pre class="src src-sh">tr -sc <span style="color: #ff0000;">'a-zA-Z'</span> <span style="color: #ff0000;">'\n'</span> &lt; shakespeare.txt | sort | uniq -c | sort -n -r | less
+<pre class="src src-sh">tr -sc <span style="color: #8b2252;">'a-zA-Z'</span> <span style="color: #8b2252;">'\n'</span> &lt; shakespeare.txt | sort | uniq -c | sort -n -r | less
 </pre>
 </div>
 <ul class="org-ul">
@@ -426,25 +432,25 @@ V个人感觉应为所有uigram即单词个数,不论是几元文法
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">score</span>(<span style="color: #40e0d0; font-weight: bold;">self</span>, sentence):
-   <span style="color: #ff0000;">""" Takes a list of strings as argument and returns the log-probability</span>
-<span style="color: #ff0000;">   of the sentence using your language model. Use whatever data you</span>
-<span style="color: #ff0000;">   computed in train() here."""</span>
-   <span style="color: #bebebe; font-weight: bold;">score</span> = 0.0
-   <span style="color: #bebebe; font-weight: bold;">previous</span> = sentence[0]
-   <span style="color: #40e0d0; font-weight: bold;">for</span> token <span style="color: #40e0d0; font-weight: bold;">in</span> sentence[1:]:
-           <span style="color: #bebebe; font-weight: bold;">bicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.bigramCounts[(previous, token)]
-           <span style="color: #bebebe; font-weight: bold;">bi_unicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.unigramCounts[previous]
-           <span style="color: #bebebe; font-weight: bold;">unicount</span> = <span style="color: #40e0d0; font-weight: bold;">self</span>.unigramCounts[token]
-           <span style="color: #40e0d0; font-weight: bold;">if</span> bicount &gt; 0:
-                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(bicount)
-                   <span style="color: #bebebe; font-weight: bold;">score</span> -= math.log(bi_unicount)
-           <span style="color: #40e0d0; font-weight: bold;">else</span>:
-                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(0.4)
-                   <span style="color: #bebebe; font-weight: bold;">score</span> += math.log(unicount + 1)
-                   <span style="color: #bebebe; font-weight: bold;">score</span> -= math.log(<span style="color: #40e0d0; font-weight: bold;">self</span>.total + <span style="color: #40e0d0; font-weight: bold;">self</span>.vocab_size)
-           <span style="color: #bebebe; font-weight: bold;">previous</span> = token
-   <span style="color: #40e0d0; font-weight: bold;">return</span> score
+<pre class="src src-python"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">score</span>(<span style="color: #a020f0;">self</span>, sentence):
+   <span style="color: #8b2252;">""" Takes a list of strings as argument and returns the log-probability</span>
+<span style="color: #8b2252;">   of the sentence using your language model. Use whatever data you</span>
+<span style="color: #8b2252;">   computed in train() here."""</span>
+   <span style="color: #a0522d;">score</span> = 0.0
+   <span style="color: #a0522d;">previous</span> = sentence[0]
+   <span style="color: #a020f0;">for</span> token <span style="color: #a020f0;">in</span> sentence[1:]:
+           <span style="color: #a0522d;">bicount</span> = <span style="color: #a020f0;">self</span>.bigramCounts[(previous, token)]
+           <span style="color: #a0522d;">bi_unicount</span> = <span style="color: #a020f0;">self</span>.unigramCounts[previous]
+           <span style="color: #a0522d;">unicount</span> = <span style="color: #a020f0;">self</span>.unigramCounts[token]
+           <span style="color: #a020f0;">if</span> bicount &gt; 0:
+                   <span style="color: #a0522d;">score</span> += math.log(bicount)
+                   <span style="color: #a0522d;">score</span> -= math.log(bi_unicount)
+           <span style="color: #a020f0;">else</span>:
+                   <span style="color: #a0522d;">score</span> += math.log(0.4)
+                   <span style="color: #a0522d;">score</span> += math.log(unicount + 1)
+                   <span style="color: #a0522d;">score</span> -= math.log(<span style="color: #a020f0;">self</span>.total + <span style="color: #a020f0;">self</span>.vocab_size)
+           <span style="color: #a0522d;">previous</span> = token
+   <span style="color: #a020f0;">return</span> score
 </pre>
 </div>
 </div>
@@ -492,39 +498,39 @@ Kukich（1992）指出有25%~40%的拼写错误都属于Real-word类型
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #40e0d0; font-weight: bold;">import</span> re, collections
+<pre class="src src-python"><span style="color: #a020f0;">import</span> re, collections
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">words</span>(text): <span style="color: #40e0d0; font-weight: bold;">return</span> re.findall(<span style="color: #ff0000;">'[a-z]+'</span>, text.lower()) 
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">words</span>(text): <span style="color: #a020f0;">return</span> re.findall(<span style="color: #8b2252;">'[a-z]+'</span>, text.lower()) 
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">train</span>(features):
-        <span style="color: #bebebe; font-weight: bold;">model</span> = collections.defaultdict(<span style="color: #40e0d0; font-weight: bold;">lambda</span>: 1)
-        <span style="color: #40e0d0; font-weight: bold;">for</span> f <span style="color: #40e0d0; font-weight: bold;">in</span> features:
-                <span style="color: #bebebe; font-weight: bold;">model</span>[f] += 1
-        <span style="color: #40e0d0; font-weight: bold;">return</span> model
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">train</span>(features):
+        <span style="color: #a0522d;">model</span> = collections.defaultdict(<span style="color: #a020f0;">lambda</span>: 1)
+        <span style="color: #a020f0;">for</span> f <span style="color: #a020f0;">in</span> features:
+                <span style="color: #a0522d;">model</span>[f] += 1
+        <span style="color: #a020f0;">return</span> model
 
-<span style="color: #bebebe; font-weight: bold;">NWORDS</span> = train(words(<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">file</span>(<span style="color: #ff0000;">'big.txt'</span>).read()))
+<span style="color: #a0522d;">NWORDS</span> = train(words(<span style="color: #483d8b;">file</span>(<span style="color: #8b2252;">'big.txt'</span>).read()))
 
-<span style="color: #bebebe; font-weight: bold;">alphabet</span> = <span style="color: #ff0000;">'abcdefghijklmnopqrstuvwxyz'</span>
+<span style="color: #a0522d;">alphabet</span> = <span style="color: #8b2252;">'abcdefghijklmnopqrstuvwxyz'</span>
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">edits1</span>(word):
-        <span style="color: #bebebe; font-weight: bold;">n</span> = <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">len</span>(word)
-        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>([word[0:i]+word[i+1:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n)] +                     <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">deletion</span>
-                           [word[0:i]+word[i+1]+word[i]+word[i+2:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n-1)] + <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">transposition</span>
-                           [word[0:i]+c+word[i+1:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n) <span style="color: #40e0d0; font-weight: bold;">for</span> c <span style="color: #40e0d0; font-weight: bold;">in</span> alphabet] + <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">alteration</span>
-                           [word[0:i]+c+word[i:] <span style="color: #40e0d0; font-weight: bold;">for</span> i <span style="color: #40e0d0; font-weight: bold;">in</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">range</span>(n+1) <span style="color: #40e0d0; font-weight: bold;">for</span> c <span style="color: #40e0d0; font-weight: bold;">in</span> alphabet])  <span style="color: #ee82ee;"># </span><span style="color: #ee82ee;">insertion</span>
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">edits1</span>(word):
+        <span style="color: #a0522d;">n</span> = <span style="color: #483d8b;">len</span>(word)
+        <span style="color: #a020f0;">return</span> <span style="color: #483d8b;">set</span>([word[0:i]+word[i+1:] <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(n)] +                     <span style="color: #b22222;"># </span><span style="color: #b22222;">deletion</span>
+                           [word[0:i]+word[i+1]+word[i]+word[i+2:] <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(n-1)] + <span style="color: #b22222;"># </span><span style="color: #b22222;">transposition</span>
+                           [word[0:i]+c+word[i+1:] <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(n) <span style="color: #a020f0;">for</span> c <span style="color: #a020f0;">in</span> alphabet] + <span style="color: #b22222;"># </span><span style="color: #b22222;">alteration</span>
+                           [word[0:i]+c+word[i:] <span style="color: #a020f0;">for</span> i <span style="color: #a020f0;">in</span> <span style="color: #483d8b;">range</span>(n+1) <span style="color: #a020f0;">for</span> c <span style="color: #a020f0;">in</span> alphabet])  <span style="color: #b22222;"># </span><span style="color: #b22222;">insertion</span>
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">known_edits2</span>(word):
-        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>(e2 <span style="color: #40e0d0; font-weight: bold;">for</span> e1 <span style="color: #40e0d0; font-weight: bold;">in</span> edits1(word) <span style="color: #40e0d0; font-weight: bold;">for</span> e2 <span style="color: #40e0d0; font-weight: bold;">in</span> edits1(e1) <span style="color: #40e0d0; font-weight: bold;">if</span> e2 <span style="color: #40e0d0; font-weight: bold;">in</span> NWORDS)
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">known_edits2</span>(word):
+        <span style="color: #a020f0;">return</span> <span style="color: #483d8b;">set</span>(e2 <span style="color: #a020f0;">for</span> e1 <span style="color: #a020f0;">in</span> edits1(word) <span style="color: #a020f0;">for</span> e2 <span style="color: #a020f0;">in</span> edits1(e1) <span style="color: #a020f0;">if</span> e2 <span style="color: #a020f0;">in</span> NWORDS)
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">known</span>(words): <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">set</span>(w <span style="color: #40e0d0; font-weight: bold;">for</span> w <span style="color: #40e0d0; font-weight: bold;">in</span> words <span style="color: #40e0d0; font-weight: bold;">if</span> w <span style="color: #40e0d0; font-weight: bold;">in</span> NWORDS)
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">known</span>(words): <span style="color: #a020f0;">return</span> <span style="color: #483d8b;">set</span>(w <span style="color: #a020f0;">for</span> w <span style="color: #a020f0;">in</span> words <span style="color: #a020f0;">if</span> w <span style="color: #a020f0;">in</span> NWORDS)
 
-<span style="color: #40e0d0; font-weight: bold;">def</span> <span style="color: #1e90ff; font-weight: bold;">correct</span>(word):
-        <span style="color: #bebebe; font-weight: bold;">candidates</span> = known([word]) <span style="color: #40e0d0; font-weight: bold;">or</span> known(edits1(word)) <span style="color: #40e0d0; font-weight: bold;">or</span> known_edits2(word) <span style="color: #40e0d0; font-weight: bold;">or</span> [word]
-        <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">max</span>(candidates, key=<span style="color: #40e0d0; font-weight: bold;">lambda</span> w: NWORDS[w])
+<span style="color: #a020f0;">def</span> <span style="color: #0000ff;">correct</span>(word):
+        <span style="color: #a0522d;">candidates</span> = known([word]) <span style="color: #a020f0;">or</span> known(edits1(word)) <span style="color: #a020f0;">or</span> known_edits2(word) <span style="color: #a020f0;">or</span> [word]
+        <span style="color: #a020f0;">return</span> <span style="color: #483d8b;">max</span>(candidates, key=<span style="color: #a020f0;">lambda</span> w: NWORDS[w])
 
-<span style="color: #40e0d0; font-weight: bold;">if</span> <span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">__name__</span> == <span style="color: #ff0000;">'__main__'</span>:
-        <span style="color: #40e0d0; font-weight: bold;">while</span> <span style="color: #ff6347; font-weight: bold;">True</span>:
-                <span style="color: #40e0d0; font-weight: bold;">print</span> correct(<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">raw_input</span>(<span style="color: #ff0000;">"&gt;"</span>))
+<span style="color: #a020f0;">if</span> <span style="color: #483d8b;">__name__</span> == <span style="color: #8b2252;">'__main__'</span>:
+        <span style="color: #a020f0;">while</span> <span style="color: #008b8b;">True</span>:
+                <span style="color: #a020f0;">print</span> correct(<span style="color: #483d8b;">raw_input</span>(<span style="color: #8b2252;">"&gt;"</span>))
 </pre>
 </div>
 </div>
@@ -587,6 +593,32 @@ $$P(w|c) = \frac{n_{k}+\alpha} {n+\alpha|V|}$$
 </p>
 </div>
 </div>
+<div id="outline-container-sec-7-4" class="outline-3">
+<h3 id="sec-7-4"><span class="section-number-3">7.4</span> 情感词典</h3>
+<div class="outline-text-3" id="text-7-4">
+</div><div id="outline-container-sec-7-4-1" class="outline-4">
+<h4 id="sec-7-4-1"><span class="section-number-4">7.4.1</span> 成熟开放的情感词典</h4>
+<div class="outline-text-4" id="text-7-4-1">
+<ul class="org-ul">
+<li>GI（The General Inquirer）
+</li>
+<li>LIWC (Linguistic Inquiry and Word Count)
+</li>
+<li>&#x2026;
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-7-4-2" class="outline-4">
+<h4 id="sec-7-4-2"><span class="section-number-4">7.4.2</span> Learning Sentiment Lexicons</h4>
+<div class="outline-text-4" id="text-7-4-2">
+<ul class="org-ul">
+<li>利用and和but连接词的词性关系(这个想法很棒)
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 <div id="outline-container-sec-8" class="outline-2">
 <h2 id="sec-8"><span class="section-number-2">8</span> homework</h2>
@@ -617,7 +649,7 @@ Everything should be made as simple as possible, but not any simpler
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-12-01 一 18:38</p>
+<p class="date">Created: 2014-12-03 三 20:06</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
