@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Kaldi学习笔记</title>
-<!-- 2014-12-01 一 16:55 -->
+<!-- 2014-12-08 一 23:24 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -676,11 +676,11 @@ ClusterableInterface保存特征个数，并提供Add方法对特征进行累加
 </ol>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">AlignmentToPosterior</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;int32&gt; &amp;<span style="color: #bebebe; font-weight: bold;">ali</span>,
-                          <span style="color: #bebebe; font-weight: bold;">Posterior</span> *post) {
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">AlignmentToPosterior</span>(<span style="color: #a020f0;">const</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;int32&gt; &amp;<span style="color: #a0522d;">ali</span>,
+                          <span style="color: #a0522d;">Posterior</span> *post) {
   post-&gt;clear();
   post-&gt;resize(ali.size());
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; ali.size(); i++) {
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">i</span> = 0; i &lt; ali.size(); i++) {
     (*post)[i].resize(1);
     (*post)[i][0].first = ali[i];
     (*post)[i][0].second = 1.0;
@@ -695,22 +695,22 @@ ClusterableInterface保存特征个数，并提供Add方法对特征进行累加
 <div class="org-src-container">
 
 <pre class="src src-cpp">silence_scale=0.0
-<span style="color: #9ac0cd;">void</span> WeightSilencePost(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">TransitionModel</span> &amp;<span style="color: #bebebe; font-weight: bold;">trans_model</span>,
-                       <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">ConstIntegerSet</span>&lt;int32&gt; &amp;<span style="color: #bebebe; font-weight: bold;">silence_set</span>,
-                       <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">silence_scale</span>,
+<span style="color: #228b22;">void</span> WeightSilencePost(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">TransitionModel</span> &amp;<span style="color: #a0522d;">trans_model</span>,
+                       <span style="color: #a020f0;">const</span> <span style="color: #228b22;">ConstIntegerSet</span>&lt;int32&gt; &amp;<span style="color: #a0522d;">silence_set</span>,
+                       <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">silence_scale</span>,
                        Posterior *post) {
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; post-&gt;size(); i++) {
-    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;int32, <span style="color: #9ac0cd;">BaseFloat</span>&gt; &gt; <span style="color: #bebebe; font-weight: bold;">this_post</span>;
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">i</span> = 0; i &lt; post-&gt;size(); i++) {
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;int32, <span style="color: #228b22;">BaseFloat</span>&gt; &gt; <span style="color: #a0522d;">this_post</span>;
     this_post.reserve((*post)[i].size());
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">j</span> = 0; j &lt; (*post)[i].size(); j++) {
-      <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">tid</span> = (*post)[i][j].first,
-          <span style="color: #bebebe; font-weight: bold;">phone</span> = trans_model.TransitionIdToPhone(tid);
-      <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">weight</span> = (*post)[i][j].second;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (silence_set.count(phone) != 0) {  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">is a silence.</span>
-        <span style="color: #40e0d0; font-weight: bold;">if</span> (silence_scale != 0.0)
-          this_post.push_back(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(tid, weight*silence_scale));
-      } <span style="color: #40e0d0; font-weight: bold;">else</span> {
-        this_post.push_back(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(tid, weight));
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">j</span> = 0; j &lt; (*post)[i].size(); j++) {
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">tid</span> = (*post)[i][j].first,
+          <span style="color: #a0522d;">phone</span> = trans_model.TransitionIdToPhone(tid);
+      <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">weight</span> = (*post)[i][j].second;
+      <span style="color: #a020f0;">if</span> (silence_set.count(phone) != 0) {  <span style="color: #b22222;">// </span><span style="color: #b22222;">is a silence.</span>
+        <span style="color: #a020f0;">if</span> (silence_scale != 0.0)
+          this_post.push_back(<span style="color: #008b8b;">std</span>::make_pair(tid, weight*silence_scale));
+      } <span style="color: #a020f0;">else</span> {
+        this_post.push_back(<span style="color: #008b8b;">std</span>::make_pair(tid, weight));
       }
     }
     (*post)[i].swap(this_post);
@@ -724,14 +724,14 @@ ClusterableInterface保存特征个数，并提供Add方法对特征进行累加
 </ol>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">Posterior</span> <span style="color: #bebebe; font-weight: bold;">pdf_post</span>;
+<pre class="src src-cpp"><span style="color: #228b22;">Posterior</span> <span style="color: #a0522d;">pdf_post</span>;
 ConvertPosteriorToPdfs(trans_model, post, &amp;pdf_post);
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; feats.NumRows(); i++) {
-  <span style="color: #9ac0cd;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">feat</span>(<span style="color: #9ac0cd;">feats</span>, i);
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">j</span> = 0; j &lt; pdf_post[i].size(); j++) {
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">pdf_id</span> = pdf_post[i][j].first;
-    <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">weight</span> = RandPrune(pdf_post[i][j].second, rand_prune);
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (weight != 0.0) {
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">i</span> = 0; i &lt; feats.NumRows(); i++) {
+  <span style="color: #228b22;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">feat</span>(<span style="color: #228b22;">feats</span>, i);
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">j</span> = 0; j &lt; pdf_post[i].size(); j++) {
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">pdf_id</span> = pdf_post[i][j].first;
+    <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">weight</span> = RandPrune(pdf_post[i][j].second, rand_prune);
+    <span style="color: #a020f0;">if</span> (weight != 0.0) {
       lda.Accumulate(feat, pdf_id, weight);
     }
   }
@@ -746,82 +746,82 @@ ConvertPosteriorToPdfs(trans_model, post, &amp;pdf_post);
 </ol>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">void</span> <span style="color: #ff6347; font-weight: bold;">LdaEstimate</span>::<span style="color: #1e90ff; font-weight: bold;">Estimate</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">LdaEstimateOptions</span> &amp;<span style="color: #bebebe; font-weight: bold;">opts</span>,
-                           <span style="color: #9ac0cd;">Matrix</span>&lt;BaseFloat&gt; *<span style="color: #bebebe; font-weight: bold;">m</span>,
-                           <span style="color: #9ac0cd;">Matrix</span>&lt;BaseFloat&gt; *<span style="color: #bebebe; font-weight: bold;">mfull</span>) <span style="color: #40e0d0; font-weight: bold;">const</span> {
-  <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">target_dim</span> = opts.dim;
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #008b8b;">LdaEstimate</span>::<span style="color: #0000ff;">Estimate</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">LdaEstimateOptions</span> &amp;<span style="color: #a0522d;">opts</span>,
+                           <span style="color: #228b22;">Matrix</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">m</span>,
+                           <span style="color: #228b22;">Matrix</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">mfull</span>) <span style="color: #a020f0;">const</span> {
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">target_dim</span> = opts.dim;
   KALDI_ASSERT(target_dim &gt; 0);
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">between-class covar is of most rank C-1</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">between-class covar is of most rank C-1</span>
   KALDI_ASSERT(target_dim &lt;= Dim() &amp;&amp; (target_dim &lt; NumClasses() || opts.allow_large_dim));
-  <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">dim</span> = Dim();
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">dim</span> = Dim();
 
-  <span style="color: #9ac0cd;">double</span> <span style="color: #bebebe; font-weight: bold;">count</span>;
-  <span style="color: #9ac0cd;">SpMatrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">total_covar</span>, <span style="color: #bebebe; font-weight: bold;">bc_covar</span>;
-  <span style="color: #9ac0cd;">Vector</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">total_mean</span>;
+  <span style="color: #228b22;">double</span> <span style="color: #a0522d;">count</span>;
+  <span style="color: #228b22;">SpMatrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">total_covar</span>, <span style="color: #a0522d;">bc_covar</span>;
+  <span style="color: #228b22;">Vector</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">total_mean</span>;
   GetStats(&amp;total_covar, &amp;bc_covar, &amp;total_mean, &amp;count);
 
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">within-class covariance</span>
-  <span style="color: #9ac0cd;">SpMatrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">wc_covar</span>(total_covar);
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">within-class covariance</span>
+  <span style="color: #228b22;">SpMatrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">wc_covar</span>(total_covar);
   wc_covar.AddSp(-1.0, bc_covar);
-  <span style="color: #9ac0cd;">TpMatrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">wc_covar_sqrt</span>(dim);
-  <span style="color: #40e0d0; font-weight: bold;">try</span> {
+  <span style="color: #228b22;">TpMatrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">wc_covar_sqrt</span>(dim);
+  <span style="color: #a020f0;">try</span> {
     wc_covar_sqrt.Cholesky(wc_covar);
-  } <span style="color: #40e0d0; font-weight: bold;">catch</span> (...) {
-    <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">smooth</span> = 1.0e-03 * wc_covar.Trace() / wc_covar.NumRows();
-    KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Cholesky failed (possibly not +ve definite), so adding "</span> &lt;&lt; smooth
-              &lt;&lt; <span style="color: #ff0000;">" to diagonal and trying again.\n"</span>;
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; wc_covar.NumRows(); i++)
-      <span style="color: #bebebe; font-weight: bold;">wc_covar</span>(i, i) += smooth;
+  } <span style="color: #a020f0;">catch</span> (...) {
+    <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">smooth</span> = 1.0e-03 * wc_covar.Trace() / wc_covar.NumRows();
+    KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Cholesky failed (possibly not +ve definite), so adding "</span> &lt;&lt; smooth
+              &lt;&lt; <span style="color: #8b2252;">" to diagonal and trying again.\n"</span>;
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">i</span> = 0; i &lt; wc_covar.NumRows(); i++)
+      <span style="color: #a0522d;">wc_covar</span>(i, i) += smooth;
     wc_covar_sqrt.Cholesky(wc_covar);    
   }
-  <span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">wc_covar_sqrt_mat</span>(wc_covar_sqrt);
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">copy wc_covar_sqrt to Matrix, because it facilitates further use</span>
+  <span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">wc_covar_sqrt_mat</span>(wc_covar_sqrt);
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">copy wc_covar_sqrt to Matrix, because it facilitates further use</span>
   wc_covar_sqrt_mat.Invert();
 
-  <span style="color: #9ac0cd;">SpMatrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">tmp_sp</span>(dim);
+  <span style="color: #228b22;">SpMatrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">tmp_sp</span>(dim);
   tmp_sp.AddMat2Sp(1.0, wc_covar_sqrt_mat, kNoTrans, bc_covar, 0.0);
-  <span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">tmp_mat</span>(tmp_sp);
+  <span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">tmp_mat</span>(tmp_sp);
 
-  <span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">svd_u</span>(dim, dim), <span style="color: #bebebe; font-weight: bold;">svd_vt</span>(dim, dim);
-  <span style="color: #9ac0cd;">Vector</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">svd_d</span>(dim);
+  <span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">svd_u</span>(dim, dim), <span style="color: #a0522d;">svd_vt</span>(dim, dim);
+  <span style="color: #228b22;">Vector</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">svd_d</span>(dim);
   tmp_mat.Svd(&amp;svd_d, &amp;svd_u, &amp;svd_vt);
   SortSvd(&amp;svd_d, &amp;svd_u);
 
-  KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Data count is "</span> &lt;&lt; count;
-  KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"LDA singular values are "</span> &lt;&lt; svd_d;
+  KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Data count is "</span> &lt;&lt; count;
+  KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"LDA singular values are "</span> &lt;&lt; svd_d;
 
-  KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Sum of all singular values is "</span> &lt;&lt; svd_d.Sum();
-  KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Sum of selected singular values is "</span> &lt;&lt;
-      <span style="color: #9ac0cd;">SubVector</span>&lt;<span style="color: #9ac0cd;">double</span>&gt;(svd_d, 0, target_dim).Sum();
+  KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Sum of all singular values is "</span> &lt;&lt; svd_d.Sum();
+  KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Sum of selected singular values is "</span> &lt;&lt;
+      <span style="color: #228b22;">SubVector</span>&lt;<span style="color: #228b22;">double</span>&gt;(svd_d, 0, target_dim).Sum();
 
-  <span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">lda_mat</span>(dim, dim);
+  <span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">lda_mat</span>(dim, dim);
   lda_mat.AddMatMat(1.0, svd_u, kTrans, wc_covar_sqrt_mat, kNoTrans, 0.0);
 
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">finally, copy first target_dim rows to m</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">finally, copy first target_dim rows to m</span>
   m-&gt;Resize(target_dim, dim);
   m-&gt;CopyFromMat(lda_mat.Range(0, target_dim, 0, dim));
 
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (mfull != <span style="color: #ff6347; font-weight: bold;">NULL</span>) {
+  <span style="color: #a020f0;">if</span> (mfull != <span style="color: #008b8b;">NULL</span>) {
     mfull-&gt;Resize(dim, dim);
     mfull-&gt;CopyFromMat(lda_mat);
   }
 
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (opts.within_class_factor != 1.0) { <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">This is not the normal code path;</span>
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">it's intended for use in neural net inputs.</span>
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; svd_d.Dim(); i++) {
-      <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">old_var</span> = 1.0 + svd_d(i), <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">the total variance of that dim..</span>
-          <span style="color: #bebebe; font-weight: bold;">new_var</span> = opts.within_class_factor + svd_d(i), <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">the variance we want..</span>
-          <span style="color: #bebebe; font-weight: bold;">scale</span> = sqrt(new_var / old_var);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (i &lt; m-&gt;NumRows())
+  <span style="color: #a020f0;">if</span> (opts.within_class_factor != 1.0) { <span style="color: #b22222;">// </span><span style="color: #b22222;">This is not the normal code path;</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">it's intended for use in neural net inputs.</span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">i</span> = 0; i &lt; svd_d.Dim(); i++) {
+      <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">old_var</span> = 1.0 + svd_d(i), <span style="color: #b22222;">// </span><span style="color: #b22222;">the total variance of that dim..</span>
+          <span style="color: #a0522d;">new_var</span> = opts.within_class_factor + svd_d(i), <span style="color: #b22222;">// </span><span style="color: #b22222;">the variance we want..</span>
+          <span style="color: #a0522d;">scale</span> = sqrt(new_var / old_var);
+      <span style="color: #a020f0;">if</span> (i &lt; m-&gt;NumRows())
         m-&gt;Row(i).Scale(scale);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (mfull != <span style="color: #ff6347; font-weight: bold;">NULL</span>)
+      <span style="color: #a020f0;">if</span> (mfull != <span style="color: #008b8b;">NULL</span>)
         mfull-&gt;Row(i).Scale(scale);
     }
   }
 
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (opts.remove_offset) {
+  <span style="color: #a020f0;">if</span> (opts.remove_offset) {
     AddMeanOffset(total_mean, m);
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (mfull != <span style="color: #ff6347; font-weight: bold;">NULL</span>)
+    <span style="color: #a020f0;">if</span> (mfull != <span style="color: #008b8b;">NULL</span>)
       AddMeanOffset(total_mean, mfull);
   }  
 }
@@ -913,26 +913,26 @@ Dropout Component
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">struct</span> <span style="color: #9ac0cd;">NnetExample</span> {
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">The label(s) for this frame; in the normal case, this will be a vector of</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">length one, containing (the pdf-id, 1.0)</span>
-<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;int32, BaseFloat&gt; &gt; <span style="color: #bebebe; font-weight: bold;">labels</span>;
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">The input data-- typically with NumRows() more than</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">labels.size(), it includes features to the left and</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">right as needed for the temporal context of the network.</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">(see the left_context variable).</span>
-<span style="color: #9ac0cd;">CompressedMatrix</span> <span style="color: #bebebe; font-weight: bold;">input_frames</span>;
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">The number of frames of left context (we can work out the #frames</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">of right context from input_frames.NumRows(), labels.size(), and this).</span>
-<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">left_context</span>;
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">The speaker-specific input, if any, or an empty vector if</span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">we're not using this features. We'll append this to each of the</span>
-<span style="color: #9ac0cd;">Vector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">spk_info</span>; 
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">Set the label of this example to the specified pdf_id </span>
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">with the specified weight.</span>
-<span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">SetLabelSingle</span>(<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">pdf_id</span>, <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">weight</span> = 1.0);
-<span style="color: #ee82ee;">/// </span><span style="color: #ee82ee;">Get the maximum weight label (pdf_id and weight) of this example. </span>
-<span style="color: #9ac0cd;">int32</span> <span style="color: #1e90ff; font-weight: bold;">GetLabelSingle</span>(<span style="color: #9ac0cd;">BaseFloat</span> *<span style="color: #bebebe; font-weight: bold;">weight</span> = <span style="color: #ff6347; font-weight: bold;">NULL</span>);
+<pre class="src src-cpp"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">NnetExample</span> {
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">The label(s) for this frame; in the normal case, this will be a vector of</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">length one, containing (the pdf-id, 1.0)</span>
+<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;int32, BaseFloat&gt; &gt; <span style="color: #a0522d;">labels</span>;
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">The input data-- typically with NumRows() more than</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">labels.size(), it includes features to the left and</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">right as needed for the temporal context of the network.</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">(see the left_context variable).</span>
+<span style="color: #228b22;">CompressedMatrix</span> <span style="color: #a0522d;">input_frames</span>;
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">The number of frames of left context (we can work out the #frames</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">of right context from input_frames.NumRows(), labels.size(), and this).</span>
+<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">left_context</span>;
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">The speaker-specific input, if any, or an empty vector if</span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">we're not using this features. We'll append this to each of the</span>
+<span style="color: #228b22;">Vector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">spk_info</span>; 
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">Set the label of this example to the specified pdf_id </span>
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">with the specified weight.</span>
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">SetLabelSingle</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">pdf_id</span>, <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">weight</span> = 1.0);
+<span style="color: #b22222;">/// </span><span style="color: #b22222;">Get the maximum weight label (pdf_id and weight) of this example. </span>
+<span style="color: #228b22;">int32</span> <span style="color: #0000ff;">GetLabelSingle</span>(<span style="color: #228b22;">BaseFloat</span> *<span style="color: #a0522d;">weight</span> = <span style="color: #008b8b;">NULL</span>);
 };
 </pre>
 </div>
@@ -942,12 +942,12 @@ Dropout Component
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">nnet/nnet-activation.h</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">Softmax</span> : <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Component</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">BlockSoftmax</span> : <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Component</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">Sigmoid</span> : <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Component</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">Tanh</span> : <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Component</span> 
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">Dropout</span> : <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Component</span>
+<pre class="src src-cpp"><span style="color: #b22222;">// </span><span style="color: #b22222;">nnet/nnet-activation.h</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">Softmax</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">BlockSoftmax</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">Sigmoid</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">Tanh</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span> 
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">Dropout</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span>
 </pre>
 </div>
 <ul class="org-ul">
@@ -956,24 +956,24 @@ Dropout Component
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#37324;&#38754;&#27809;&#26377;prior_&#30340;&#20449;&#24687;, &#37027;&#20040;prior&#22312;&#37027;&#37324;&#29992;&#65311;</span>
-<span style="color: #9ac0cd;">void</span> <span style="color: #ff6347; font-weight: bold;">NnetSimpleTrainer</span>::<span style="color: #1e90ff; font-weight: bold;">TrainOnExample</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">NnetExample</span> &amp;<span style="color: #bebebe; font-weight: bold;">value</span>) {
+<pre class="src src-cpp"><span style="color: #b22222;">//</span><span style="color: #b22222;">&#37324;&#38754;&#27809;&#26377;prior_&#30340;&#20449;&#24687;, &#37027;&#20040;prior&#22312;&#37027;&#37324;&#29992;&#65311;</span>
+<span style="color: #228b22;">void</span> <span style="color: #008b8b;">NnetSimpleTrainer</span>::<span style="color: #0000ff;">TrainOnExample</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">NnetExample</span> &amp;<span style="color: #a0522d;">value</span>) {
 buffer_.push_back(value);
-<span style="color: #40e0d0; font-weight: bold;">if</span> (<span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;int32&gt;(buffer_.size()) == config_.minibatch_size)
+<span style="color: #a020f0;">if</span> (<span style="color: #a020f0;">static_cast</span>&lt;int32&gt;(buffer_.size()) == config_.minibatch_size)
 TrainOneMinibatch();
 }
-<span style="color: #9ac0cd;">void</span> <span style="color: #ff6347; font-weight: bold;">NnetSimpleTrainer</span>::<span style="color: #1e90ff; font-weight: bold;">TrainOneMinibatch</span>() {
+<span style="color: #228b22;">void</span> <span style="color: #008b8b;">NnetSimpleTrainer</span>::<span style="color: #0000ff;">TrainOneMinibatch</span>() {
 
 KALDI_ASSERT(!buffer_.empty());
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">The following function is declared in nnet-update.h.</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">The following function is declared in nnet-update.h.</span>
 logprob_this_phase_ += DoBackprop(*nnet_,
 buffer_,
 nnet_);
 weight_this_phase_ += TotalNnetTrainingWeight(buffer_);
 buffer_.clear();
 minibatches_seen_this_phase_++;
-<span style="color: #40e0d0; font-weight: bold;">if</span> (minibatches_seen_this_phase_ == config_.minibatches_per_phase) {
-<span style="color: #9ac0cd;">bool</span> <span style="color: #bebebe; font-weight: bold;">first_time</span> = <span style="color: #ff6347; font-weight: bold;">false</span>;
+<span style="color: #a020f0;">if</span> (minibatches_seen_this_phase_ == config_.minibatches_per_phase) {
+<span style="color: #228b22;">bool</span> <span style="color: #a0522d;">first_time</span> = <span style="color: #008b8b;">false</span>;
 BeginNewPhase(first_time);
 }
 }
@@ -985,10 +985,10 @@ BeginNewPhase(first_time);
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">Amnet</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">AmNnet</span> {
-  <span style="color: #9ac0cd;">Nnet</span> <span style="color: #bebebe; font-weight: bold;">nnet_</span>;
-  <span style="color: #9ac0cd;">Vector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">priors_</span>; 
+<pre class="src src-cpp"><span style="color: #b22222;">//</span><span style="color: #b22222;">Amnet</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">AmNnet</span> {
+  <span style="color: #228b22;">Nnet</span> <span style="color: #a0522d;">nnet_</span>;
+  <span style="color: #228b22;">Vector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">priors_</span>; 
 };
 </pre>
 </div>
@@ -1007,35 +1007,35 @@ BeginNewPhase(first_time);
 
 <pre class="src src-cpp">ProcessFile(feats, pdf_post, key, left_context, right_context, const_feat_dim,
 keep_proportion, &amp;num_frames_written, &amp;example_writer)
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; feats.NumRows(); i++) {
-<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">count</span> = GetCount(keep_proportion); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">number of times</span>
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">we'll write this out (1 by default).</span>
-<span style="color: #40e0d0; font-weight: bold;">if</span> (count &gt; 0) {
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Set up "input_frames".</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">j</span> = -left_context; j &lt;= right_context; j++) {
-<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">j2</span> = j + i;
-<span style="color: #40e0d0; font-weight: bold;">if</span> (j2 &lt; 0) j2 = 0;
-<span style="color: #40e0d0; font-weight: bold;">if</span> (j2 &gt;= feats.NumRows()) j2 = feats.NumRows() - 1;
-<span style="color: #9ac0cd;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">src</span>(feats.Row(j2), 0, basic_feat_dim),
-<span style="color: #bebebe; font-weight: bold;">dest</span>(input_frames, j + left_context);
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">i</span> = 0; i &lt; feats.NumRows(); i++) {
+<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">count</span> = GetCount(keep_proportion); <span style="color: #b22222;">// </span><span style="color: #b22222;">number of times</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">we'll write this out (1 by default).</span>
+<span style="color: #a020f0;">if</span> (count &gt; 0) {
+<span style="color: #b22222;">// </span><span style="color: #b22222;">Set up "input_frames".</span>
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">j</span> = -left_context; j &lt;= right_context; j++) {
+<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">j2</span> = j + i;
+<span style="color: #a020f0;">if</span> (j2 &lt; 0) j2 = 0;
+<span style="color: #a020f0;">if</span> (j2 &gt;= feats.NumRows()) j2 = feats.NumRows() - 1;
+<span style="color: #228b22;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">src</span>(feats.Row(j2), 0, basic_feat_dim),
+<span style="color: #a0522d;">dest</span>(input_frames, j + left_context);
 dest.CopyFromVec(src);
 }
 eg.labels = pdf_post[i];
 eg.input_frames = input_frames;
-<span style="color: #40e0d0; font-weight: bold;">if</span> (const_feat_dim &gt; 0) {
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">we'll normally reach here if we're using online-estimated iVectors.</span>
-<span style="color: #9ac0cd;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">const_part</span>(feats.Row(i),
+<span style="color: #a020f0;">if</span> (const_feat_dim &gt; 0) {
+<span style="color: #b22222;">// </span><span style="color: #b22222;">we'll normally reach here if we're using online-estimated iVectors.</span>
+<span style="color: #228b22;">SubVector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">const_part</span>(feats.Row(i),
 basic_feat_dim, const_feat_dim);
 eg.spk_info.CopyFromVec(const_part);
 }
-<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">ostringstream</span> <span style="color: #bebebe; font-weight: bold;">os</span>;
-os &lt;&lt; utt_id &lt;&lt; <span style="color: #ff0000;">"-"</span> &lt;&lt; i;
+<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">ostringstream</span> <span style="color: #a0522d;">os</span>;
+os &lt;&lt; utt_id &lt;&lt; <span style="color: #8b2252;">"-"</span> &lt;&lt; i;
 
 
-<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">string</span> <span style="color: #bebebe; font-weight: bold;">key</span> = os.str(); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">key is &lt;utt_id&gt;-&lt;frame_id&gt;</span>
+<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">string</span> <span style="color: #a0522d;">key</span> = os.str(); <span style="color: #b22222;">// </span><span style="color: #b22222;">key is &lt;utt_id&gt;-&lt;frame_id&gt;</span>
 
 
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">c</span> = 0; c &lt; count; c++)
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">c</span> = 0; c &lt; count; c++)
 example_writer-&gt;Write(key, eg);
 }
 }
@@ -1051,25 +1051,25 @@ example_writer-&gt;Write(key, eg);
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">SetPriors</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">TransitionModel</span> &amp;<span style="color: #bebebe; font-weight: bold;">tmodel</span>,
-               <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Vector</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; &amp;<span style="color: #bebebe; font-weight: bold;">transition_accs</span>,
-               <span style="color: #9ac0cd;">double</span> <span style="color: #bebebe; font-weight: bold;">prior_floor</span>,
-               <span style="color: #9ac0cd;">AmNnet</span> *<span style="color: #bebebe; font-weight: bold;">am_nnet</span>) {
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">SetPriors</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">TransitionModel</span> &amp;<span style="color: #a0522d;">tmodel</span>,
+               <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Vector</span>&lt;<span style="color: #228b22;">double</span>&gt; &amp;<span style="color: #a0522d;">transition_accs</span>,
+               <span style="color: #228b22;">double</span> <span style="color: #a0522d;">prior_floor</span>,
+               <span style="color: #228b22;">AmNnet</span> *<span style="color: #a0522d;">am_nnet</span>) {
   KALDI_ASSERT(tmodel.NumPdfs() == am_nnet-&gt;NumPdfs());
-  <span style="color: #9ac0cd;">Vector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">pdf_counts</span>(tmodel.NumPdfs());
-  KALDI_ASSERT(transition_accs(0) == 0.0); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">There is</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">no zero transition-id.</span>
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">tid</span> = 1; tid &lt; transition_accs.Dim(); tid++) {
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">pdf</span> = tmodel.TransitionIdToPdf(tid);
+  <span style="color: #228b22;">Vector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">pdf_counts</span>(tmodel.NumPdfs());
+  KALDI_ASSERT(transition_accs(0) == 0.0); <span style="color: #b22222;">// </span><span style="color: #b22222;">There is</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">no zero transition-id.</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">tid</span> = 1; tid &lt; transition_accs.Dim(); tid++) {
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">pdf</span> = tmodel.TransitionIdToPdf(tid);
     pdf_counts(pdf) += transition_accs(tid);
   }
-  <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">sum</span> = pdf_counts.Sum();
+  <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">sum</span> = pdf_counts.Sum();
   KALDI_ASSERT(sum != 0.0);
   KALDI_ASSERT(prior_floor &gt; 0.0 &amp;&amp; prior_floor &lt; 1.0);
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#24402;&#19968;&#21270;</span>
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#24402;&#19968;&#21270;</span>
   pdf_counts.Scale(1.0 / sum);
   pdf_counts.ApplyFloor(prior_floor);
-  pdf_counts.Scale(1.0 / pdf_counts.Sum()); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">normalize again.</span>
+  pdf_counts.Scale(1.0 / pdf_counts.Sum()); <span style="color: #b22222;">// </span><span style="color: #b22222;">normalize again.</span>
   am_nnet-&gt;SetPriors(pdf_counts);
 }
 </pre>
@@ -1080,11 +1080,11 @@ example_writer-&gt;Write(key, eg);
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#40664;&#35748;minibatch(1024)&#65292;&#36798;&#21040;minibatch-size&#26102;&#22788;&#29702;</span>
-<span style="color: #9ac0cd;">NnetSimpleTrainer</span> <span style="color: #1e90ff; font-weight: bold;">trainer</span>(train_config,&amp;(am_nnet.GetNnet())); 
-<span style="color: #9ac0cd;">SequentialNnetExampleReader</span> <span style="color: #1e90ff; font-weight: bold;">example_reader</span>(examples_rspecifier); 
-<span style="color: #40e0d0; font-weight: bold;">for</span> (; !example_reader.Done(); example_reader.Next(), num_examples++) 
-    trainer.TrainOnExample(example_reader.Value()); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">It all happens here!</span>
+<pre class="src src-cpp"><span style="color: #b22222;">//</span><span style="color: #b22222;">&#40664;&#35748;minibatch(1024)&#65292;&#36798;&#21040;minibatch-size&#26102;&#22788;&#29702;</span>
+<span style="color: #228b22;">NnetSimpleTrainer</span> <span style="color: #0000ff;">trainer</span>(train_config,&amp;(am_nnet.GetNnet())); 
+<span style="color: #228b22;">SequentialNnetExampleReader</span> <span style="color: #0000ff;">example_reader</span>(examples_rspecifier); 
+<span style="color: #a020f0;">for</span> (; !example_reader.Done(); example_reader.Next(), num_examples++) 
+    trainer.TrainOnExample(example_reader.Value()); <span style="color: #b22222;">// </span><span style="color: #b22222;">It all happens here!</span>
 </pre>
 </div>
 <ul class="org-ul">
@@ -1424,10 +1424,10 @@ sil
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-sh">utils/make_lexicon_fst.pl --pron-probs $<span style="color: #bebebe; font-weight: bold;">tmpdir</span>/lexiconp.txt $<span style="color: #bebebe; font-weight: bold;">sil_prob</span> $<span style="color: #bebebe; font-weight: bold;">silphone</span> | <span style="color: #ff0000;">\</span>
-  fstcompile --isymbols=$<span style="color: #bebebe; font-weight: bold;">dir</span>/phones.txt --osymbols=$<span style="color: #bebebe; font-weight: bold;">dir</span>/words.txt <span style="color: #ff0000;">\</span>
-  --keep_isymbols=false --keep_osymbols=false | <span style="color: #ff0000;">\</span>
-   fstarcsort --sort_type=olabel &gt; $<span style="color: #bebebe; font-weight: bold;">dir</span>/L.fst || <span style="color: #40e0d0; font-weight: bold;">exit</span> 1;
+<pre class="src src-sh">utils/make_lexicon_fst.pl --pron-probs $<span style="color: #a0522d;">tmpdir</span>/lexiconp.txt $<span style="color: #a0522d;">sil_prob</span> $<span style="color: #a0522d;">silphone</span> | <span style="color: #8b2252;">\</span>
+  fstcompile --isymbols=$<span style="color: #a0522d;">dir</span>/phones.txt --osymbols=$<span style="color: #a0522d;">dir</span>/words.txt <span style="color: #8b2252;">\</span>
+  --keep_isymbols=false --keep_osymbols=false | <span style="color: #8b2252;">\</span>
+   fstarcsort --sort_type=olabel &gt; $<span style="color: #a0522d;">dir</span>/L.fst || <span style="color: #a020f0;">exit</span> 1;
 </pre>
 </div>
 <pre class="example">
@@ -1603,7 +1603,7 @@ FADG0_SI1909 /home/robin1001/kaldi/kaldi-trunk/egs/timit/s5/mfcc/raw_mfcc_dev.1.
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-sh">compute-cmvn-stats --spk2utt=ark:$<span style="color: #bebebe; font-weight: bold;">data</span>/spk2utt scp:$<span style="color: #bebebe; font-weight: bold;">data</span>/feats.scp ark,scp:$<span style="color: #bebebe; font-weight: bold;">cmvndir</span>/cmvn_$<span style="color: #bebebe; font-weight: bold;">name</span>.ark,$<span style="color: #bebebe; font-weight: bold;">cmvndir</span>/cmvn_$<span style="color: #bebebe; font-weight: bold;">name</span>.scp
+<pre class="src src-sh">compute-cmvn-stats --spk2utt=ark:$<span style="color: #a0522d;">data</span>/spk2utt scp:$<span style="color: #a0522d;">data</span>/feats.scp ark,scp:$<span style="color: #a0522d;">cmvndir</span>/cmvn_$<span style="color: #a0522d;">name</span>.ark,$<span style="color: #a0522d;">cmvndir</span>/cmvn_$<span style="color: #a0522d;">name</span>.scp
 </pre>
 </div>
 <pre class="example">
@@ -1762,22 +1762,22 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 </ol>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">SomeKaldiClass</span> {
- <span style="color: #40e0d0; font-weight: bold;">public</span>:
-   <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">Read</span>(<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">istream</span> &amp;<span style="color: #bebebe; font-weight: bold;">is</span>, <span style="color: #9ac0cd;">bool</span> <span style="color: #bebebe; font-weight: bold;">binary</span>);
-   <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">Write</span>(<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">ostream</span> &amp;<span style="color: #bebebe; font-weight: bold;">os</span>, <span style="color: #9ac0cd;">bool</span> <span style="color: #bebebe; font-weight: bold;">binary</span>) <span style="color: #40e0d0; font-weight: bold;">const</span>;
+<pre class="src src-cpp"><span style="color: #a020f0;">class</span> <span style="color: #228b22;">SomeKaldiClass</span> {
+ <span style="color: #a020f0;">public</span>:
+   <span style="color: #228b22;">void</span> <span style="color: #0000ff;">Read</span>(<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">istream</span> &amp;<span style="color: #a0522d;">is</span>, <span style="color: #228b22;">bool</span> <span style="color: #a0522d;">binary</span>);
+   <span style="color: #228b22;">void</span> <span style="color: #0000ff;">Write</span>(<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">ostream</span> &amp;<span style="color: #a0522d;">os</span>, <span style="color: #228b22;">bool</span> <span style="color: #a0522d;">binary</span>) <span style="color: #a020f0;">const</span>;
 };
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">read &amp; write</span>
-{ <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">input.</span>
-  <span style="color: #9ac0cd;">bool</span> <span style="color: #bebebe; font-weight: bold;">binary_in</span>;
-  <span style="color: #9ac0cd;">Input</span> <span style="color: #bebebe; font-weight: bold;">ki</span>(some_rxfilename, &amp;binary_in);
+<span style="color: #b22222;">//</span><span style="color: #b22222;">read &amp; write</span>
+{ <span style="color: #b22222;">// </span><span style="color: #b22222;">input.</span>
+  <span style="color: #228b22;">bool</span> <span style="color: #a0522d;">binary_in</span>;
+  <span style="color: #228b22;">Input</span> <span style="color: #a0522d;">ki</span>(some_rxfilename, &amp;binary_in);
   my_object.Read(ki.Stream(), binary_in);
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">you can have more than one object in a file:</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">you can have more than one object in a file:</span>
   my_other_object.Read(ki.Stream(), binary_in);
 }
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">output.  note, "binary" is probably a command-line option.</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">output.  note, "binary" is probably a command-line option.</span>
 {
-  <span style="color: #9ac0cd;">Output</span> <span style="color: #bebebe; font-weight: bold;">ko</span>(some_wxfilename, binary);
+  <span style="color: #228b22;">Output</span> <span style="color: #a0522d;">ko</span>(some_wxfilename, binary);
   my_object.Write(ko.Stream(), binary); 
 }
 </pre>
@@ -1785,7 +1785,8 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 <ol class="org-ol">
 <li>binary vs text: binary start '\0B'
 </li>
-<li></li>
+<li>ark,t: t in text format
+</li>
 </ol>
 </div>
 </div>
@@ -1804,12 +1805,12 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">Vector</span>&lt;<span style="color: #9ac0cd;">float</span>&gt; <span style="color: #1e90ff; font-weight: bold;">v</span>(10), <span style="color: #1e90ff; font-weight: bold;">w</span>(9);
-<span style="color: #40e0d0; font-weight: bold;">for</span>(<span style="color: #9ac0cd;">int</span> <span style="color: #bebebe; font-weight: bold;">i</span>=0; i &lt; 9; i++) {
+<pre class="src src-cpp"><span style="color: #228b22;">Vector</span>&lt;<span style="color: #228b22;">float</span>&gt; <span style="color: #0000ff;">v</span>(10), <span style="color: #0000ff;">w</span>(9);
+<span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int</span> <span style="color: #a0522d;">i</span>=0; i &lt; 9; i++) {
    v(i) = i; 
    w(i) = i+1;
 }
-<span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">float</span>&gt; <span style="color: #1e90ff; font-weight: bold;">M</span>(10,9);
+<span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">float</span>&gt; <span style="color: #0000ff;">M</span>(10,9);
 M.AddVecVec(1.0, v, w);
 </pre>
 </div>
@@ -1860,21 +1861,21 @@ M.AddVecVec(1.0, v, w);
 <div class="outline-text-4" id="text-3-6-1">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">KaldiLogMessage</span> {
- <span style="color: #40e0d0; font-weight: bold;">public</span>:
-  <span style="color: #40e0d0; font-weight: bold;">inline</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">ostream</span> &amp;<span style="color: #1e90ff; font-weight: bold;">stream</span>() { <span style="color: #40e0d0; font-weight: bold;">return</span> ss; }
-  <span style="color: #1e90ff; font-weight: bold;">KaldiLogMessage</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span> *<span style="color: #bebebe; font-weight: bold;">func</span>, <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span> *<span style="color: #bebebe; font-weight: bold;">file</span>, <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">line</span>);
-  ~<span style="color: #1e90ff; font-weight: bold;">KaldiLogMessage</span>() { fprintf(stderr, <span style="color: #ff0000;">"%s\n"</span>, ss.str().c_str()); }
- <span style="color: #40e0d0; font-weight: bold;">private</span>:
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">ostringstream</span> <span style="color: #bebebe; font-weight: bold;">ss</span>;
+<pre class="src src-cpp"><span style="color: #a020f0;">class</span> <span style="color: #228b22;">KaldiLogMessage</span> {
+ <span style="color: #a020f0;">public</span>:
+  <span style="color: #a020f0;">inline</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">ostream</span> &amp;<span style="color: #0000ff;">stream</span>() { <span style="color: #a020f0;">return</span> ss; }
+  <span style="color: #0000ff;">KaldiLogMessage</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span> *<span style="color: #a0522d;">func</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span> *<span style="color: #a0522d;">file</span>, <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">line</span>);
+  ~<span style="color: #0000ff;">KaldiLogMessage</span>() { fprintf(stderr, <span style="color: #8b2252;">"%s\n"</span>, ss.str().c_str()); }
+ <span style="color: #a020f0;">private</span>:
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">ostringstream</span> <span style="color: #a0522d;">ss</span>;
 };
 
-<span style="color: #ff6347; font-weight: bold;">#define</span> <span style="color: #bebebe; font-weight: bold;">KALDI_LOG</span> <span style="color: #ff6347; font-weight: bold;">kaldi</span>::<span style="color: #1e90ff; font-weight: bold;">KaldiLogMessage</span>(__func__, __FILE__, __LINE__).stream()
+<span style="color: #483d8b;">#define</span> <span style="color: #a0522d;">KALDI_LOG</span> <span style="color: #008b8b;">kaldi</span>::<span style="color: #0000ff;">KaldiLogMessage</span>(__func__, __FILE__, __LINE__).stream()
 
-<span style="color: #ff6347; font-weight: bold;">KaldiLogMessage</span>::<span style="color: #1e90ff; font-weight: bold;">KaldiLogMessage</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span> *<span style="color: #bebebe; font-weight: bold;">func</span>, <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span> *<span style="color: #bebebe; font-weight: bold;">file</span>,
-                                 <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">line</span>) {
-  <span style="color: #40e0d0; font-weight: bold;">this</span>-&gt;stream() &lt;&lt; <span style="color: #ff0000;">"LOG ("</span> &lt;&lt; GetProgramName() &lt;&lt; func &lt;&lt; <span style="color: #ff0000;">"():"</span>
-                 &lt;&lt; GetShortFileName(file) &lt;&lt; <span style="color: #ff0000;">':'</span> &lt;&lt; line &lt;&lt; <span style="color: #ff0000;">") "</span>;
+<span style="color: #008b8b;">KaldiLogMessage</span>::<span style="color: #0000ff;">KaldiLogMessage</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span> *<span style="color: #a0522d;">func</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span> *<span style="color: #a0522d;">file</span>,
+                                 <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">line</span>) {
+  <span style="color: #a020f0;">this</span>-&gt;stream() &lt;&lt; <span style="color: #8b2252;">"LOG ("</span> &lt;&lt; GetProgramName() &lt;&lt; func &lt;&lt; <span style="color: #8b2252;">"():"</span>
+                 &lt;&lt; GetShortFileName(file) &lt;&lt; <span style="color: #8b2252;">':'</span> &lt;&lt; line &lt;&lt; <span style="color: #8b2252;">") "</span>;
 }
 </pre>
 </div>
@@ -1900,131 +1901,131 @@ virtual int32 NumIndices();
 <div class="outline-text-4" id="text-3-7-2">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">Token</span> {
-   <span style="color: #40e0d0; font-weight: bold;">public</span>:
-    <span style="color: #9ac0cd;">Arc</span> <span style="color: #bebebe; font-weight: bold;">arc_</span>;
-    <span style="color: #9ac0cd;">Token</span> *<span style="color: #bebebe; font-weight: bold;">prev_</span>;
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">ref_count_</span>;
-    <span style="color: #9ac0cd;">Weight</span> <span style="color: #bebebe; font-weight: bold;">weight_</span>;
+<pre class="src src-cpp"><span style="color: #a020f0;">class</span> <span style="color: #228b22;">Token</span> {
+   <span style="color: #a020f0;">public</span>:
+    <span style="color: #228b22;">Arc</span> <span style="color: #a0522d;">arc_</span>;
+    <span style="color: #228b22;">Token</span> *<span style="color: #a0522d;">prev_</span>;
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">ref_count_</span>;
+    <span style="color: #228b22;">Weight</span> <span style="color: #a0522d;">weight_</span>;
     ...
 };
 
-<span style="color: #9ac0cd;">bool</span> <span style="color: #ff6347; font-weight: bold;">LatticeFasterDecoder</span>::<span style="color: #1e90ff; font-weight: bold;">Decode</span>(<span style="color: #9ac0cd;">DecodableInterface</span> *<span style="color: #bebebe; font-weight: bold;">decodable</span>) {
-    <span style="color: #40e0d0; font-weight: bold;">for</span>(<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">frame</span> = 0; !decodable.IsLastFrame(frame-1); frame++) {
+<span style="color: #228b22;">bool</span> <span style="color: #008b8b;">LatticeFasterDecoder</span>::<span style="color: #0000ff;">Decode</span>(<span style="color: #228b22;">DecodableInterface</span> *<span style="color: #a0522d;">decodable</span>) {
+    <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">frame</span> = 0; !decodable.IsLastFrame(frame-1); frame++) {
         ClearToks(prev_toks_);
-        <span style="color: #ff6347; font-weight: bold;">std</span>::swap(cur_toks_, prev_toks_);
+        <span style="color: #008b8b;">std</span>::swap(cur_toks_, prev_toks_);
         ProcessEmitting(decodable, frame);
         ProcessNonemitting();
         PruneToks(cur_toks_, beam_);
      }
 }
 
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Outputs an FST corresponding to the raw, state-level</span>
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">tracebacks.</span>
-<span style="color: #9ac0cd;">bool</span> <span style="color: #ff6347; font-weight: bold;">LatticeFasterDecoder</span>::<span style="color: #1e90ff; font-weight: bold;">GetRawLattice</span>(<span style="color: #ff6347; font-weight: bold;">fst</span>::<span style="color: #9ac0cd;">MutableFst</span>&lt;LatticeArc&gt; *<span style="color: #bebebe; font-weight: bold;">ofst</span>) <span style="color: #40e0d0; font-weight: bold;">const</span> {
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #9ac0cd;">LatticeArc</span> <span style="color: #9ac0cd;">Arc</span>;
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">StateId</span> <span style="color: #9ac0cd;">StateId</span>;
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">Weight</span> <span style="color: #9ac0cd;">Weight</span>;
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">Label</span> <span style="color: #9ac0cd;">Label</span>;
+<span style="color: #b22222;">// </span><span style="color: #b22222;">Outputs an FST corresponding to the raw, state-level</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">tracebacks.</span>
+<span style="color: #228b22;">bool</span> <span style="color: #008b8b;">LatticeFasterDecoder</span>::<span style="color: #0000ff;">GetRawLattice</span>(<span style="color: #008b8b;">fst</span>::<span style="color: #228b22;">MutableFst</span>&lt;LatticeArc&gt; *<span style="color: #a0522d;">ofst</span>) <span style="color: #a020f0;">const</span> {
+  <span style="color: #a020f0;">typedef</span> <span style="color: #228b22;">LatticeArc</span> <span style="color: #228b22;">Arc</span>;
+  <span style="color: #a020f0;">typedef</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">StateId</span> <span style="color: #228b22;">StateId</span>;
+  <span style="color: #a020f0;">typedef</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">Weight</span> <span style="color: #228b22;">Weight</span>;
+  <span style="color: #a020f0;">typedef</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">Label</span> <span style="color: #228b22;">Label</span>;
   ofst-&gt;DeleteStates();
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">num-frames plus one (since frames are one-based, and we have</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">an extra frame for the start-state).</span>
-  <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">num_frames</span> = active_toks_.size() - 1;
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">num-frames plus one (since frames are one-based, and we have</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">an extra frame for the start-state).</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_frames</span> = active_toks_.size() - 1;
   KALDI_ASSERT(num_frames &gt; 0);
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#29983;&#25104;token&#21040;id&#30340;&#26144;&#23556;&#65292; &#27599;&#19968;&#24103;&#19978;&#37117;&#26377;active token list&#65292;&#39034;&#24207;&#35775;&#38382;&#32534;&#21495;</span>
-  <span style="color: #9ac0cd;">unordered_map</span>&lt;<span style="color: #9ac0cd;">Token</span>*, <span style="color: #9ac0cd;">StateId</span>&gt; <span style="color: #bebebe; font-weight: bold;">tok_map</span>(num_toks_/2 + 3); <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">bucket count</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">First create all states.</span>
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">f</span> = 0; f &lt;= num_frames; f++) {
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (active_toks_[f].toks == <span style="color: #ff6347; font-weight: bold;">NULL</span>) {
-      KALDI_WARN &lt;&lt; <span style="color: #ff0000;">"GetRawLattice: no tokens active on frame "</span> &lt;&lt; f
-                 &lt;&lt; <span style="color: #ff0000;">": not producing lattice.\n"</span>;
-      <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">false</span>;
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#29983;&#25104;token&#21040;id&#30340;&#26144;&#23556;&#65292; &#27599;&#19968;&#24103;&#19978;&#37117;&#26377;active token list&#65292;&#39034;&#24207;&#35775;&#38382;&#32534;&#21495;</span>
+  <span style="color: #228b22;">unordered_map</span>&lt;<span style="color: #228b22;">Token</span>*, <span style="color: #228b22;">StateId</span>&gt; <span style="color: #a0522d;">tok_map</span>(num_toks_/2 + 3); <span style="color: #b22222;">// </span><span style="color: #b22222;">bucket count</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">First create all states.</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">f</span> = 0; f &lt;= num_frames; f++) {
+    <span style="color: #a020f0;">if</span> (active_toks_[f].toks == <span style="color: #008b8b;">NULL</span>) {
+      KALDI_WARN &lt;&lt; <span style="color: #8b2252;">"GetRawLattice: no tokens active on frame "</span> &lt;&lt; f
+                 &lt;&lt; <span style="color: #8b2252;">": not producing lattice.\n"</span>;
+      <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">false</span>;
     }
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">Token</span> *<span style="color: #bebebe; font-weight: bold;">tok</span> = active_toks_[f].toks; tok != <span style="color: #ff6347; font-weight: bold;">NULL</span>; tok = tok-&gt;next)
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">Token</span> *<span style="color: #a0522d;">tok</span> = active_toks_[f].toks; tok != <span style="color: #008b8b;">NULL</span>; tok = tok-&gt;next)
       tok_map[tok] = ofst-&gt;AddState();
   }
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Now create all arcs&#65292;&#25353;&#29031;token&#20043;&#38388;&#36339;&#36716;&#20851;&#31995;&#21152;&#19978;&#24359;Arc&#65292;&#26377;&#27809;&#26377;&#36229;&#32423;&#31616;&#21333;&#21834;&#65292;fst&#23601;&#26159;&#22909;</span>
-  <span style="color: #9ac0cd;">StateId</span> <span style="color: #bebebe; font-weight: bold;">cur_state</span> = 0; <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">we rely on the fact that we numbered these</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">consecutively (AddState() returns the numbers in order..)</span>
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">f</span> = 0; f &lt;= num_frames; f++) {
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">Token</span> *<span style="color: #bebebe; font-weight: bold;">tok</span> = active_toks_[f].toks; tok != <span style="color: #ff6347; font-weight: bold;">NULL</span>; tok = tok-&gt;next,
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">Now create all arcs&#65292;&#25353;&#29031;token&#20043;&#38388;&#36339;&#36716;&#20851;&#31995;&#21152;&#19978;&#24359;Arc&#65292;&#26377;&#27809;&#26377;&#36229;&#32423;&#31616;&#21333;&#21834;&#65292;fst&#23601;&#26159;&#22909;</span>
+  <span style="color: #228b22;">StateId</span> <span style="color: #a0522d;">cur_state</span> = 0; <span style="color: #b22222;">// </span><span style="color: #b22222;">we rely on the fact that we numbered these</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">consecutively (AddState() returns the numbers in order..)</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">f</span> = 0; f &lt;= num_frames; f++) {
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">Token</span> *<span style="color: #a0522d;">tok</span> = active_toks_[f].toks; tok != <span style="color: #008b8b;">NULL</span>; tok = tok-&gt;next,
              cur_state++) {
-      <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">ForwardLink</span> *<span style="color: #bebebe; font-weight: bold;">l</span> = tok-&gt;links;
-           l != <span style="color: #ff6347; font-weight: bold;">NULL</span>;
+      <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">ForwardLink</span> *<span style="color: #a0522d;">l</span> = tok-&gt;links;
+           l != <span style="color: #008b8b;">NULL</span>;
            l = l-&gt;next) {
-        <span style="color: #ff6347; font-weight: bold;">unordered_map</span>&lt;<span style="color: #9ac0cd;">Token</span>*, <span style="color: #9ac0cd;">StateId</span>&gt;::<span style="color: #9ac0cd;">const_iterator</span> <span style="color: #bebebe; font-weight: bold;">iter</span> =
+        <span style="color: #008b8b;">unordered_map</span>&lt;<span style="color: #228b22;">Token</span>*, <span style="color: #228b22;">StateId</span>&gt;::<span style="color: #228b22;">const_iterator</span> <span style="color: #a0522d;">iter</span> =
             tok_map.find(l-&gt;next_tok);
-        <span style="color: #9ac0cd;">StateId</span> <span style="color: #bebebe; font-weight: bold;">nextstate</span> = iter-&gt;second;
+        <span style="color: #228b22;">StateId</span> <span style="color: #a0522d;">nextstate</span> = iter-&gt;second;
         KALDI_ASSERT(iter != tok_map.end());
-        <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">cost_offset</span> = 0.0;
-        <span style="color: #40e0d0; font-weight: bold;">if</span> (l-&gt;ilabel != 0) { <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">emitting..</span>
+        <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">cost_offset</span> = 0.0;
+        <span style="color: #a020f0;">if</span> (l-&gt;ilabel != 0) { <span style="color: #b22222;">// </span><span style="color: #b22222;">emitting..</span>
           KALDI_ASSERT(f &gt;= 0 &amp;&amp; f &lt; cost_offsets_.size());
           cost_offset = cost_offsets_[f];
         }
-        <span style="color: #9ac0cd;">Arc</span> <span style="color: #bebebe; font-weight: bold;">arc</span>(l-&gt;ilabel, l-&gt;olabel,
+        <span style="color: #228b22;">Arc</span> <span style="color: #a0522d;">arc</span>(l-&gt;ilabel, l-&gt;olabel,
                 Weight(l-&gt;graph_cost, l-&gt;acoustic_cost - cost_offset),
                 nextstate);
         ofst-&gt;AddArc(cur_state, arc);
       }
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (f == num_frames) {
-        <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #ff6347; font-weight: bold;">map</span>&lt;<span style="color: #9ac0cd;">Token</span>*, <span style="color: #9ac0cd;">BaseFloat</span>&gt;::<span style="color: #9ac0cd;">const_iterator</span> <span style="color: #bebebe; font-weight: bold;">iter</span> =
+      <span style="color: #a020f0;">if</span> (f == num_frames) {
+        <span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">map</span>&lt;<span style="color: #228b22;">Token</span>*, <span style="color: #228b22;">BaseFloat</span>&gt;::<span style="color: #228b22;">const_iterator</span> <span style="color: #a0522d;">iter</span> =
             final_costs_.find(tok);
-        <span style="color: #40e0d0; font-weight: bold;">if</span> (iter != final_costs_.end())
+        <span style="color: #a020f0;">if</span> (iter != final_costs_.end())
           ofst-&gt;SetFinal(cur_state, LatticeWeight(iter-&gt;second, 0));
       }
     }
   }
   KALDI_ASSERT(cur_state == ofst-&gt;NumStates());
-  <span style="color: #40e0d0; font-weight: bold;">return</span> (cur_state != 0);
+  <span style="color: #a020f0;">return</span> (cur_state != 0);
 }
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#20808;&#35745;&#31639;raw lattice&#65292;&#28982;&#21518;&#29983;&#25104;&#26368;&#30701;&#36335;&#24452;&#30340;lattice</span>
-<span style="color: #9ac0cd;">bool</span> <span style="color: #ff6347; font-weight: bold;">LatticeFasterDecoder</span>::<span style="color: #1e90ff; font-weight: bold;">GetBestPath</span>(<span style="color: #ff6347; font-weight: bold;">fst</span>::<span style="color: #9ac0cd;">MutableFst</span>&lt;<span style="color: #9ac0cd;">LatticeArc</span>&gt; *<span style="color: #bebebe; font-weight: bold;">ofst</span>) <span style="color: #40e0d0; font-weight: bold;">const</span> {
-  <span style="color: #ff6347; font-weight: bold;">fst</span>::<span style="color: #9ac0cd;">VectorFst</span>&lt;<span style="color: #9ac0cd;">LatticeArc</span>&gt; <span style="color: #bebebe; font-weight: bold;">fst</span>;
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (!GetRawLattice(&amp;fst)) <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">false</span>;
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">std::cout &lt;&lt; "Raw lattice is:\n";</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">fst::FstPrinter&lt;LatticeArc&gt; fstprinter(fst, NULL, NULL, NULL, false, true);</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">fstprinter.Print(&amp;std::cout, "standard output");</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#20808;&#35745;&#31639;raw lattice&#65292;&#28982;&#21518;&#29983;&#25104;&#26368;&#30701;&#36335;&#24452;&#30340;lattice</span>
+<span style="color: #228b22;">bool</span> <span style="color: #008b8b;">LatticeFasterDecoder</span>::<span style="color: #0000ff;">GetBestPath</span>(<span style="color: #008b8b;">fst</span>::<span style="color: #228b22;">MutableFst</span>&lt;<span style="color: #228b22;">LatticeArc</span>&gt; *<span style="color: #a0522d;">ofst</span>) <span style="color: #a020f0;">const</span> {
+  <span style="color: #008b8b;">fst</span>::<span style="color: #228b22;">VectorFst</span>&lt;<span style="color: #228b22;">LatticeArc</span>&gt; <span style="color: #a0522d;">fst</span>;
+  <span style="color: #a020f0;">if</span> (!GetRawLattice(&amp;fst)) <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">false</span>;
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">std::cout &lt;&lt; "Raw lattice is:\n";</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">fst::FstPrinter&lt;LatticeArc&gt; fstprinter(fst, NULL, NULL, NULL, false, true);</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">fstprinter.Print(&amp;std::cout, "standard output");</span>
   ShortestPath(fst, ofst);
-  <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">true</span>;
+  <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">true</span>;
 }
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#30001;&#26368;&#30701;&#36335;&#24452;&#24471;&#21040;&#30340;fst&#65292;&#20854;ilabel&#23601;&#26159;alignment&#65292; &#20854;olabel&#23601;&#26159;words</span>
-<span style="color: #9ac0cd;">bool</span> <span style="color: #1e90ff; font-weight: bold;">GetLinearSymbolSequence</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Fst</span>&lt;<span style="color: #9ac0cd;">Arc</span>&gt; &amp;<span style="color: #bebebe; font-weight: bold;">fst</span>,
-                             <span style="color: #9ac0cd;">vector</span>&lt;I&gt; *<span style="color: #bebebe; font-weight: bold;">isymbols_out</span>,
-                             <span style="color: #9ac0cd;">vector</span>&lt;I&gt; *<span style="color: #bebebe; font-weight: bold;">osymbols_out</span>,
-                             <span style="color: #40e0d0; font-weight: bold;">typename</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">Weight</span> *<span style="color: #bebebe; font-weight: bold;">tot_weight_out</span>) {
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #40e0d0; font-weight: bold;">typename</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">Label</span> <span style="color: #9ac0cd;">Label</span>;
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #40e0d0; font-weight: bold;">typename</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">StateId</span> <span style="color: #9ac0cd;">StateId</span>;
-  <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #40e0d0; font-weight: bold;">typename</span> <span style="color: #ff6347; font-weight: bold;">Arc</span>::<span style="color: #9ac0cd;">Weight</span> <span style="color: #9ac0cd;">Weight</span>;
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#30001;&#26368;&#30701;&#36335;&#24452;&#24471;&#21040;&#30340;fst&#65292;&#20854;ilabel&#23601;&#26159;alignment&#65292; &#20854;olabel&#23601;&#26159;words</span>
+<span style="color: #228b22;">bool</span> <span style="color: #0000ff;">GetLinearSymbolSequence</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">Fst</span>&lt;<span style="color: #228b22;">Arc</span>&gt; &amp;<span style="color: #a0522d;">fst</span>,
+                             <span style="color: #228b22;">vector</span>&lt;I&gt; *<span style="color: #a0522d;">isymbols_out</span>,
+                             <span style="color: #228b22;">vector</span>&lt;I&gt; *<span style="color: #a0522d;">osymbols_out</span>,
+                             <span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">Weight</span> *<span style="color: #a0522d;">tot_weight_out</span>) {
+  <span style="color: #a020f0;">typedef</span> <span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">Label</span> <span style="color: #228b22;">Label</span>;
+  <span style="color: #a020f0;">typedef</span> <span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">StateId</span> <span style="color: #228b22;">StateId</span>;
+  <span style="color: #a020f0;">typedef</span> <span style="color: #a020f0;">typename</span> <span style="color: #008b8b;">Arc</span>::<span style="color: #228b22;">Weight</span> <span style="color: #228b22;">Weight</span>;
 
-  <span style="color: #9ac0cd;">Weight</span> <span style="color: #bebebe; font-weight: bold;">tot_weight</span> = <span style="color: #ff6347; font-weight: bold;">Weight</span>::One();
-  <span style="color: #9ac0cd;">vector</span>&lt;I&gt; <span style="color: #bebebe; font-weight: bold;">ilabel_seq</span>;
-  <span style="color: #9ac0cd;">vector</span>&lt;I&gt; <span style="color: #bebebe; font-weight: bold;">olabel_seq</span>;
+  <span style="color: #228b22;">Weight</span> <span style="color: #a0522d;">tot_weight</span> = <span style="color: #008b8b;">Weight</span>::One();
+  <span style="color: #228b22;">vector</span>&lt;I&gt; <span style="color: #a0522d;">ilabel_seq</span>;
+  <span style="color: #228b22;">vector</span>&lt;I&gt; <span style="color: #a0522d;">olabel_seq</span>;
 
-  <span style="color: #9ac0cd;">StateId</span> <span style="color: #bebebe; font-weight: bold;">cur_state</span> = fst.Start();
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (cur_state == kNoStateId) {  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">empty sequence.</span>
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (isymbols_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) isymbols_out-&gt;clear();
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (osymbols_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) osymbols_out-&gt;clear();
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (tot_weight_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) *tot_weight_out = <span style="color: #ff6347; font-weight: bold;">Weight</span>::Zero();
-    <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">true</span>;
+  <span style="color: #228b22;">StateId</span> <span style="color: #a0522d;">cur_state</span> = fst.Start();
+  <span style="color: #a020f0;">if</span> (cur_state == kNoStateId) {  <span style="color: #b22222;">// </span><span style="color: #b22222;">empty sequence.</span>
+    <span style="color: #a020f0;">if</span> (isymbols_out != <span style="color: #008b8b;">NULL</span>) isymbols_out-&gt;clear();
+    <span style="color: #a020f0;">if</span> (osymbols_out != <span style="color: #008b8b;">NULL</span>) osymbols_out-&gt;clear();
+    <span style="color: #a020f0;">if</span> (tot_weight_out != <span style="color: #008b8b;">NULL</span>) *tot_weight_out = <span style="color: #008b8b;">Weight</span>::Zero();
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">true</span>;
   }
-  <span style="color: #40e0d0; font-weight: bold;">while</span> (1) {
-    <span style="color: #9ac0cd;">Weight</span> <span style="color: #bebebe; font-weight: bold;">w</span> = fst.Final(cur_state);
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (w != <span style="color: #ff6347; font-weight: bold;">Weight</span>::Zero()) {  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">is final..</span>
+  <span style="color: #a020f0;">while</span> (1) {
+    <span style="color: #228b22;">Weight</span> <span style="color: #a0522d;">w</span> = fst.Final(cur_state);
+    <span style="color: #a020f0;">if</span> (w != <span style="color: #008b8b;">Weight</span>::Zero()) {  <span style="color: #b22222;">// </span><span style="color: #b22222;">is final..</span>
       tot_weight = Times(w, tot_weight);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (fst.NumArcs(cur_state) != 0) <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">false</span>;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (isymbols_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) *isymbols_out = ilabel_seq;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (osymbols_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) *osymbols_out = olabel_seq;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (tot_weight_out != <span style="color: #ff6347; font-weight: bold;">NULL</span>) *tot_weight_out = tot_weight;
-      <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">true</span>;
-    } <span style="color: #40e0d0; font-weight: bold;">else</span> {
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (fst.NumArcs(cur_state) != 1) <span style="color: #40e0d0; font-weight: bold;">return</span> <span style="color: #ff6347; font-weight: bold;">false</span>; <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#20160;&#20040;&#24847;&#24605;&#65292;&#22240;&#20026;&#36825;&#26159;&#26368;&#30701;&#36335;&#24452;&#30340;lattice</span>
+      <span style="color: #a020f0;">if</span> (fst.NumArcs(cur_state) != 0) <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">false</span>;
+      <span style="color: #a020f0;">if</span> (isymbols_out != <span style="color: #008b8b;">NULL</span>) *isymbols_out = ilabel_seq;
+      <span style="color: #a020f0;">if</span> (osymbols_out != <span style="color: #008b8b;">NULL</span>) *osymbols_out = olabel_seq;
+      <span style="color: #a020f0;">if</span> (tot_weight_out != <span style="color: #008b8b;">NULL</span>) *tot_weight_out = tot_weight;
+      <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">true</span>;
+    } <span style="color: #a020f0;">else</span> {
+      <span style="color: #a020f0;">if</span> (fst.NumArcs(cur_state) != 1) <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">false</span>; <span style="color: #b22222;">//</span><span style="color: #b22222;">&#20160;&#20040;&#24847;&#24605;&#65292;&#22240;&#20026;&#36825;&#26159;&#26368;&#30701;&#36335;&#24452;&#30340;lattice</span>
 
-      <span style="color: #9ac0cd;">ArcIterator</span>&lt;<span style="color: #9ac0cd;">Fst</span>&lt;<span style="color: #9ac0cd;">Arc</span>&gt; &gt; <span style="color: #bebebe; font-weight: bold;">iter</span>(fst, cur_state);  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">get the only arc.</span>
-      <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Arc</span> &amp;<span style="color: #bebebe; font-weight: bold;">arc</span> = iter.Value();
+      <span style="color: #228b22;">ArcIterator</span>&lt;<span style="color: #228b22;">Fst</span>&lt;<span style="color: #228b22;">Arc</span>&gt; &gt; <span style="color: #a0522d;">iter</span>(fst, cur_state);  <span style="color: #b22222;">// </span><span style="color: #b22222;">get the only arc.</span>
+      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Arc</span> &amp;<span style="color: #a0522d;">arc</span> = iter.Value();
       tot_weight = Times(arc.weight, tot_weight);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (arc.ilabel != 0) ilabel_seq.push_back(arc.ilabel);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (arc.olabel != 0) olabel_seq.push_back(arc.olabel);
+      <span style="color: #a020f0;">if</span> (arc.ilabel != 0) ilabel_seq.push_back(arc.ilabel);
+      <span style="color: #a020f0;">if</span> (arc.olabel != 0) olabel_seq.push_back(arc.olabel);
       cur_state = arc.nextstate;
     }
   }
@@ -2088,15 +2089,15 @@ virtual int32 NumIndices();
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">struct</span> <span style="color: #9ac0cd;">HmmState</span> {
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">pdf_class</span>;
-    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;<span style="color: #9ac0cd;">int32</span>, BaseFloat&gt; &gt; <span style="color: #bebebe; font-weight: bold;">transitions</span>;
+<pre class="src src-cpp"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">HmmState</span> {
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">pdf_class</span>;
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;<span style="color: #228b22;">int32</span>, BaseFloat&gt; &gt; <span style="color: #a0522d;">transitions</span>;
 };
-<span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">HmmState</span>&gt; <span style="color: #9ac0cd;">TopologyEntry</span>;
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">HmmTopology</span>{
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; <span style="color: #bebebe; font-weight: bold;">phones_</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">&#25490;&#24207;&#30340;&#38899;&#32032;topo&#38598;&#21512;</span>
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; <span style="color: #bebebe; font-weight: bold;">phone2idx_</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">&#38899;&#32032;&#21040;hmm topo&#32467;&#26500;&#30340;&#26144;&#23556;</span>
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">TopologyEntry</span>&gt; <span style="color: #bebebe; font-weight: bold;">entries_</span>; <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">topo</span>
+<span style="color: #a020f0;">typedef</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">HmmState</span>&gt; <span style="color: #228b22;">TopologyEntry</span>;
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">HmmTopology</span>{
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">phones_</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">&#25490;&#24207;&#30340;&#38899;&#32032;topo&#38598;&#21512;</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">phone2idx_</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">&#38899;&#32032;&#21040;hmm topo&#32467;&#26500;&#30340;&#26144;&#23556;</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">TopologyEntry</span>&gt; <span style="color: #a0522d;">entries_</span>; <span style="color: #b22222;">//</span><span style="color: #b22222;">topo</span>
 };
 </pre>
 </div>
@@ -2287,15 +2288,15 @@ MaxResult: 共多少个节点，返回最大节点编号
 <div class="outline-text-4" id="text-3-10-2">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">GaussClusterable</span>: <span style="color: #40e0d0; font-weight: bold;">public</span> <span style="color: #9ac0cd;">Clusterable</span> {
-<span style="color: #40e0d0; font-weight: bold;">public</span>:
-<span style="color: #40e0d0; font-weight: bold;">virtual</span> <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">Add</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Clusterable</span> &amp;<span style="color: #bebebe; font-weight: bold;">other_in</span>);
-<span style="color: #40e0d0; font-weight: bold;">virtual</span> <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">Sub</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Clusterable</span> &amp;<span style="color: #bebebe; font-weight: bold;">other_in</span>);
-<span style="color: #40e0d0; font-weight: bold;">virtual</span> <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #1e90ff; font-weight: bold;">Normalizer</span>() <span style="color: #40e0d0; font-weight: bold;">const</span> { <span style="color: #40e0d0; font-weight: bold;">return</span> count_; }
-<span style="color: #40e0d0; font-weight: bold;">virtual</span> <span style="color: #9ac0cd;">Clusterable</span> *<span style="color: #1e90ff; font-weight: bold;">Copy</span>() <span style="color: #40e0d0; font-weight: bold;">const</span>;
-<span style="color: #9ac0cd;">double</span> <span style="color: #bebebe; font-weight: bold;">count_</span>;
-<span style="color: #9ac0cd;">Matrix</span>&lt;<span style="color: #9ac0cd;">double</span>&gt; <span style="color: #bebebe; font-weight: bold;">stats_</span>; <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">two rows: sum, then sum-squared.</span>
-<span style="color: #9ac0cd;">double</span> <span style="color: #bebebe; font-weight: bold;">var_floor_</span>; <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">should be common for all objects created.</span>
+<pre class="src src-cpp"><span style="color: #a020f0;">class</span> <span style="color: #228b22;">GaussClusterable</span>: <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Clusterable</span> {
+<span style="color: #a020f0;">public</span>:
+<span style="color: #a020f0;">virtual</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">Add</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">Clusterable</span> &amp;<span style="color: #a0522d;">other_in</span>);
+<span style="color: #a020f0;">virtual</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">Sub</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">Clusterable</span> &amp;<span style="color: #a0522d;">other_in</span>);
+<span style="color: #a020f0;">virtual</span> <span style="color: #228b22;">BaseFloat</span> <span style="color: #0000ff;">Normalizer</span>() <span style="color: #a020f0;">const</span> { <span style="color: #a020f0;">return</span> count_; }
+<span style="color: #a020f0;">virtual</span> <span style="color: #228b22;">Clusterable</span> *<span style="color: #0000ff;">Copy</span>() <span style="color: #a020f0;">const</span>;
+<span style="color: #228b22;">double</span> <span style="color: #a0522d;">count_</span>;
+<span style="color: #228b22;">Matrix</span>&lt;<span style="color: #228b22;">double</span>&gt; <span style="color: #a0522d;">stats_</span>; <span style="color: #b22222;">// </span><span style="color: #b22222;">two rows: sum, then sum-squared.</span>
+<span style="color: #228b22;">double</span> <span style="color: #a0522d;">var_floor_</span>; <span style="color: #b22222;">// </span><span style="color: #b22222;">should be common for all objects created.</span>
 </pre>
 </div>
 </div>
@@ -2327,50 +2328,50 @@ MaxResult: 共多少个节点，返回最大节点编号
 </div><ol class="org-ol"><li><a id="sec-3-10-4-0-1" name="sec-3-10-4-0-1"></a>acc-tree-stats<br  /><div class="outline-text-6" id="text-3-10-4-0-1">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int</span> <span style="color: #bebebe; font-weight: bold;">i</span> = -N; <span style="color: #9ac0cd;">i</span> &lt; <span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;<span style="color: #9ac0cd;">int</span>&gt;(split_alignment.size()); i++) {
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">consider window starting at i, only if i+P is within</span>
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">list of phones.</span>
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (i + P &gt;= 0 &amp;&amp; i + <span style="color: #9ac0cd;">P</span> &lt; <span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;<span style="color: #9ac0cd;">int</span>&gt;(split_alignment.size())) {
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">central_phone</span> =
+<pre class="src src-cpp"><span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int</span> <span style="color: #a0522d;">i</span> = -N; <span style="color: #228b22;">i</span> &lt; <span style="color: #a020f0;">static_cast</span>&lt;<span style="color: #228b22;">int</span>&gt;(split_alignment.size()); i++) {
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">consider window starting at i, only if i+P is within</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">list of phones.</span>
+  <span style="color: #a020f0;">if</span> (i + P &gt;= 0 &amp;&amp; i + <span style="color: #228b22;">P</span> &lt; <span style="color: #a020f0;">static_cast</span>&lt;<span style="color: #228b22;">int</span>&gt;(split_alignment.size())) {
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">central_phone</span> =
         MapPhone(phone_map,
                  trans_model.TransitionIdToPhone(split_alignment[i+P][0]));
-    <span style="color: #9ac0cd;">bool</span> <span style="color: #bebebe; font-weight: bold;">is_ctx_dep</span> = ! <span style="color: #ff6347; font-weight: bold;">std</span>::binary_search(ci_phones.begin(),
+    <span style="color: #228b22;">bool</span> <span style="color: #a0522d;">is_ctx_dep</span> = ! <span style="color: #008b8b;">std</span>::binary_search(ci_phones.begin(),
                                            ci_phones.end(),
                                            central_phone);
-    <span style="color: #9ac0cd;">EventType</span> <span style="color: #bebebe; font-weight: bold;">evec</span>;
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int</span> <span style="color: #bebebe; font-weight: bold;">j</span> = 0; j &lt; N; j++) {
-      <span style="color: #9ac0cd;">int</span> <span style="color: #bebebe; font-weight: bold;">phone</span>;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (i + j &gt;= 0 &amp;&amp; i + <span style="color: #9ac0cd;">j</span> &lt; <span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;<span style="color: #9ac0cd;">int</span>&gt;(split_alignment.size()))
+    <span style="color: #228b22;">EventType</span> <span style="color: #a0522d;">evec</span>;
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int</span> <span style="color: #a0522d;">j</span> = 0; j &lt; N; j++) {
+      <span style="color: #228b22;">int</span> <span style="color: #a0522d;">phone</span>;
+      <span style="color: #a020f0;">if</span> (i + j &gt;= 0 &amp;&amp; i + <span style="color: #228b22;">j</span> &lt; <span style="color: #a020f0;">static_cast</span>&lt;<span style="color: #228b22;">int</span>&gt;(split_alignment.size()))
         phone =
             MapPhone(phone_map,
                      trans_model.TransitionIdToPhone(split_alignment[i+j][0]));
-      <span style="color: #40e0d0; font-weight: bold;">else</span>
-        phone = 0;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">ContextDependency class uses 0 to mean "out of window";</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">we also set the phone arbitrarily to 0</span>
+      <span style="color: #a020f0;">else</span>
+        phone = 0;  <span style="color: #b22222;">// </span><span style="color: #b22222;">ContextDependency class uses 0 to mean "out of window";</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">we also set the phone arbitrarily to 0</span>
 
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Don't add stuff to the event that we don't "allow" to be asked, due</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">to the central phone being context-independent: check "is_ctx_dep".</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Why not just set the value to zero in this</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">case?  It's for safety.  By omitting the key from the event, we</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">ensure that there is no way a question can ever be asked that might</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">give an inconsistent answer in tree-training versus graph-building.</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">[setting it to zero would have the same effect given the "normal"</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">recipe but might be less robust to changes in tree-building recipe].</span>
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (is_ctx_dep || j == P)
-        evec.push_back(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(<span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;EventKeyType&gt;(j), <span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;EventValueType&gt;(phone)));
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">Don't add stuff to the event that we don't "allow" to be asked, due</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">to the central phone being context-independent: check "is_ctx_dep".</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">Why not just set the value to zero in this</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">case?  It's for safety.  By omitting the key from the event, we</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">ensure that there is no way a question can ever be asked that might</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">give an inconsistent answer in tree-training versus graph-building.</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">[setting it to zero would have the same effect given the "normal"</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">recipe but might be less robust to changes in tree-building recipe].</span>
+      <span style="color: #a020f0;">if</span> (is_ctx_dep || j == P)
+        evec.push_back(<span style="color: #008b8b;">std</span>::make_pair(<span style="color: #a020f0;">static_cast</span>&lt;EventKeyType&gt;(j), <span style="color: #a020f0;">static_cast</span>&lt;EventValueType&gt;(phone)));
     }
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int</span> <span style="color: #bebebe; font-weight: bold;">j</span> = 0; <span style="color: #9ac0cd;">j</span> &lt; <span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;<span style="color: #9ac0cd;">int</span>&gt;(split_alignment[i+P].size());j++) {
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">for central phone of this window...</span>
-      <span style="color: #9ac0cd;">EventType</span> <span style="color: #bebebe; font-weight: bold;">evec_more</span>(evec);
-      <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">pdf_class</span> = trans_model.TransitionIdToPdfClass(split_alignment[i+P][j]);
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">pdf_class will normally by 0, 1 or 2 for 3-state HMM.</span>
-      <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;EventKeyType, EventValueType&gt; <span style="color: #bebebe; font-weight: bold;">pr</span>(kPdfClass, pdf_class);
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int</span> <span style="color: #a0522d;">j</span> = 0; <span style="color: #228b22;">j</span> &lt; <span style="color: #a020f0;">static_cast</span>&lt;<span style="color: #228b22;">int</span>&gt;(split_alignment[i+P].size());j++) {
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">for central phone of this window...</span>
+      <span style="color: #228b22;">EventType</span> <span style="color: #a0522d;">evec_more</span>(evec);
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">pdf_class</span> = trans_model.TransitionIdToPdfClass(split_alignment[i+P][j]);
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">pdf_class will normally by 0, 1 or 2 for 3-state HMM.</span>
+      <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;EventKeyType, EventValueType&gt; <span style="color: #a0522d;">pr</span>(kPdfClass, pdf_class);
       evec_more.push_back(pr);
-      <span style="color: #ff6347; font-weight: bold;">std</span>::sort(evec_more.begin(), evec_more.end());  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">these must be sorted!</span>
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (stats-&gt;count(evec_more) == 0)
-        (*stats)[evec_more] = <span style="color: #40e0d0; font-weight: bold;">new</span> <span style="color: #9ac0cd;">GaussClusterable</span>(dim, var_floor);
+      <span style="color: #008b8b;">std</span>::sort(evec_more.begin(), evec_more.end());  <span style="color: #b22222;">// </span><span style="color: #b22222;">these must be sorted!</span>
+      <span style="color: #a020f0;">if</span> (stats-&gt;count(evec_more) == 0)
+        (*stats)[evec_more] = <span style="color: #a020f0;">new</span> <span style="color: #228b22;">GaussClusterable</span>(dim, var_floor);
 
-      <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">weight</span> = 1.0;
+      <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">weight</span> = 1.0;
       (*stats)[evec_more]-&gt;AddStats(features.Row(cur_pos), weight);
       cur_pos++;
     }
@@ -2383,62 +2384,62 @@ MaxResult: 共多少个节点，返回最大节点编号
 <li><a id="sec-3-10-4-0-2" name="sec-3-10-4-0-2"></a>cluster-phones<br  /><div class="outline-text-6" id="text-3-10-4-0-2">
 <div class="org-src-container">
 
-<pre class="src src-cpp">  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">split by phone,&#26681;&#25454;&#20013;&#38388;&#38899;&#32032;&#20998;&#31867;&#65292;&#24182;&#32479;&#35745;</span>
+<pre class="src src-cpp">  <span style="color: #b22222;">// </span><span style="color: #b22222;">split by phone,&#26681;&#25454;&#20013;&#38388;&#38899;&#32032;&#20998;&#31867;&#65292;&#24182;&#32479;&#35745;</span>
   SplitStatsByKey(retained_stats, P, &amp;split_stats);
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">Clusterable</span>*&gt; <span style="color: #bebebe; font-weight: bold;">summed_stats</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">summed up by phone.</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">Clusterable</span>*&gt; <span style="color: #a0522d;">summed_stats</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">summed up by phone.</span>
   SumStatsVec(split_stats, &amp;summed_stats);
-  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">&#26641;&#32858;&#31867;</span>
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;int32&gt; <span style="color: #bebebe; font-weight: bold;">assignments</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">assignment of phones to clusters. dim == summed_stats.size().</span>
-  <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;int32&gt; <span style="color: #bebebe; font-weight: bold;">clust_assignments</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Parent of each cluster.  Dim == #clusters.</span>
-  <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">num_leaves</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">number of leaf-level clusters.</span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">&#26641;&#32858;&#31867;</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;int32&gt; <span style="color: #a0522d;">assignments</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">assignment of phones to clusters. dim == summed_stats.size().</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;int32&gt; <span style="color: #a0522d;">clust_assignments</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">Parent of each cluster.  Dim == #clusters.</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_leaves</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">number of leaf-level clusters.</span>
   TreeCluster(summed_stats_per_set,
-              summed_stats_per_set.size(),  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">max-#clust is all of the points.</span>
-              <span style="color: #ff6347; font-weight: bold;">NULL</span>,  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">don't need the clusters out.</span>
+              summed_stats_per_set.size(),  <span style="color: #b22222;">// </span><span style="color: #b22222;">max-#clust is all of the points.</span>
+              <span style="color: #008b8b;">NULL</span>,  <span style="color: #b22222;">// </span><span style="color: #b22222;">don't need the clusters out.</span>
               &amp;assignments,
               &amp;clust_assignments,
               &amp;num_leaves,
               topts);
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#35843;&#29992;</span>
-  <span style="color: #9ac0cd;">TreeClusterer</span> <span style="color: #1e90ff; font-weight: bold;">tc</span>(points, max_clust, cfg);
-  <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">ans</span> = tc.Cluster(clusters_out, assignments_out, clust_assignments_out, num_leaves_out);
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#31867;TreeCluster</span>
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">TreeClusterer</span> {
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#26641;&#32858;&#31867;</span>
-  <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #1e90ff; font-weight: bold;">Cluster</span>(<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">Clusterable</span>*&gt; *<span style="color: #bebebe; font-weight: bold;">clusters_out</span>,
-                    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; *<span style="color: #bebebe; font-weight: bold;">assignments_out</span>,
-                    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; *<span style="color: #bebebe; font-weight: bold;">clust_assignments_out</span>,
-                    <span style="color: #bebebe; font-weight: bold;">int32</span> *num_leaves_out) {
-    <span style="color: #40e0d0; font-weight: bold;">while</span> (<span style="color: #40e0d0; font-weight: bold;">static_cast</span>&lt;int32&gt;(leaf_nodes_.size()) &lt; max_clust_ &amp;&amp; !queue_.empty()) {
-      <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;<span style="color: #9ac0cd;">BaseFloat</span>, <span style="color: #9ac0cd;">Node</span>*&gt; <span style="color: #bebebe; font-weight: bold;">pr</span> = queue_.top();
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#35843;&#29992;</span>
+  <span style="color: #228b22;">TreeClusterer</span> <span style="color: #0000ff;">tc</span>(points, max_clust, cfg);
+  <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">ans</span> = tc.Cluster(clusters_out, assignments_out, clust_assignments_out, num_leaves_out);
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#31867;TreeCluster</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">TreeClusterer</span> {
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#26641;&#32858;&#31867;</span>
+  <span style="color: #228b22;">BaseFloat</span> <span style="color: #0000ff;">Cluster</span>(<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">Clusterable</span>*&gt; *<span style="color: #a0522d;">clusters_out</span>,
+                    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; *<span style="color: #a0522d;">assignments_out</span>,
+                    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; *<span style="color: #a0522d;">clust_assignments_out</span>,
+                    <span style="color: #a0522d;">int32</span> *num_leaves_out) {
+    <span style="color: #a020f0;">while</span> (<span style="color: #a020f0;">static_cast</span>&lt;int32&gt;(leaf_nodes_.size()) &lt; max_clust_ &amp;&amp; !queue_.empty()) {
+      <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;<span style="color: #228b22;">BaseFloat</span>, <span style="color: #228b22;">Node</span>*&gt; <span style="color: #a0522d;">pr</span> = queue_.top();
       queue_.pop();
       ans_ += pr.first;
       DoSplit(pr.second);
     }
     CreateOutput(clusters_out, assignments_out, clust_assignments_out,
                  num_leaves_out);
-    <span style="color: #40e0d0; font-weight: bold;">return</span> ans_;
+    <span style="color: #a020f0;">return</span> ans_;
   }
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#23545;&#19968;&#20010;&#33410;&#28857;&#36827;&#34892;&#20998;&#21106;</span>
-  <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">DoSplit</span>(<span style="color: #9ac0cd;">Node</span> *<span style="color: #bebebe; font-weight: bold;">node</span>) {}
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#23558;&#19968;&#20010;&#33410;&#28857;&#36827;&#34892;kmeans&#32858;&#31867;, &#27492;&#22788;kmeans&#32858;&#31867;&#27604;&#36739;&#29305;&#27530;&#65292;&#20026;&#20445;&#35777;&#32467;&#26524;&#36739;&#20248;&#65292;&#36827;&#34892;&#20102;&#22810;&#27425;&#19981;&#21516;&#21021;&#22987;&#21270;&#65292;&#24182;&#36873;&#25321;&#25928;&#26524;&#22909;&#30340;&#12290;</span>
-  <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">FindBestSplit</span>(<span style="color: #9ac0cd;">Node</span> *<span style="color: #bebebe; font-weight: bold;">node</span>) {
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">takes a leaf node that has just been set up, and does ClusterKMeans with k = cfg_branch_factor.</span>
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#23545;&#19968;&#20010;&#33410;&#28857;&#36827;&#34892;&#20998;&#21106;</span>
+  <span style="color: #228b22;">void</span> <span style="color: #0000ff;">DoSplit</span>(<span style="color: #228b22;">Node</span> *<span style="color: #a0522d;">node</span>) {}
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#23558;&#19968;&#20010;&#33410;&#28857;&#36827;&#34892;kmeans&#32858;&#31867;, &#27492;&#22788;kmeans&#32858;&#31867;&#27604;&#36739;&#29305;&#27530;&#65292;&#20026;&#20445;&#35777;&#32467;&#26524;&#36739;&#20248;&#65292;&#36827;&#34892;&#20102;&#22810;&#27425;&#19981;&#21516;&#21021;&#22987;&#21270;&#65292;&#24182;&#36873;&#25321;&#25928;&#26524;&#22909;&#30340;&#12290;</span>
+  <span style="color: #228b22;">void</span> <span style="color: #0000ff;">FindBestSplit</span>(<span style="color: #228b22;">Node</span> *<span style="color: #a0522d;">node</span>) {
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">takes a leaf node that has just been set up, and does ClusterKMeans with k = cfg_branch_factor.</span>
     KALDI_ASSERT(node-&gt;is_leaf);
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (node-&gt;leaf.points.size() == 0) {
-      KALDI_WARN &lt;&lt; <span style="color: #ff0000;">"Warning: tree clustering: leaf with no data\n"</span>;
-      node-&gt;leaf.best_split = 0; <span style="color: #40e0d0; font-weight: bold;">return</span>;
+    <span style="color: #a020f0;">if</span> (node-&gt;leaf.points.size() == 0) {
+      KALDI_WARN &lt;&lt; <span style="color: #8b2252;">"Warning: tree clustering: leaf with no data\n"</span>;
+      node-&gt;leaf.best_split = 0; <span style="color: #a020f0;">return</span>;
     }
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (node-&gt;leaf.points.size()&lt;=1) { node-&gt;leaf.best_split = 0; <span style="color: #40e0d0; font-weight: bold;">return</span>; }
-    <span style="color: #40e0d0; font-weight: bold;">else</span> {
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">use kmeans.</span>
-      <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">impr</span> = ClusterKMeans(node-&gt;leaf.points,
+    <span style="color: #a020f0;">if</span> (node-&gt;leaf.points.size()&lt;=1) { node-&gt;leaf.best_split = 0; <span style="color: #a020f0;">return</span>; }
+    <span style="color: #a020f0;">else</span> {
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">use kmeans.</span>
+      <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">impr</span> = ClusterKMeans(node-&gt;leaf.points,
                                      cfg_.branch_factor,
                                      &amp;node-&gt;leaf.clusters,
                                      &amp;node-&gt;leaf.assignments,
                                      cfg_.kmeans_cfg);
       node-&gt;leaf.best_split = impr;
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (impr &gt; cfg_.thresh)
-        queue_.push(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(impr, node));
+      <span style="color: #a020f0;">if</span> (impr &gt; cfg_.thresh)
+        queue_.push(<span style="color: #008b8b;">std</span>::make_pair(impr, node));
     }
   }
 }
@@ -2449,25 +2450,25 @@ MaxResult: 共多少个节点，返回最大节点编号
 <li><a id="sec-3-10-4-0-3" name="sec-3-10-4-0-3"></a>compile-questions<br  /><div class="outline-text-6" id="text-3-10-4-0-3">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">Questions</span> <span style="color: #bebebe; font-weight: bold;">qo</span>;
-<span style="color: #9ac0cd;">QuestionsForKey</span> <span style="color: #1e90ff; font-weight: bold;">phone_opts</span>(num_iters_refine);
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">the questions-options corresponding to keys 0, 1, .. N-1 which</span>
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">represent the phonetic context positions (including the central phone).</span>
+<pre class="src src-cpp"><span style="color: #228b22;">Questions</span> <span style="color: #a0522d;">qo</span>;
+<span style="color: #228b22;">QuestionsForKey</span> <span style="color: #0000ff;">phone_opts</span>(num_iters_refine);
+<span style="color: #b22222;">// </span><span style="color: #b22222;">the questions-options corresponding to keys 0, 1, .. N-1 which</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">represent the phonetic context positions (including the central phone).</span>
 phone_opts.initial_questions = questions;
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#23545;&#27599;&#20010;&#20301;&#32622;&#24314;&#31435;&#38382;&#39064;&#38598;</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">n</span> = 0; n &lt; N; n++) {
-  KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Setting questions for phonetic-context position "</span>&lt;&lt; n;
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#23545;&#27599;&#20010;&#20301;&#32622;&#24314;&#31435;&#38382;&#39064;&#38598;</span>
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">n</span> = 0; n &lt; N; n++) {
+  KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Setting questions for phonetic-context position "</span>&lt;&lt; n;
   qo.SetQuestionsOf(n, phone_opts);
 }
-<span style="color: #9ac0cd;">QuestionsForKey</span> <span style="color: #1e90ff; font-weight: bold;">pdfclass_opts</span>(num_iters_refine);
-<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; &gt; <span style="color: #1e90ff; font-weight: bold;">pdfclass_questions</span>(max_num_pdfclasses-1);
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#23545;kPdfClass=-1&#38382;&#39064;&#38598;[ [0], [0, 1] ]</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; max_num_pdfclasses - 1; i++)
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">j</span> = 0; j &lt;= i; j++)
+<span style="color: #228b22;">QuestionsForKey</span> <span style="color: #0000ff;">pdfclass_opts</span>(num_iters_refine);
+<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; &gt; <span style="color: #0000ff;">pdfclass_questions</span>(max_num_pdfclasses-1);
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#23545;kPdfClass=-1&#38382;&#39064;&#38598;[ [0], [0, 1] ]</span>
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">i</span> = 0; i &lt; max_num_pdfclasses - 1; i++)
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">j</span> = 0; j &lt;= i; j++)
     pdfclass_questions[i].push_back(j);
-<span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">E.g. if max_num_pdfclasses == 3,  pdfclass_questions is now [ [0], [0, 1] ].</span>
+<span style="color: #b22222;">// </span><span style="color: #b22222;">E.g. if max_num_pdfclasses == 3,  pdfclass_questions is now [ [0], [0, 1] ].</span>
 pdfclass_opts.initial_questions = pdfclass_questions;
-KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"Setting questions for hmm-position [hmm-position ranges from 0 to "</span>&lt;&lt; (max_num_pdfclasses-1) &lt;&lt;<span style="color: #ff0000;">"]"</span>;
+KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"Setting questions for hmm-position [hmm-position ranges from 0 to "</span>&lt;&lt; (max_num_pdfclasses-1) &lt;&lt;<span style="color: #8b2252;">"]"</span>;
 qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </pre>
 </div>
@@ -2477,89 +2478,89 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 <li><a id="sec-3-10-4-0-4" name="sec-3-10-4-0-4"></a>build-tree<br  /><div class="outline-text-6" id="text-3-10-4-0-4">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">EventMap</span> *<span style="color: #1e90ff; font-weight: bold;">SplitDecisionTree</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">EventMap</span> &amp;<span style="color: #bebebe; font-weight: bold;">input_map</span>,
-                            <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">BuildTreeStatsType</span> &amp;<span style="color: #bebebe; font-weight: bold;">stats</span>,
-                            <span style="color: #9ac0cd;">Questions</span> &amp;<span style="color: #bebebe; font-weight: bold;">q_opts</span>,
-                            <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">thresh</span>,
-                            <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">max_leaves</span>,  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">max_leaves&lt;=0 -&gt; no maximum.</span>
-                            <span style="color: #9ac0cd;">int32</span> *<span style="color: #bebebe; font-weight: bold;">num_leaves</span>,
-                            <span style="color: #9ac0cd;">BaseFloat</span> *<span style="color: #bebebe; font-weight: bold;">obj_impr_out</span>,
-                            <span style="color: #9ac0cd;">BaseFloat</span> *<span style="color: #bebebe; font-weight: bold;">smallest_split_change_out</span>) {
-  {  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Do the splitting.</span>
-    <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">count</span> = 0;
-    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">priority_queue</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">pair</span>&lt;<span style="color: #9ac0cd;">BaseFloat</span>, <span style="color: #9ac0cd;">size_t</span>&gt; &gt; <span style="color: #bebebe; font-weight: bold;">queue</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">use size_t because logically these</span>
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">are just indexes into the array, not leaf-ids (after splitting they are no longer leaf id's).</span>
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Initialize queue.</span>
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; builders.size(); i++)
-      queue.push(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(builders[i]-&gt;BestSplit(), i));
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">Note-- queue's size never changes from now.  All the alternatives leaves to split are</span>
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">inside the "DecisionTreeSplitter*" objects, in a tree structure.</span>
-    <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#27492;&#22788;&#20026;&#37325;&#28857;&#65292;&#20248;&#20808;&#38431;&#21015;&#30340;&#20351;&#29992;&#65292;&#21450;&#20915;&#31574;&#26641;&#32456;&#27490;&#30340;&#20004;&#20010;&#26465;&#20214;</span>
-    <span style="color: #40e0d0; font-weight: bold;">while</span> (queue.top().first &gt; thresh
+<pre class="src src-cpp"><span style="color: #228b22;">EventMap</span> *<span style="color: #0000ff;">SplitDecisionTree</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">EventMap</span> &amp;<span style="color: #a0522d;">input_map</span>,
+                            <span style="color: #a020f0;">const</span> <span style="color: #228b22;">BuildTreeStatsType</span> &amp;<span style="color: #a0522d;">stats</span>,
+                            <span style="color: #228b22;">Questions</span> &amp;<span style="color: #a0522d;">q_opts</span>,
+                            <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">thresh</span>,
+                            <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">max_leaves</span>,  <span style="color: #b22222;">// </span><span style="color: #b22222;">max_leaves&lt;=0 -&gt; no maximum.</span>
+                            <span style="color: #228b22;">int32</span> *<span style="color: #a0522d;">num_leaves</span>,
+                            <span style="color: #228b22;">BaseFloat</span> *<span style="color: #a0522d;">obj_impr_out</span>,
+                            <span style="color: #228b22;">BaseFloat</span> *<span style="color: #a0522d;">smallest_split_change_out</span>) {
+  {  <span style="color: #b22222;">// </span><span style="color: #b22222;">Do the splitting.</span>
+    <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">count</span> = 0;
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">priority_queue</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">pair</span>&lt;<span style="color: #228b22;">BaseFloat</span>, <span style="color: #228b22;">size_t</span>&gt; &gt; <span style="color: #a0522d;">queue</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">use size_t because logically these</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">are just indexes into the array, not leaf-ids (after splitting they are no longer leaf id's).</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">Initialize queue.</span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">i</span> = 0; i &lt; builders.size(); i++)
+      queue.push(<span style="color: #008b8b;">std</span>::make_pair(builders[i]-&gt;BestSplit(), i));
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">Note-- queue's size never changes from now.  All the alternatives leaves to split are</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">inside the "DecisionTreeSplitter*" objects, in a tree structure.</span>
+    <span style="color: #b22222;">//</span><span style="color: #b22222;">&#27492;&#22788;&#20026;&#37325;&#28857;&#65292;&#20248;&#20808;&#38431;&#21015;&#30340;&#20351;&#29992;&#65292;&#21450;&#20915;&#31574;&#26641;&#32456;&#27490;&#30340;&#20004;&#20010;&#26465;&#20214;</span>
+    <span style="color: #a020f0;">while</span> (queue.top().first &gt; thresh
           &amp;&amp; (max_leaves&lt;=0 || *num_leaves &lt; max_leaves)) {
-      smallest_split_change = <span style="color: #ff6347; font-weight: bold;">std</span>::min(smallest_split_change, queue.top().first);
-      <span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">i</span> = queue.top().second;
+      smallest_split_change = <span style="color: #008b8b;">std</span>::min(smallest_split_change, queue.top().first);
+      <span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">i</span> = queue.top().second;
       like_impr += queue.top().first;
       builders[i]-&gt;DoSplit(num_leaves);
       queue.pop();
-      queue.push(<span style="color: #ff6347; font-weight: bold;">std</span>::make_pair(builders[i]-&gt;BestSplit(), i));
+      queue.push(<span style="color: #008b8b;">std</span>::make_pair(builders[i]-&gt;BestSplit(), i));
       count++;
     }
-    KALDI_LOG &lt;&lt; <span style="color: #ff0000;">"DoDecisionTreeSplit: split "</span>&lt;&lt; count &lt;&lt; <span style="color: #ff0000;">" times, #leaves now "</span> &lt;&lt; (*num_leaves);
+    KALDI_LOG &lt;&lt; <span style="color: #8b2252;">"DoDecisionTreeSplit: split "</span>&lt;&lt; count &lt;&lt; <span style="color: #8b2252;">" times, #leaves now "</span> &lt;&lt; (*num_leaves);
   }
   ...
 }
 &#23547;&#25214;&#26368;&#20248;&#38382;&#39064;&#38598;&#31867;
-<span style="color: #40e0d0; font-weight: bold;">class</span> <span style="color: #9ac0cd;">DecisionTreeSplitter</span> {
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#36820;&#22238;&#26368;&#20248;&#30340;&#19968;&#20010;&#20998;&#21106;&#22686;&#30410;</span>
-  <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #1e90ff; font-weight: bold;">BestSplit</span>() { <span style="color: #40e0d0; font-weight: bold;">return</span> best_split_impr_; } <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">returns objf improvement (&gt;=0) of best possible split.</span>
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#26500;&#36896;&#20989;&#25968;&#20013;&#21363;&#20174;&#38382;&#39064;&#38598;&#20013;&#23547;&#25214;&#26368;&#20248;&#38382;&#39064;</span>
-  <span style="color: #1e90ff; font-weight: bold;">DecisionTreeSplitter</span>(<span style="color: #9ac0cd;">EventAnswerType</span> <span style="color: #bebebe; font-weight: bold;">leaf</span>, <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">BuildTreeStatsType</span> &amp;<span style="color: #bebebe; font-weight: bold;">stats</span>,
-                      <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Questions</span> &amp;<span style="color: #bebebe; font-weight: bold;">q_opts</span>): q_opts_(q_opts), yes_(<span style="color: #ff6347; font-weight: bold;">NULL</span>), no_(<span style="color: #ff6347; font-weight: bold;">NULL</span>), <span style="color: #9ac0cd;">leaf_</span>(<span style="color: #bebebe; font-weight: bold;">leaf</span>), <span style="color: #9ac0cd;">stats_</span>(<span style="color: #bebebe; font-weight: bold;">stats</span>) {
-    <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">not, this must work when stats is empty too. [just gives zero improvement, non-splittable].</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">DecisionTreeSplitter</span> {
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#36820;&#22238;&#26368;&#20248;&#30340;&#19968;&#20010;&#20998;&#21106;&#22686;&#30410;</span>
+  <span style="color: #228b22;">BaseFloat</span> <span style="color: #0000ff;">BestSplit</span>() { <span style="color: #a020f0;">return</span> best_split_impr_; } <span style="color: #b22222;">// </span><span style="color: #b22222;">returns objf improvement (&gt;=0) of best possible split.</span>
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#26500;&#36896;&#20989;&#25968;&#20013;&#21363;&#20174;&#38382;&#39064;&#38598;&#20013;&#23547;&#25214;&#26368;&#20248;&#38382;&#39064;</span>
+  <span style="color: #0000ff;">DecisionTreeSplitter</span>(<span style="color: #228b22;">EventAnswerType</span> <span style="color: #a0522d;">leaf</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">BuildTreeStatsType</span> &amp;<span style="color: #a0522d;">stats</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Questions</span> &amp;<span style="color: #a0522d;">q_opts</span>): q_opts_(q_opts), yes_(<span style="color: #008b8b;">NULL</span>), no_(<span style="color: #008b8b;">NULL</span>), <span style="color: #228b22;">leaf_</span>(<span style="color: #a0522d;">leaf</span>), <span style="color: #228b22;">stats_</span>(<span style="color: #a0522d;">stats</span>) {
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">not, this must work when stats is empty too. [just gives zero improvement, non-splittable].</span>
     FindBestSplit();
   }
-   <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#22312;all_keys&#20013;&#25214;&#26368;&#20248;</span>
-  <span style="color: #9ac0cd;">void</span> <span style="color: #1e90ff; font-weight: bold;">FindBestSplit</span>() {}
+   <span style="color: #b22222;">//</span><span style="color: #b22222;">&#22312;all_keys&#20013;&#25214;&#26368;&#20248;</span>
+  <span style="color: #228b22;">void</span> <span style="color: #0000ff;">FindBestSplit</span>() {}
 };
 
-<span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #1e90ff; font-weight: bold;">ComputeInitialSplit</span>(<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">Clusterable</span>*&gt; &amp;<span style="color: #bebebe; font-weight: bold;">summed_stats</span>,
-                              <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">Questions</span> &amp;<span style="color: #bebebe; font-weight: bold;">q_opts</span>, <span style="color: #bebebe; font-weight: bold;">EventKeyType</span> key,
-                              <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;EventValueType&gt; *<span style="color: #bebebe; font-weight: bold;">yes_set</span>) {
+<span style="color: #228b22;">BaseFloat</span> <span style="color: #0000ff;">ComputeInitialSplit</span>(<span style="color: #a020f0;">const</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">Clusterable</span>*&gt; &amp;<span style="color: #a0522d;">summed_stats</span>,
+                              <span style="color: #a020f0;">const</span> <span style="color: #228b22;">Questions</span> &amp;<span style="color: #a0522d;">q_opts</span>, <span style="color: #a0522d;">EventKeyType</span> key,
+                              <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;EventValueType&gt; *<span style="color: #a0522d;">yes_set</span>) {
   ...
-  <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;EventValueType&gt; &gt; &amp;<span style="color: #bebebe; font-weight: bold;">questions_of_this_key</span> = key_opts.initial_questions;
+  <span style="color: #a020f0;">const</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;EventValueType&gt; &gt; &amp;<span style="color: #a0522d;">questions_of_this_key</span> = key_opts.initial_questions;
 
-  <span style="color: #9ac0cd;">int32</span> <span style="color: #bebebe; font-weight: bold;">best_idx</span> = -1;
-  <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">best_objf_change</span> = 0;
-  <span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#22312;&#38382;&#39064;&#38598;&#20013;&#23547;&#25214;&#20284;&#28982;&#22686;&#30410;&#26368;&#22823;&#30340;&#38382;&#39064;</span>
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">size_t</span> <span style="color: #bebebe; font-weight: bold;">i</span> = 0; i &lt; questions_of_this_key.size(); i++) {
-    <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;EventValueType&gt; &amp;<span style="color: #bebebe; font-weight: bold;">yes_set</span> = questions_of_this_key[i];
-    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">int32</span>&gt; <span style="color: #bebebe; font-weight: bold;">assignments</span>(summed_stats.size(), 0);  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">0 is index of "no".</span>
-    <span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">Clusterable</span>*&gt; <span style="color: #bebebe; font-weight: bold;">clusters</span>(2);  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">no and yes clusters.</span>
-    <span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #ff6347; font-weight: bold;">std</span>::<span style="color: #ff6347; font-weight: bold;">vector</span>&lt;EventValueType&gt;::<span style="color: #9ac0cd;">const_iterator</span> <span style="color: #bebebe; font-weight: bold;">iter</span> = yes_set.begin(); iter != yes_set.end(); iter++) {
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">best_idx</span> = -1;
+  <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">best_objf_change</span> = 0;
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#22312;&#38382;&#39064;&#38598;&#20013;&#23547;&#25214;&#20284;&#28982;&#22686;&#30410;&#26368;&#22823;&#30340;&#38382;&#39064;</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">size_t</span> <span style="color: #a0522d;">i</span> = 0; i &lt; questions_of_this_key.size(); i++) {
+    <span style="color: #a020f0;">const</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;EventValueType&gt; &amp;<span style="color: #a0522d;">yes_set</span> = questions_of_this_key[i];
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">assignments</span>(summed_stats.size(), 0);  <span style="color: #b22222;">// </span><span style="color: #b22222;">0 is index of "no".</span>
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">Clusterable</span>*&gt; <span style="color: #a0522d;">clusters</span>(2);  <span style="color: #b22222;">// </span><span style="color: #b22222;">no and yes clusters.</span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #008b8b;">std</span>::<span style="color: #008b8b;">vector</span>&lt;EventValueType&gt;::<span style="color: #228b22;">const_iterator</span> <span style="color: #a0522d;">iter</span> = yes_set.begin(); iter != yes_set.end(); iter++) {
       KALDI_ASSERT(*iter&gt;=0);
-      <span style="color: #40e0d0; font-weight: bold;">if</span> (*iter &lt; (<span style="color: #9ac0cd;">EventValueType</span>)assignments.size()) assignments[*iter] = 1;
+      <span style="color: #a020f0;">if</span> (*iter &lt; (<span style="color: #228b22;">EventValueType</span>)assignments.size()) assignments[*iter] = 1;
     }
-    <span style="color: #ff6347; font-weight: bold;">kaldi</span>::AddToClustersOptimized(summed_stats, assignments, *total, &amp;clusters);
-    <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">this_objf</span> = SumClusterableObjf(clusters);
+    <span style="color: #008b8b;">kaldi</span>::AddToClustersOptimized(summed_stats, assignments, *total, &amp;clusters);
+    <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">this_objf</span> = SumClusterableObjf(clusters);
 
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (this_objf &lt; unsplit_objf- 0.001*<span style="color: #ff6347; font-weight: bold;">std</span>::abs(unsplit_objf)) {  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">got worse; should never happen.</span>
-      <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">of course small differences can be caused by roundoff.</span>
-      KALDI_WARN &lt;&lt; <span style="color: #ff0000;">"Objective function got worse when building tree: "</span>&lt;&lt; this_objf &lt;&lt; <span style="color: #ff0000;">" &lt; "</span> &lt;&lt; unsplit_objf;
-      KALDI_ASSERT(!(this_objf &lt; unsplit_objf - 0.01*(200 + <span style="color: #ff6347; font-weight: bold;">std</span>::abs(unsplit_objf))));  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">do assert on more stringent check.</span>
+    <span style="color: #a020f0;">if</span> (this_objf &lt; unsplit_objf- 0.001*<span style="color: #008b8b;">std</span>::abs(unsplit_objf)) {  <span style="color: #b22222;">// </span><span style="color: #b22222;">got worse; should never happen.</span>
+      <span style="color: #b22222;">// </span><span style="color: #b22222;">of course small differences can be caused by roundoff.</span>
+      KALDI_WARN &lt;&lt; <span style="color: #8b2252;">"Objective function got worse when building tree: "</span>&lt;&lt; this_objf &lt;&lt; <span style="color: #8b2252;">" &lt; "</span> &lt;&lt; unsplit_objf;
+      KALDI_ASSERT(!(this_objf &lt; unsplit_objf - 0.01*(200 + <span style="color: #008b8b;">std</span>::abs(unsplit_objf))));  <span style="color: #b22222;">// </span><span style="color: #b22222;">do assert on more stringent check.</span>
     }
 
-    <span style="color: #9ac0cd;">BaseFloat</span> <span style="color: #bebebe; font-weight: bold;">this_objf_change</span> = this_objf - unsplit_objf;
-    <span style="color: #40e0d0; font-weight: bold;">if</span> (this_objf_change &gt; best_objf_change) {
+    <span style="color: #228b22;">BaseFloat</span> <span style="color: #a0522d;">this_objf_change</span> = this_objf - unsplit_objf;
+    <span style="color: #a020f0;">if</span> (this_objf_change &gt; best_objf_change) {
       best_objf_change = this_objf_change;
       best_idx = i;
     }
     DeletePointers(&amp;clusters);
   }
-  <span style="color: #40e0d0; font-weight: bold;">delete</span> total;
-  <span style="color: #40e0d0; font-weight: bold;">if</span> (best_idx != -1)
+  <span style="color: #a020f0;">delete</span> total;
+  <span style="color: #a020f0;">if</span> (best_idx != -1)
     *yes_set = questions_of_this_key[best_idx];
-  <span style="color: #40e0d0; font-weight: bold;">return</span> best_objf_change;
+  <span style="color: #a020f0;">return</span> best_objf_change;
 }
 </pre>
 </div>
@@ -2623,9 +2624,9 @@ make valgrind
 </ul>
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #9ac0cd;">Vector</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">weights_</span>;        <span style="color: #ee82ee;">///</span><span style="color: #ee82ee;">&lt; weights (not log).</span>
-<span style="color: #9ac0cd;">Matrix</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">inv_vars_</span>;       <span style="color: #ee82ee;">///</span><span style="color: #ee82ee;">&lt; Inverted (diagonal) variances</span>
-<span style="color: #9ac0cd;">Matrix</span>&lt;BaseFloat&gt; <span style="color: #bebebe; font-weight: bold;">means_invvars_</span>;  <span style="color: #ee82ee;">///</span><span style="color: #ee82ee;">&lt; Means times inverted variance</span>
+<pre class="src src-cpp"><span style="color: #228b22;">Vector</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">weights_</span>;        <span style="color: #b22222;">///</span><span style="color: #b22222;">&lt; weights (not log).</span>
+<span style="color: #228b22;">Matrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">inv_vars_</span>;       <span style="color: #b22222;">///</span><span style="color: #b22222;">&lt; Inverted (diagonal) variances</span>
+<span style="color: #228b22;">Matrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">means_invvars_</span>;  <span style="color: #b22222;">///</span><span style="color: #b22222;">&lt; Means times inverted variance</span>
 </pre>
 </div>
 <p>
@@ -2701,17 +2702,17 @@ Merge &amp; MergeKMeans ???
 <div class="outline-text-4" id="text-4-1-2">
 <div class="org-src-container">
 
-<pre class="src src-sh">$<span style="color: #bebebe; font-weight: bold;">cmd</span> <span style="color: #bebebe; font-weight: bold;">JOB</span>=1:$<span style="color: #bebebe; font-weight: bold;">nj</span> $<span style="color: #bebebe; font-weight: bold;">dir</span>/log/acc_tree.JOB.log <span style="color: #ff0000;">\</span>
-    acc-tree-stats  --ci-phones=$<span style="color: #bebebe; font-weight: bold;">ciphonelist</span> $<span style="color: #bebebe; font-weight: bold;">alidir</span>/final.mdl <span style="color: #ff0000;">"$feats"</span> <span style="color: #ff0000;">\</span>
-     <span style="color: #ff0000;">"ark:gunzip -c $alidir/ali.JOB.gz|"</span> $<span style="color: #bebebe; font-weight: bold;">dir</span>/JOB.treeacc || <span style="color: #40e0d0; font-weight: bold;">exit</span> 1;
-<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#31561;&#20215;&#20110;&#22914;&#19979;shell</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> ((<span style="color: #bebebe; font-weight: bold;">i</span>=1; i&lt;=$<span style="color: #bebebe; font-weight: bold;">JOB</span>; i++));
-<span style="color: #40e0d0; font-weight: bold;">do</span>
+<pre class="src src-sh">$<span style="color: #a0522d;">cmd</span> <span style="color: #a0522d;">JOB</span>=1:$<span style="color: #a0522d;">nj</span> $<span style="color: #a0522d;">dir</span>/log/acc_tree.JOB.log <span style="color: #8b2252;">\</span>
+    acc-tree-stats  --ci-phones=$<span style="color: #a0522d;">ciphonelist</span> $<span style="color: #a0522d;">alidir</span>/final.mdl <span style="color: #8b2252;">"$feats"</span> <span style="color: #8b2252;">\</span>
+     <span style="color: #8b2252;">"ark:gunzip -c $alidir/ali.JOB.gz|"</span> $<span style="color: #a0522d;">dir</span>/JOB.treeacc || <span style="color: #a020f0;">exit</span> 1;
+<span style="color: #b22222;">#</span><span style="color: #b22222;">&#31561;&#20215;&#20110;&#22914;&#19979;shell</span>
+<span style="color: #a020f0;">for</span> ((<span style="color: #a0522d;">i</span>=1; i&lt;=$<span style="color: #a0522d;">JOB</span>; i++));
+<span style="color: #a020f0;">do</span>
 {
-   <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">my operate</span>
-}&amp; <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#24182;&#34892;</span>
-<span style="color: #40e0d0; font-weight: bold;">done</span>
-<span style="color: #ffc0cb; font-size: 110%; font-weight: bold;">wait</span> <span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#31561;&#24453;&#25152;&#26377;&#23376;&#36827;&#31243;&#32467;&#26463;</span>
+   <span style="color: #b22222;">#</span><span style="color: #b22222;">my operate</span>
+}&amp; <span style="color: #b22222;">#</span><span style="color: #b22222;">&#24182;&#34892;</span>
+<span style="color: #a020f0;">done</span>
+<span style="color: #483d8b;">wait</span> <span style="color: #b22222;">#</span><span style="color: #b22222;">&#31561;&#24453;&#25152;&#26377;&#23376;&#36827;&#31243;&#32467;&#26463;</span>
 </pre>
 </div>
 </div>
@@ -2721,21 +2722,21 @@ Merge &amp; MergeKMeans ???
 <div class="outline-text-4" id="text-4-1-3">
 <div class="org-src-container">
 
-<pre class="src src-perl"><span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">JOB</span>
-<span style="color: #40e0d0; font-weight: bold;">if</span> ($<span style="color: #bebebe; font-weight: bold;">ARGV</span>[0] =~ m<span style="color: #ff0000;">/^([\w_][\w\d_]*)+=(\d+):(\d+)$/</span>) { <span style="color: #ee82ee;"># e.g. JOB=1:10</span>
-    $<span style="color: #bebebe; font-weight: bold;">jobname</span> = $<span style="color: #bebebe; font-weight: bold;">1</span>;
-    $<span style="color: #bebebe; font-weight: bold;">jobstart</span> = $<span style="color: #bebebe; font-weight: bold;">2</span>;
-    $<span style="color: #bebebe; font-weight: bold;">jobend</span> = $<span style="color: #bebebe; font-weight: bold;">3</span>;
+<pre class="src src-perl"><span style="color: #b22222;">#</span><span style="color: #b22222;">JOB</span>
+<span style="color: #a020f0;">if</span> ($<span style="color: #a0522d;">ARGV</span>[0] =~ m<span style="color: #8b2252;">/^([\w_][\w\d_]*)+=(\d+):(\d+)$/</span>) { <span style="color: #b22222;"># e.g. JOB=1:10</span>
+    $<span style="color: #a0522d;">jobname</span> = $<span style="color: #a0522d;">1</span>;
+    $<span style="color: #a0522d;">jobstart</span> = $<span style="color: #a0522d;">2</span>;
+    $<span style="color: #a0522d;">jobend</span> = $<span style="color: #a0522d;">3</span>;
 }
-<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#21019;&#24314;&#23376;&#36827;&#31243;</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> ($<span style="color: #bebebe; font-weight: bold;">jobid</span> = $<span style="color: #bebebe; font-weight: bold;">jobstart</span>; $<span style="color: #bebebe; font-weight: bold;">jobid</span> &lt;= $<span style="color: #bebebe; font-weight: bold;">jobend</span>; $<span style="color: #bebebe; font-weight: bold;">jobid</span>++) {
-  $<span style="color: #bebebe; font-weight: bold;">childpid</span> = fork();
+<span style="color: #b22222;">#</span><span style="color: #b22222;">&#21019;&#24314;&#23376;&#36827;&#31243;</span>
+<span style="color: #a020f0;">for</span> ($<span style="color: #a0522d;">jobid</span> = $<span style="color: #a0522d;">jobstart</span>; $<span style="color: #a0522d;">jobid</span> &lt;= $<span style="color: #a0522d;">jobend</span>; $<span style="color: #a0522d;">jobid</span>++) {
+  $<span style="color: #a0522d;">childpid</span> = fork();
 }
-<span style="color: #ee82ee;">#</span><span style="color: #ee82ee;">&#31561;&#24453;&#23376;&#36827;&#31243;&#32467;&#26463;</span>
-<span style="color: #40e0d0; font-weight: bold;">for</span> ($<span style="color: #bebebe; font-weight: bold;">jobid</span> = $<span style="color: #bebebe; font-weight: bold;">jobstart</span>; $<span style="color: #bebebe; font-weight: bold;">jobid</span> &lt;= $<span style="color: #bebebe; font-weight: bold;">jobend</span>; $<span style="color: #bebebe; font-weight: bold;">jobid</span>++) {
-  $<span style="color: #bebebe; font-weight: bold;">r</span> = wait();
-  <span style="color: #40e0d0; font-weight: bold;">if</span> ($<span style="color: #bebebe; font-weight: bold;">r</span> == -1) { <span style="color: #40e0d0; font-weight: bold;">die</span> <span style="color: #ff0000;">"Error waiting for child process"</span>; } <span style="color: #ee82ee;"># should never happen.</span>
-  <span style="color: #40e0d0; font-weight: bold;">if</span> ($? != 0) { $<span style="color: #bebebe; font-weight: bold;">numfail</span>++; $<span style="color: #bebebe; font-weight: bold;">ret</span> = 1; } <span style="color: #ee82ee;"># The child process failed.</span>
+<span style="color: #b22222;">#</span><span style="color: #b22222;">&#31561;&#24453;&#23376;&#36827;&#31243;&#32467;&#26463;</span>
+<span style="color: #a020f0;">for</span> ($<span style="color: #a0522d;">jobid</span> = $<span style="color: #a0522d;">jobstart</span>; $<span style="color: #a0522d;">jobid</span> &lt;= $<span style="color: #a0522d;">jobend</span>; $<span style="color: #a0522d;">jobid</span>++) {
+  $<span style="color: #a0522d;">r</span> = wait();
+  <span style="color: #a020f0;">if</span> ($<span style="color: #a0522d;">r</span> == -1) { <span style="color: #a020f0;">die</span> <span style="color: #8b2252;">"Error waiting for child process"</span>; } <span style="color: #b22222;"># should never happen.</span>
+  <span style="color: #a020f0;">if</span> ($? != 0) { $<span style="color: #a0522d;">numfail</span>++; $<span style="color: #a0522d;">ret</span> = 1; } <span style="color: #b22222;"># The child process failed.</span>
 }
 </pre>
 </div>
@@ -2852,7 +2853,9 @@ Minimum Word Error(MWE)
 </li>
 <li>sum-tree-stats &#x2013;binary=false - exp/tri1/treeacc | less
 </li>
-<li>scripts/int2sym.pl data/lang/phones.txt &lt; exp/tri1/questions.int
+<li>utils/int2sym.pl data/lang/phones.txt &lt; exp/tri1/questions.int
+</li>
+<li>ali-to-phones exp/mono/40.mdl ark:1.lat ark,t:- | less
 </li>
 </ul>
 </div>
@@ -2999,23 +3002,23 @@ g++ -O0 fst.cpp -o fst -I/home/robin1001/kaldi/kaldi-trunk/tools/openfst/include
 <div class="outline-text-4" id="text-6-10-1">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #40e0d0; font-weight: bold;">struct</span> <span style="color: #9ac0cd;">StdArc</span> {
- <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #9ac0cd;">int</span> <span style="color: #9ac0cd;">Label</span>;
- <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #9ac0cd;">TropicalWeight</span> <span style="color: #9ac0cd;">Weight</span>;  <span style="color: #ee82ee;">// </span><span style="color: #ee82ee;">see "FST Weights" below </span>
- <span style="color: #40e0d0; font-weight: bold;">typedef</span> <span style="color: #9ac0cd;">int</span> <span style="color: #9ac0cd;">StateId</span>; 
+<pre class="src src-cpp"><span style="color: #a020f0;">struct</span> <span style="color: #228b22;">StdArc</span> {
+ <span style="color: #a020f0;">typedef</span> <span style="color: #228b22;">int</span> <span style="color: #228b22;">Label</span>;
+ <span style="color: #a020f0;">typedef</span> <span style="color: #228b22;">TropicalWeight</span> <span style="color: #228b22;">Weight</span>;  <span style="color: #b22222;">// </span><span style="color: #b22222;">see "FST Weights" below </span>
+ <span style="color: #a020f0;">typedef</span> <span style="color: #228b22;">int</span> <span style="color: #228b22;">StateId</span>; 
 
- <span style="color: #9ac0cd;">Label</span> <span style="color: #bebebe; font-weight: bold;">ilabel</span>;
- <span style="color: #9ac0cd;">Label</span> <span style="color: #bebebe; font-weight: bold;">olabel</span>;
- <span style="color: #9ac0cd;">Weight</span> <span style="color: #bebebe; font-weight: bold;">weight</span>;
- <span style="color: #9ac0cd;">StateId</span> <span style="color: #bebebe; font-weight: bold;">nextstate</span>;
+ <span style="color: #228b22;">Label</span> <span style="color: #a0522d;">ilabel</span>;
+ <span style="color: #228b22;">Label</span> <span style="color: #a0522d;">olabel</span>;
+ <span style="color: #228b22;">Weight</span> <span style="color: #a0522d;">weight</span>;
+ <span style="color: #228b22;">StateId</span> <span style="color: #a0522d;">nextstate</span>;
 };
-<span style="color: #40e0d0; font-weight: bold;">for</span> (<span style="color: #9ac0cd;">ArcIterator</span>&lt;StdFst&gt; <span style="color: #bebebe; font-weight: bold;">aiter</span>(fst, i); !aiter.Done(); aiter.Next())
-  <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">StdArc</span> &amp;<span style="color: #bebebe; font-weight: bold;">arc</span> = aiter.Value();
-<span style="color: #9ac0cd;">Matcher</span>&lt;StdFst&gt; <span style="color: #1e90ff; font-weight: bold;">matcher</span>(fst, MATCH_INPUT);
+<span style="color: #a020f0;">for</span> (<span style="color: #228b22;">ArcIterator</span>&lt;StdFst&gt; <span style="color: #a0522d;">aiter</span>(fst, i); !aiter.Done(); aiter.Next())
+  <span style="color: #a020f0;">const</span> <span style="color: #228b22;">StdArc</span> &amp;<span style="color: #a0522d;">arc</span> = aiter.Value();
+<span style="color: #228b22;">Matcher</span>&lt;StdFst&gt; <span style="color: #0000ff;">matcher</span>(fst, MATCH_INPUT);
 matcher.SetState(i);
-<span style="color: #40e0d0; font-weight: bold;">if</span> (matcher.Find(l)) 
-  <span style="color: #40e0d0; font-weight: bold;">for</span> (; !matcher.Done(); matcher.Next())
-     <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">StdArc</span> &amp;<span style="color: #bebebe; font-weight: bold;">arc</span> = matcher.Value();
+<span style="color: #a020f0;">if</span> (matcher.Find(l)) 
+  <span style="color: #a020f0;">for</span> (; !matcher.Done(); matcher.Next())
+     <span style="color: #a020f0;">const</span> <span style="color: #228b22;">StdArc</span> &amp;<span style="color: #a0522d;">arc</span> = matcher.Value();
 </pre>
 </div>
 </div>
@@ -3025,48 +3028,48 @@ matcher.SetState(i);
 <div class="outline-text-4" id="text-6-10-2">
 <div class="org-src-container">
 
-<pre class="src src-cpp"><span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#25277;&#35937;&#31867;</span>
-<span style="color: #9ac0cd;">Fst</span>&lt;Arc&gt;
-<span style="color: #9ac0cd;">ExpandedFst</span>&lt;Arc&gt;: +NumStates();
-<span style="color: #9ac0cd;">MutableFst</span>&lt;Arc&gt;: &#21487;&#21464;&#30340;fst&#65292;&#22914;AddStates(), SetStart()
+<pre class="src src-cpp"><span style="color: #b22222;">//</span><span style="color: #b22222;">&#25277;&#35937;&#31867;</span>
+<span style="color: #228b22;">Fst</span>&lt;Arc&gt;
+<span style="color: #228b22;">ExpandedFst</span>&lt;Arc&gt;: +NumStates();
+<span style="color: #228b22;">MutableFst</span>&lt;Arc&gt;: &#21487;&#21464;&#30340;fst&#65292;&#22914;AddStates(), SetStart()
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">&#23454;&#29616;</span>
-<span style="color: #9ac0cd;">VectorFst</span>&lt;Arc&gt;: <span style="color: #40e0d0; font-weight: bold;">mutable</span> fst
-<span style="color: #9ac0cd;">ConstFst</span>&lt;Arc&gt;:  immutable fst
-<span style="color: #9ac0cd;">ComposeFst</span>&lt;Arc&gt;
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#23454;&#29616;</span>
+<span style="color: #228b22;">VectorFst</span>&lt;Arc&gt;: <span style="color: #a020f0;">mutable</span> fst
+<span style="color: #228b22;">ConstFst</span>&lt;Arc&gt;:  immutable fst
+<span style="color: #228b22;">ComposeFst</span>&lt;Arc&gt;
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">StdArc</span>
-ilabel, olabel, weight(Weight), <span style="color: #9ac0cd;">nextstate</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">StdArc</span>
+ilabel, olabel, weight(Weight), <span style="color: #228b22;">nextstate</span>
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">Weight</span>
-<span style="color: #bebebe; font-weight: bold;">TropicalWeight</span>, LogWeight, ProductWeight
+<span style="color: #b22222;">//</span><span style="color: #b22222;">Weight</span>
+<span style="color: #a0522d;">TropicalWeight</span>, LogWeight, ProductWeight
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">Fst</span>
-<span style="color: #9ac0cd;">Start</span>(), Final(), Read(), etc ...
+<span style="color: #b22222;">//</span><span style="color: #b22222;">Fst</span>
+<span style="color: #228b22;">Start</span>(), Final(), Read(), etc ...
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">Mutable Fst</span>
-<span style="color: #9ac0cd;">SetStart</span>(), SetFinal(), AddState(), AddArc()
+<span style="color: #b22222;">//</span><span style="color: #b22222;">Mutable Fst</span>
+<span style="color: #228b22;">SetStart</span>(), SetFinal(), AddState(), AddArc()
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">StateIterator</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">StateIterator</span>
 Done(), Value(), Next(), Reset()
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">ArcIterator</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">ArcIterator</span>
 Done(), Value(), Next(), Reset()
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">FstImple: public Fst</span>
-type_, isymbols_, osymbols_, <span style="color: #9ac0cd;">ref_count_</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">FstImple: public Fst</span>
+type_, isymbols_, osymbols_, <span style="color: #228b22;">ref_count_</span>
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">SymbolTable Impl: &#21253;&#35013;SymbolTable</span>
-<span style="color: #bebebe; font-weight: bold;">map</span>&lt;<span style="color: #9ac0cd;">int64</span>, <span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span>*&gt; key_map_;
-<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #40e0d0; font-weight: bold;">const</span> <span style="color: #9ac0cd;">char</span> *&gt; <span style="color: #bebebe; font-weight: bold;">symbols_</span>;
+<span style="color: #b22222;">//</span><span style="color: #b22222;">SymbolTable Impl: &#21253;&#35013;SymbolTable</span>
+<span style="color: #a0522d;">map</span>&lt;<span style="color: #228b22;">int64</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span>*&gt; key_map_;
+<span style="color: #228b22;">vector</span>&lt;<span style="color: #a020f0;">const</span> <span style="color: #228b22;">char</span> *&gt; <span style="color: #a0522d;">symbols_</span>;
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">VectorState</span>
-final, <span style="color: #9ac0cd;">Vector</span>&lt;A&gt; <span style="color: #bebebe; font-weight: bold;">arcs</span>, niepsilon, <span style="color: #9ac0cd;">noepsilon</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">VectorState</span>
+final, <span style="color: #228b22;">Vector</span>&lt;A&gt; <span style="color: #a0522d;">arcs</span>, niepsilon, <span style="color: #228b22;">noepsilon</span>
 
-<span style="color: #ee82ee;">//</span><span style="color: #ee82ee;">VectorFstBaseImpl: &#36825;&#20010;&#31867;&#26159;VectorFst&#30340;&#19968;&#31995;&#21015;&#23454;&#29616;</span>
-<span style="color: #bebebe; font-weight: bold;">state_</span>;
-<span style="color: #9ac0cd;">vector</span>&lt;<span style="color: #9ac0cd;">State</span> *&gt;<span style="color: #bebebe; font-weight: bold;">states</span>;
-<span style="color: #9ac0cd;">StateId</span> <span style="color: #1e90ff; font-weight: bold;">AddState</span>() { states.push_back(<span style="color: #40e0d0; font-weight: bold;">new</span> <span style="color: #9ac0cd;">State</span>())
+<span style="color: #b22222;">//</span><span style="color: #b22222;">VectorFstBaseImpl: &#36825;&#20010;&#31867;&#26159;VectorFst&#30340;&#19968;&#31995;&#21015;&#23454;&#29616;</span>
+<span style="color: #a0522d;">state_</span>;
+<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">State</span> *&gt;<span style="color: #a0522d;">states</span>;
+<span style="color: #228b22;">StateId</span> <span style="color: #0000ff;">AddState</span>() { states.push_back(<span style="color: #a020f0;">new</span> <span style="color: #228b22;">State</span>())
 etc ...
 </pre>
 </div>
@@ -3158,13 +3161,30 @@ dot -Tps binary.dot &gt;binary.ps
 </li>
 <li>禁止使用异常
 </li>
+<li>常量命名, 在名称前加k：kDaysInAWeek
+</li>
 </ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #a020f0;">const</span> <span style="color: #228b22;">int</span> <span style="color: #a0522d;">kDaysInAWeek</span> = 7;
+</pre>
+</div>
+<ol class="org-ol">
+<li>函数形式参数位置和花括号位置
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #228b22;">ReturnType</span> <span style="color: #008b8b;">ClassName</span>::<span style="color: #0000ff;">ReallyLongFunctionName</span>(<span style="color: #228b22;">Type</span> <span style="color: #a0522d;">par_name1</span>) {
+}
+</pre>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-12-01 一 16:55</p>
+<p class="date">Created: 2014-12-08 一 23:24</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

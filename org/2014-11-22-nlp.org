@@ -173,6 +173,11 @@ $$P(w|c) = \frac{n_{k}+\alpha} {n+\alpha|V|}$$
 + ...
 *** Learning Sentiment Lexicons
 + 利用and和but连接词的词性关系(这个想法很棒)
+* Discriminative classifiers: Maximum Entropy classifiers
+** 生成模型 & 判别模型
++ 判别方法：由数据直接学习决策函数Y=f(X)或者条件概率分布P(Y|X)作为预测的模型，即判别模型。基本思想是有限样本条件下建立判别函数，不考虑样本的产生模型，直接研究预测模型。典型的判别模型包括k近邻，感知级，决策树，支持向量机等。
++ 生成方法：由数据学习联合概率密度分布P(X,Y)，然后求出条件概率分布P(Y|X)作为预测的模型，即生成模型：P(Y|X)= P(X,Y)/ P(X)。基本思想是首先建立样本的联合概率概率密度模型P(X,Y)，然后再得到后验概率P(Y|X)，再利用它进行分类
+* Pos Tagging词性标注
 * homework
 1. regular expression
 2. autocorrect(edit distance, language model)

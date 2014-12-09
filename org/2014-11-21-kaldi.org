@@ -894,7 +894,7 @@ class SomeKaldiClass {
 }
 #+end_src
 2. binary vs text: binary start '\0B'
-3. 
+3. ark,t: t in text format
 ** The Kaldi Matrix library
 + 包装库 BLAS & LAPACK
 + Vector 向量
@@ -1577,7 +1577,8 @@ Minimum Word Error(MWE)
 + show-alignments data/lang/phones.txt exp/mono/0.mdl ark:exp/mono/cur.ali | less
 + show-transitions data/lang/phones.txt exp/mono/0.mdl
 + sum-tree-stats --binary=false - exp/tri1/treeacc | less
-+ scripts/int2sym.pl data/lang/phones.txt < exp/tri1/questions.int
++ utils/int2sym.pl data/lang/phones.txt < exp/tri1/questions.int
++ ali-to-phones exp/mono/40.mdl ark:1.lat ark,t:- | less
 * fst
  Created by:robin1001 <2014-08-27 三>
 ** 定义

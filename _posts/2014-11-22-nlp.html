@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Natural Language Processing</title>
-<!-- 2014-12-03 三 20:06 -->
+<!-- 2014-12-04 四 11:26 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -231,7 +231,13 @@ for the JavaScript code in this tag.
 </li>
 </ul>
 </li>
-<li><a href="#sec-8">8. homework</a></li>
+<li><a href="#sec-8">8. Discriminative classifiers: Maximum Entropy classifiers</a>
+<ul>
+<li><a href="#sec-8-1">8.1. 生成模型 &amp; 判别模型</a></li>
+</ul>
+</li>
+<li><a href="#sec-9">9. Pos Tagging词性标注</a></li>
+<li><a href="#sec-10">10. homework</a></li>
 </ul>
 </div>
 </div>
@@ -621,8 +627,26 @@ $$P(w|c) = \frac{n_{k}+\alpha} {n+\alpha|V|}$$
 </div>
 </div>
 <div id="outline-container-sec-8" class="outline-2">
-<h2 id="sec-8"><span class="section-number-2">8</span> homework</h2>
+<h2 id="sec-8"><span class="section-number-2">8</span> Discriminative classifiers: Maximum Entropy classifiers</h2>
 <div class="outline-text-2" id="text-8">
+</div><div id="outline-container-sec-8-1" class="outline-3">
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> 生成模型 &amp; 判别模型</h3>
+<div class="outline-text-3" id="text-8-1">
+<ul class="org-ul">
+<li>判别方法：由数据直接学习决策函数Y=f(X)或者条件概率分布P(Y|X)作为预测的模型，即判别模型。基本思想是有限样本条件下建立判别函数，不考虑样本的产生模型，直接研究预测模型。典型的判别模型包括k近邻，感知级，决策树，支持向量机等。
+</li>
+<li>生成方法：由数据学习联合概率密度分布P(X,Y)，然后求出条件概率分布P(Y|X)作为预测的模型，即生成模型：P(Y|X)= P(X,Y)/ P(X)。基本思想是首先建立样本的联合概率概率密度模型P(X,Y)，然后再得到后验概率P(Y|X)，再利用它进行分类
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Pos Tagging词性标注</h2>
+</div>
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> homework</h2>
+<div class="outline-text-2" id="text-10">
 <ol class="org-ol">
 <li>regular expression
 </li>
@@ -649,7 +673,7 @@ Everything should be made as simple as possible, but not any simpler
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-12-03 三 20:06</p>
+<p class="date">Created: 2014-12-04 四 11:26</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
