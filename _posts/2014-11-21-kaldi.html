@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Kaldi学习笔记</title>
-<!-- 2014-12-08 一 23:24 -->
+<!-- 2014-12-10 三 00:17 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -2855,7 +2855,7 @@ Minimum Word Error(MWE)
 </li>
 <li>utils/int2sym.pl data/lang/phones.txt &lt; exp/tri1/questions.int
 </li>
-<li>ali-to-phones exp/mono/40.mdl ark:1.lat ark,t:- | less
+<li>ali-to-phones exp_decode/mono_ali/final.mdl "ark:gunzip -c exp_decode/mono_ali/ali.1.gz|" ark,t:- | less
 </li>
 </ul>
 </div>
@@ -3184,7 +3184,7 @@ dot -Tps binary.dot &gt;binary.ps
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2014-12-08 一 23:24</p>
+<p class="date">Created: 2014-12-10 三 00:17</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

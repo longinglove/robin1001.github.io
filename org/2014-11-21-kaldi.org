@@ -1578,7 +1578,7 @@ Minimum Word Error(MWE)
 + show-transitions data/lang/phones.txt exp/mono/0.mdl
 + sum-tree-stats --binary=false - exp/tri1/treeacc | less
 + utils/int2sym.pl data/lang/phones.txt < exp/tri1/questions.int
-+ ali-to-phones exp/mono/40.mdl ark:1.lat ark,t:- | less
++ ali-to-phones exp_decode/mono_ali/final.mdl "ark:gunzip -c exp_decode/mono_ali/ali.1.gz|" ark,t:- | less
 * fst
  Created by:robin1001 <2014-08-27 三>
 ** 定义
