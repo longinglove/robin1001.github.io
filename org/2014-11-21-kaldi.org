@@ -21,15 +21,24 @@
 *** timit_data_prepare.sh
 + wav.scp:文件列表
 + uttids：文件id
-+ trans：抄本
-+ utt2spk:语音-->说话人
-+ duration calc, mean, min, max
-
++ text：抄本
++ utt2spk spk2utt:语音-->说话人
++ duration calc, mean, min, max,在别的任务中不是必须的
++ stm, gtm等文件，在别的人物中也不是必须的
 *** timit_prepare_dict.sh
 + phone
 + lm：音素级bigram，build-lm.sh compile-lm
 *** utils/prepare_lang.sh
-与语言模型 & fst相关，代码太长，暂且不看
+#+BEGIN_EXAMPLE
+参数:
+1. --position-dependent-phones false, 音素是否设置为与在词中的位置相关
+  (B)egin, (E)nd, (I)nternal and (S)ingleton，设置相关后，单个音素会扩展为4个。
+a_B 6
+a_E 7
+a_I 8
+a_S 9
+2. "sil" "!SIL" "<UNK>" 写入到oov.txt
+#+END_EXAMPLE
 + sets.txt音素 sets.int 整数
 + roots.txt "shared split aa" roots.int
 + silence.txt nonsilence.txt context_indep.txt extra_questions.txt
@@ -39,10 +48,9 @@
 + align_lexicon.txt 
 + fstcompile --isymbols=$dir/phones.txt --osymbols=$dir/words.txt
 + 为什么构造这样一个L.fst 0.693147180559945(log 0.5)
-+ 生成的未见phones.txt word.txt L.fst L_disambig.fst
 *** timit_format_data.sh
-+ 将data lang数据分类规整到data\train test文件夹下
-+ 例如原train.text修改为data/train/text文件
++ 将data lang数据分类归整到data\train test文件夹下，标准命令，例如原train.text修改为data/train/text文件
++ utils/validate_data_dir.sh --no-feats data/$x || exit 1, 这个很重要，检查数据准备是否有序，kaldi中要求有序，便于随机读取
 + 准备了G.fst
 
 ** 特征提取
@@ -436,6 +444,15 @@ for (; !example_reader.Done(); example_reader.Next(), num_examples++)
 
 * kaldi中的数据文件及其作用
 ** 数据准备(其中大部分文件均需要排序)
+*** Required(Must provide)
+在数据准备过程中，必须准备并在以后训练过程中必须存在的有以下文件，注意啦
++ train.uttid test.uttid (data/local/data)
+#+begin_example
+作用: 文件唯一标识符
+格式: 
+FAEM0_SI1392
+FAEM0_SI2022
+#+end_example
 + train_wav.scp test_wav.scp dev_wav.scp(data/local/data)
 #+begin_example
 作用: 数据文件列表
@@ -446,13 +463,6 @@ for (; !example_reader.Done(); example_reader.Next(), num_examples++)
 作用: 抄本, 注意sil扩展
 格式: FAEM0_SI1392 sil ax s uw m f ao r ix vcl z ae m cl p uh l ax s n vcl d f iy l vcl s sil
 #+end_example
-+ train.uttid test.uttid (data/local/data)
-#+begin_example
-作用: 文件唯一标识符
-格式: 
-FAEM0_SI1392
-FAEM0_SI2022
-#+end_example
 + train.utt2spk train.spk2utt(data/local/data)
 #+begin_example
 作用: 说话人信息到uttid
@@ -461,6 +471,10 @@ FAEM0_SI2022
 utt2spk: FAEM0 FAEM0_SI1392 FAEM0_SI2022 FAEM0_SI762 FAEM0_SX132 FAEM0_SX222 FAEM0_SX312 FAEM0_SX402 FAEM0_SX42
 spk2utt: FAEM0_SI1392 FAEM0
 #+end_example
+*以上内容在format_data时会被分类整理在data/train, data/test, data/dev目录下,整理时名称可能会有改变*
+
+*** Timit Required
+以下文件timit也准备了，对于其他任务不一定必须，在此仅列出
 + train.spk2gender(data/local/data)
 #+begin_example
 作用: 说话人到性别信息
@@ -480,7 +494,7 @@ FAEM0_SI2022 2.252812
 + train.stm(data/local/data)
 #+begin_example
 作用: 扩展形式的超本，加入说话人，性别，时长信息
-使用: 这是啥？
+使用: stm和gtm这玩意儿timit独有，和解码时还有关系
 格式: 
 ;; LABEL "O" "Overall" "Overall"
 ;; LABEL "F" "Female" "Female speakers"
@@ -494,12 +508,11 @@ FAEM0_SI1392 1 FAEM0 0.0 4.761625 <O,M>  sil ax s uw m f ae n vcl d f iy l vcl s
 ;; empty.glm
   [FAKE]     =>  %HESITATION     / [ ] __ [ ] ;; hesitation token
 #+end_example
-*以上内容在format_data时会被分类整理在data/train, data/test, data/dev目录下,整理时名称可能会有改变*
 ** 字典准备
 + silence_phones.txt nonsilence_phones.txt(data/local/dict)
 #+begin_example
-使用: prepare_lang时使用，作为输入
-格式
+作用: 静音音素和非静音音素，两个互斥的集合 
+格式:
 sil
 ----------------
 aa
@@ -507,7 +520,7 @@ bb
 #+end_example
 + phones.txt(data/local/dict)
 #+begin_example
-使用: prepare_lang时使用
+使用: silence_phones.txt (U) nonsilence_phones.txt
 格式:
 aa
 ae
@@ -516,6 +529,16 @@ sil
 ...
 zh
 #+end_example
++ optinal_silence.txt
+#+begin_example
+作用: 可选静音列表，在发音字典fst中，可选的让该phone出现在每段发音段首或者词尾
+      根据任务而定，可选的sil, spn
+格式:
+sil
+----------------
+aa
+bb
+#+end_example
 + lexicon.txt(data/local/dict)
 #+begin_example
 作用: 词典
@@ -523,6 +546,8 @@ zh
 aa	aa
 ae	ae
 ah	ah
+----------------
+阿爸 a1 ba4
 #+end_example
 + extra_questions.txt(data/local/dict)
 #+begin_example
@@ -568,17 +593,15 @@ ngram  2=      1694
 格式: 
 sil
 aa
-ae
 ...
 ------------
 1
 2
-3
 ...
 #+end_example
 + root.txt (data/lang/phones)
 #+begin_example
-作用: 
+作用: 哪些音素共享根 
 格式:
 shared split sil
 shared split aa
@@ -587,6 +610,14 @@ shared split ae
 shared split 1
 shared split 2
 shared split 3
+#+end_example
++ oov.txt oov.int(data/lang)
+#+begin_example
+作用: 将词汇表以外词映射到该词，所以其在也仅在compile-train-graphs作为输入
+格式:
+sil
+------------
+38
 #+end_example
 + silence.txt,nonsilence.txt, silence.int, nonsilence.int(data/lang/phones)
 #+begin_example
@@ -629,16 +660,12 @@ ah 3
 ...
 #0 49
 #+end_example
-+ align_lexicon.txt
-#+begin_example
-作用: 
-格式: 
-<eps> <eps> sil
-aa aa aa
-ae ae ae
-...
-zh zh zh
-#+end_example
++ context_indep.txt
+#+BEGIN_EXAMPLE
+包含一个音素列表，用于建立文本无关模型，即不会建立上下文决策树。
+一般有静音SIL，口语噪音SPN，非口语噪音NSN，笑声LAU
+经验：把噪声和发声噪声都列为静音音素，而把其他传统音素列为非静音因素
+#+END_EXAMPLE
 + lexiconp.txt(data/local/dict)
 #+begin_example
 作用: 
@@ -646,14 +673,6 @@ zh zh zh
 aa	1.0	aa
 ae	1.0	ae
 ah	1.0	ah
-#+end_example
-+ oov.txt oov.int(data/lang)
-#+begin_example
-作用: 1. compile-train-graphs作为输入
-      2. 
-sil
-------------
-38
 #+end_example
 + L.fst L.disambig.fst(data/lang)
 #+begin_src sh
