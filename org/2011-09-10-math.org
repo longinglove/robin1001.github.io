@@ -1,0 +1,7 @@
+#+TITLE: 数学杂记
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/css/worg.css" />
+#+OPTIONS: ^:{} H:3
+#+STARTUP: indent
+#+CATEGORY: note
+
+$$ \int_{-\infty}^{+\infty} {e^{-x^2}dx} \eq  \sqrt{\pi}$$
