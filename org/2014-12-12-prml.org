@@ -13,9 +13,12 @@
 [[/img/prml/6-7.png]]
 [[/img/prml/6-8.png]]
 [[/img/prml/6-9.png]]
+
 可以将其完全转换为对偶形式，预测时也使用对偶形式。对偶形式有一下有点:
 + 完全使用核函数形式表示
 + 无需显示声明基函数
 + 预测形式中 $\mathbf{w}$ 消去了
 ** 核函数
+核函数将内积映射为核。如果我们的算法最终表达形式为内积形式，则可以选择合适的核通过核替换(kernel trick)简化运算。
+$$k(\mathbf{x}, {\mathbf{x}}^{'}) = {\phi(\mathbf{x})}^{T} {\phi({\mathbf{x}}^{'})}$$
 ** Radial Basis Function
