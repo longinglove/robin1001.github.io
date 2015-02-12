@@ -1487,17 +1487,13 @@ KaldiLogMessage::KaldiLogMessage(const char *func, const char *file,
                  << GetShortFileName(file) << ':' << line << ") ";
 }
  #+END_SRC
-* Kaldi Keypoint
-**** TODO SGMM
-**** TODO MAP, Mlle
-**** TODO occ
-** kaldi中的并行
-*** 主要特点
+*** kaldi中的并行run.pl
+**** 主要特点
 1. 错误日志
 2. 计算时间
 3. 在log文件首行打印所执行命令的实际参数信息
 4. 因此在不并行的时候也能看到使用$cmd
-*** 示例
+**** 示例
 #+begin_src sh
 $cmd JOB=1:$nj $dir/log/acc_tree.JOB.log \
     acc-tree-stats  --ci-phones=$ciphonelist $alidir/final.mdl "$feats" \
@@ -1511,7 +1507,7 @@ do
 done
 wait #等待所有子进程结束
 #+end_src
-*** run.pl源码
+**** run.pl源码
 #+begin_src perl
 #JOB
 if ($ARGV[0] =~ m/^([\w_][\w\d_]*)+=(\d+):(\d+)$/) { # e.g. JOB=1:10
@@ -1530,7 +1526,10 @@ for ($jobid = $jobstart; $jobid <= $jobend; $jobid++) {
   if ($? != 0) { $numfail++; $ret = 1; } # The child process failed.
 }
 #+end_src
-
+* Kaldi Keypoint
+**** TODO SGMM
+**** TODO MAP, Mlle
+**** TODO occ
 ** GMM
 *** TODO 如何加高斯，gmm split & merge
 *** 训练时每个模型的高斯数不一定相等，有意思哈！
