@@ -129,21 +129,8 @@ ClusterableInterface保存特征个数，并提供Add方法对特征进行累加
 
 ** tri2 : LDA + MLLT Training & Decoding
 *** steps/train_lda_mllt.sh
-1. 特征 splice-feats, 前后7帧
-2. ali-to-post: make_pair<alignment, 1.0>, Convert alignments to viterbi style posteriors
-#+begin_src cpp
-void AlignmentToPosterior(const std::vector<int32> &ali,
-                          Posterior *post) {
-  post->clear();
-  post->resize(ali.size());
-  for (size_t i = 0; i < ali.size(); i++) {
-    (*post)[i].resize(1);
-    (*post)[i][0].first = ali[i];
-    (*post)[i][0].second = 1.0;
-  }
-}
-#+end_src
-3. weight-silence-post: 将post中silence的weight*silence_weight = 0.0
+1. 拼接特征 splice-feats, 前后7帧
+2. weight-silence-post: 将post中silence的weight*silence_weight = 0.0
 #+begin_src cpp
 silence_scale=0.0
 void WeightSilencePost(const TransitionModel &trans_model,
@@ -168,7 +155,7 @@ void WeightSilencePost(const TransitionModel &trans_model,
   }
 }
 #+end_src
-4. acc-lda: 按照pdf id进行统计
+3. acc-lda: 按照pdf id进行统计
 #+begin_src cpp
       Posterior pdf_post;
       ConvertPosteriorToPdfs(trans_model, post, &pdf_post);
@@ -183,7 +170,7 @@ void WeightSilencePost(const TransitionModel &trans_model,
         }
       }
 #+end_src
-5. est_lda
+4. est_lda
 + dim=40
 #+begin_src cpp
 void LdaEstimate::Estimate(const LdaEstimateOptions &opts,
@@ -886,34 +873,14 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 #+end_example
 
 * kaldi doc
+这里主要是kaldi官网http://kaldi.sourceforge.net/上的重点摘记。
 ** kaldi tutorial
 *** Reading and modifying the code
 + kaldi中使用-O0,调试可以使用gdb调试
 + 可以在Makefile TESTFILES中添加自己的test，然后make test
 ** Kaldi I/O mechanisms
-1. io
-#+begin_src cpp
-class SomeKaldiClass {
- public:
-   void Read(std::istream &is, bool binary);
-   void Write(std::ostream &os, bool binary) const;
-};
-//read & write
-{ // input.
-  bool binary_in;
-  Input ki(some_rxfilename, &binary_in);
-  my_object.Read(ki.Stream(), binary_in);
-  // you can have more than one object in a file:
-  my_other_object.Read(ki.Stream(), binary_in);
-}
-// output.  note, "binary" is probably a command-line option.
-{
-  Output ko(some_wxfilename, binary);
-  my_object.Write(ko.Stream(), binary); 
-}
-#+end_src
-2. binary vs text: binary start '\0B'
-3. ark,t: t in text format
+1. binary vs text: binary start '\0B'
+2. ark,t: t in text format
 ** The Kaldi Matrix library
 + 包装库 BLAS & LAPACK
 + Vector 向量
@@ -932,33 +899,139 @@ M.AddVecVec(1.0, v, w);
 *** kaldi.mk
 + 默认编译选项：-g -O0 -DKALDI_PARANOID
 *** Makefile
-+ make test
-+ 
++ make test 
 ** Parsing command-line Options
 *** parse-option(util, ParseOption类)
 + Read()
 
-** Kaldi logging and error-reporting
-*** kaldi log(base/kaldi-error.h)
-#+BEGIN_SRC cpp
-class KaldiLogMessage {
- public:
-  inline std::ostream &stream() { return ss; }
-  KaldiLogMessage(const char *func, const char *file, int32 line);
-  ~KaldiLogMessage() { fprintf(stderr, "%s\n", ss.str().c_str()); }
- private:
-  std::ostringstream ss;
-};
-
-#define KALDI_LOG kaldi::KaldiLogMessage(__func__, __FILE__, __LINE__).stream()
-
-KaldiLogMessage::KaldiLogMessage(const char *func, const char *file,
-                                 int32 line) {
-  this->stream() << "LOG (" << GetProgramName() << func << "():"
-                 << GetShortFileName(file) << ':' << line << ") ";
-}
- #+END_SRC
 ** Decoders used in the Kaldi toolkit
+详见kaldi部分代码解析之解码。
+** HMM topology and transition modeling
+*** HMM topology
+#+BEGIN_EXAMPLE
+ <Topology>
+ <TopologyEntry>
+ <ForPhones> 1 2 3 4 5 6 7 8 </ForPhones>
+ <State> 0 <PdfClass> 0
+ <Transition> 0 0.5
+ <Transition> 1 0.5
+ </State> 
+ <State> 1 <PdfClass> 1 
+ <Transition> 1 0.5
+ <Transition> 2 0.5
+ </State>  
+ <State> 2 <PdfClass> 2
+ <Transition> 2 0.5
+ <Transition> 3 0.5
+ </State>   
+ <State> 3
+ </State>   
+ </TopologyEntry>
+ </Topology>
+#+END_EXAMPLE
++ pdfclass index
++ 状态3无pdf
++ code
+#+BEGIN_SRC cpp
+struct HmmState {
+    int32 pdf_class;
+    std::vector<std::pair<int32, BaseFloat> > transitions;
+};
+typedef std::vector<HmmState> TopologyEntry;
+class HmmTopology{
+  std::vector<int32> phones_;  // 排序的音素topo集合
+  std::vector<int32> phone2idx_;  // 音素到hmm topo结构的映射
+  std::vector<TopologyEntry> entries_; //topo
+};
+#+END_SRC
+
+*** Pdf-classes
+*** Transition models (the TransitionModel object)
+#+begin_example
+//             (phone, HMM-state, pdf-id) -> transition-state
+//   (transition-state, transition-index) -> transition-id
+ The most "natural" FST-based setups would have what we call pdf-ids on
+ the input labels. However, bearing in mind that given our tree-building
+ algorithms it will not always be possible to map uniquely from a pdf-id
+ to a phone, this would make it hard to map from an input-label sequence
+ to a phone sequence, and this is inconvenient for a number of reasons;
+ it would also make it hard in general to train the transition probabilities
+ using the information in the FST alone. For this reason we put identifiers
+ called transition-ids on the input labels of the FST, and these can be mapped
+ to the pdf-id but also to the phone and to a particular transition in a
+ prototype HMM (as given in the HmmTopology object).
+#+end_example
+why???
++ 将HMM和GMMS(am-diag-gmm)连接起来
++ The most "natural" FST-based setups would have what we call pdf-ids on the input labels.
+
+***** Integer identifiers used by TransitionModel
+1. phone: 1-based
+2. hmm-state: 0-based
+3. transition-state: 1-based
+4. transition-index 0-based
+5. transition-id: 1-based
+***** transition-id as input label
+***** Alignments in Kaldi
++ vector<int32>, which contains a sequence of transition-ids
+** How decision trees are used in Kaldi
+#+begin_example
+we have a number of ways we can split the data by asking about, say, the left phone, 
+the right phone, the central phone, the state we're in, and so on. 
+#+end_example
+
+| Name in code | Name in command-line arguments | Value (triphone) | Value (monophone) |
+| N            | –context-width=?               |                3 |                 1 |
+| P            | –central-position=?            |                1 |                 0 |
+#+begin_example
+vector<int32> ctx_window = { 12, 15, 21 }; 三音素树 12-15+21， 0代表没有音素
+kPdfClass=-1,一个音素生成TableEventMap(kPdfClass, map)
+一个音素的所有状态生成一个table，每个状态生成一个ConstEventMap,id作为key
+#+end_example
+** Decoding-graph creation recipe(training time)
+#+begin_example
+compile-train-graphs: 为每个语句训练一个wfst,即H*C*L*G，其中G为根据每条语句
+生成的一个acceptor，利用这个fst在这个语句mfcc特征上进行解码，然后反向得到对齐
+信息。
+gmm-align-compiled：
+具体步骤可参考：Internals of graph creation
+#+end_example
+
+** Other kaldi utilities
+*** hash-list(util/hash-list.h)
+*** kaldi-table(util/kaldi-table)
+实现w和r的参数解析
+make valgrind
+
+** Clustering mechanisms in Kaldi
++ Clusterable接口
++ Clustering algorithms
+
+** Acoustic modeling code
++ DiagGmmNormal
++ DiagGmm 一个对角混合高斯模型
+#+begin_src cpp
+  Vector<BaseFloat> weights_;        ///< weights (not log).
+  Matrix<BaseFloat> inv_vars_;       ///< Inverted (diagonal) variances
+  Matrix<BaseFloat> means_invvars_;  ///< Means times inverted variance
+#+end_src
+ Merge & MergeKMeans ???
++ AmDiagGmm
+1. std::vector<DiagGmm*> densities_;
+2. num_pdfs个混合高斯模型
+3. pdf_index混合高斯索引
+4. LogLikelihood(pdf_index): 返回某个高斯的对数似然 
++ You can think of AmDiagGmm as a vector of type DiagGmm
++ FullGmm: Full-covariance GMMs
++ AmSgmm: Subspace Gaussian Mixture Models (SGMMs)
+
+** Deep Neural Networks in Kaldi
+*** 两种不同实现
++ Karel's:效果好，不并行，使用预训练和交叉验证集。
++ Dan's: 并行，无预训练，使用固定训练轮数
+
+* kaldi 部分代码解析
+** 解码
 *** DecodableInterface
   virtual BaseFloat LogLikelihood(int32 frame, int32 index);
   virtual bool IsLastFrame(int32 frame);
@@ -1103,91 +1176,7 @@ bool GetLinearSymbolSequence(const Fst<Arc> &fst,
 5. ProcessEmitting:
 6. 在解码处理上算法简单化，数据结构更加抽象
 7. 代码看起来很清晰哈
-
-** HMM topology and transition modeling
-*** HMM topology
-#+BEGIN_EXAMPLE
- <Topology>
- <TopologyEntry>
- <ForPhones> 1 2 3 4 5 6 7 8 </ForPhones>
- <State> 0 <PdfClass> 0
- <Transition> 0 0.5
- <Transition> 1 0.5
- </State> 
- <State> 1 <PdfClass> 1 
- <Transition> 1 0.5
- <Transition> 2 0.5
- </State>  
- <State> 2 <PdfClass> 2
- <Transition> 2 0.5
- <Transition> 3 0.5
- </State>   
- <State> 3
- </State>   
- </TopologyEntry>
- </Topology>
-#+END_EXAMPLE
-+ pdfclass index
-+ 状态3无pdf
-+ code
-#+BEGIN_SRC cpp
-struct HmmState {
-    int32 pdf_class;
-    std::vector<std::pair<int32, BaseFloat> > transitions;
-};
-typedef std::vector<HmmState> TopologyEntry;
-class HmmTopology{
-  std::vector<int32> phones_;  // 排序的音素topo集合
-  std::vector<int32> phone2idx_;  // 音素到hmm topo结构的映射
-  std::vector<TopologyEntry> entries_; //topo
-};
-#+END_SRC
-
-*** Pdf-classes
-*** Transition models (the TransitionModel object)
-#+begin_example
-//             (phone, HMM-state, pdf-id) -> transition-state
-//   (transition-state, transition-index) -> transition-id
- The most "natural" FST-based setups would have what we call pdf-ids on
- the input labels. However, bearing in mind that given our tree-building
- algorithms it will not always be possible to map uniquely from a pdf-id
- to a phone, this would make it hard to map from an input-label sequence
- to a phone sequence, and this is inconvenient for a number of reasons;
- it would also make it hard in general to train the transition probabilities
- using the information in the FST alone. For this reason we put identifiers
- called transition-ids on the input labels of the FST, and these can be mapped
- to the pdf-id but also to the phone and to a particular transition in a
- prototype HMM (as given in the HmmTopology object).
-#+end_example
-why???
-+ 将HMM和GMMS(am-diag-gmm)连接起来
-+ The most "natural" FST-based setups would have what we call pdf-ids on the input labels.
-
-***** Integer identifiers used by TransitionModel
-1. phone: 1-based
-2. hmm-state: 0-based
-3. transition-state: 1-based
-4. transition-index 0-based
-5. transition-id: 1-based
-***** transition-id as input label
-***** Alignments in Kaldi
-+ vector<int32>, which contains a sequence of transition-ids
-** How decision trees are used in Kaldi
-#+begin_example
-we have a number of ways we can split the data by asking about, say, the left phone, 
-the right phone, the central phone, the state we're in, and so on. 
-#+end_example
-
-| Name in code | Name in command-line arguments | Value (triphone) | Value (monophone) |
-| N            | –context-width=?               |                3 |                 1 |
-| P            | –central-position=?            |                1 |                 0 |
-#+begin_example
-vector<int32> ctx_window = { 12, 15, 21 }; 三音素树 12-15+21， 0代表没有音素
-kPdfClass=-1,一个音素生成TableEventMap(kPdfClass, map)
-一个音素的所有状态生成一个table，每个状态生成一个ConstEventMap,id作为key
-#+end_example
-
-** Decision tree internals
+** 三音素决策树
 + An event is just a set of (key,value) pairs, with no key repeated
 *** 数据结构
 ***** EventMap
@@ -1464,50 +1453,40 @@ BaseFloat ComputeInitialSplit(const std::vector<Clusterable*> &summed_stats,
   return best_objf_change;
 }
 #+end_src
-** Decoding graph construction in Kaldi
-** Decoding-graph creation recipe(training time)
-#+begin_example
-compile-train-graphs: 为每个语句训练一个wfst,即H*C*L*G，其中G为根据每条语句
-生成的一个acceptor，利用这个fst在这个语句mfcc特征上进行解码，然后反向得到对齐
-信息。
-gmm-align-compiled：
-具体步骤可参考：Internals of graph creation
-#+end_example
-
-** Other kaldi utilities
-*** hash-list(util/hash-list.h)
-*** kaldi-table(util/kaldi-table)
-实现w和r的参数解析
-make valgrind
-
-** Clustering mechanisms in Kaldi
-+ Clusterable接口
-+ Clustering algorithms
-
-** Acoustic modeling code
-+ DiagGmmNormal
-+ DiagGmm 一个对角混合高斯模型
+** DNN
+** 一些工具解析
+*** ali-to-post: make_pair<alignment, 1.0>, Convert alignments to viterbi style posteriors
 #+begin_src cpp
-  Vector<BaseFloat> weights_;        ///< weights (not log).
-  Matrix<BaseFloat> inv_vars_;       ///< Inverted (diagonal) variances
-  Matrix<BaseFloat> means_invvars_;  ///< Means times inverted variance
+void AlignmentToPosterior(const std::vector<int32> &ali,
+                          Posterior *post) {
+  post->clear();
+  post->resize(ali.size());
+  for (size_t i = 0; i < ali.size(); i++) {
+    (*post)[i].resize(1);
+    (*post)[i][0].first = ali[i];
+    (*post)[i][0].second = 1.0;
+  }
+}
 #+end_src
- Merge & MergeKMeans ???
-+ AmDiagGmm
-1. std::vector<DiagGmm*> densities_;
-2. num_pdfs个混合高斯模型
-3. pdf_index混合高斯索引
-4. LogLikelihood(pdf_index): 返回某个高斯的对数似然 
-+ You can think of AmDiagGmm as a vector of type DiagGmm
-+ FullGmm: Full-covariance GMMs
-+ AmSgmm: Subspace Gaussian Mixture Models (SGMMs)
+*** kaldi log(base/kaldi-error.h)
+#+BEGIN_SRC cpp
+class KaldiLogMessage {
+ public:
+  inline std::ostream &stream() { return ss; }
+  KaldiLogMessage(const char *func, const char *file, int32 line);
+  ~KaldiLogMessage() { fprintf(stderr, "%s\n", ss.str().c_str()); }
+ private:
+  std::ostringstream ss;
+};
 
-** Deep Neural Networks in Kaldi
-*** 两种不同实现
-+ Karel's:效果好，不并行，使用预训练和交叉验证集。
-+ Dan's: 并行，无预训练，使用固定训练轮数
-*** Dan's DNN implementation
+#define KALDI_LOG kaldi::KaldiLogMessage(__func__, __FILE__, __LINE__).stream()
 
+KaldiLogMessage::KaldiLogMessage(const char *func, const char *file,
+                                 int32 line) {
+  this->stream() << "LOG (" << GetProgramName() << func << "():"
+                 << GetShortFileName(file) << ':' << line << ") ";
+}
+ #+END_SRC
 * Kaldi Keypoint
 **** TODO SGMM
 **** TODO MAP, Mlle
