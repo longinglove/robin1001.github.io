@@ -4,7 +4,7 @@
 #+STARTUP: indent
 #+CATEGORY: note
 
-* kaldi timit
+* kaldi timit脚本解析
 ** keynotes
 #+begin_example
 1. train_cmd在cmd.sh中定义，训练方式选择
@@ -882,10 +882,8 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 1. binary vs text: binary start '\0B'
 2. ark,t: t in text format
 ** The Kaldi Matrix library
-+ 包装库 BLAS & LAPACK
-+ Vector 向量
-+ Matrix 矩阵
-+ 一些操作
+kaldi的Matrix库为BLAS & LAPACK线性代数库的包装。
+*** Matrix & Vector
 #+begin_src cpp
 Vector<float> v(10), w(9);
 for(int i=0; i < 9; i++) {
@@ -894,7 +892,29 @@ for(int i=0; i < 9; i++) {
 }
 Matrix<float> M(10,9);
 M.AddVecVec(1.0, v, w);
+//A = beta * A + alpha * B * C; B,C是否转置由kNoTrans和kTrans决定
+A.AddMatMat(alpha, B, kNoTrans, C, kTrans, beta);
 #+end_src
+*** Sub-vectors & Sub-matrices
+子向量和矩阵，类似matlab或python中的矩阵切片, SubVector和SubMatrix不能Resize。
+#+BEGIN_SRC cpp
+Vector<float> v(10), w(10);
+Matrix<float> M(10, 10);
+SubVector<float> vs(v, 1, 9), ws(w, 1, 9);
+SubMatrix<float> Ms(M, 1, 9, 1, 9);
+// next line would be v(2:10) += M(2:10,2:10)*w(2:10) in some
+// matrix multiply & add
+vs.AddMatVec(1.0, Ms, kNoTrans, ws); vs = 1.0 * Ms * ws
+
+//切片操作
+SubVector row_of_m(M, 0); // M.Row(3), return SubVector
+// get a sub-vector of length 5 starting from position 0; zero it.
+v.Range(0, 5).SetZero();
+// get a sub-matrix of size 2x2 starting from position (5,5); zero it.
+M.Range(5, 2, 5, 2).SetZero(); 
+#+END_SRC
+*** Copy
+The simplest ones are the CopyFrom functions, for instance Matrix::CopyFromMat, Vector::CopyFromVec.
 ** The build process(how Kaldi is compiled)
 *** kaldi.mk
 + 默认编译选项：-g -O0 -DKALDI_PARANOID
