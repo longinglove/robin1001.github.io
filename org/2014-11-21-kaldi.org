@@ -873,7 +873,7 @@ trn_adg04_sr249 285 283 283 283 283 283 283 283 283 291 292 292 292 292 292 292
 #+end_example
 
 * kaldi doc
-这里主要是kaldi官网http://kaldi.sourceforge.net/上的重点摘记。
+这里主要是kaldi官网上的重点摘记。
 ** kaldi tutorial
 *** Reading and modifying the code
 + kaldi中使用-O0,调试可以使用gdb调试
