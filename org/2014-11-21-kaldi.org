@@ -1474,6 +1474,169 @@ BaseFloat ComputeInitialSplit(const std::vector<Clusterable*> &summed_stats,
 }
 #+end_src
 ** DNN
+*** component
+神经网络由多层的Component拼接而成，即Component为其基本组件。Component中引申出UpdatableComponent，即含有连接权值的Component，如：
+1. Component: Sigmoid, Softmax, Tanh, max-pooling等
+2. UpdatableComponent: AffineTransform, LinearTransform, ConvolutionalComponent等。
+#+BEGIN_SRC cpp
+//Componet子类需实现PropagateFnc和BackpropagateFnc接口
+class Sigmoid : public Component {
+ public:
+  void PropagateFnc(const CuMatrixBase<BaseFloat> &in, CuMatrixBase<BaseFloat> *out) {
+    // y = 1/(1+e^-x)
+    out->Sigmoid(in);
+  }
+  void BackpropagateFnc(const CuMatrixBase<BaseFloat> &in, const CuMatrixBase<BaseFloat> &out,
+                        const CuMatrixBase<BaseFloat> &out_diff, CuMatrixBase<BaseFloat> *in_diff) {
+    // ey = y(1-y)ex
+    in_diff->DiffSigmoid(out, out_diff);
+  }
+};
+//UpdatableComponent还需实现Update()接口
+class UpdatableComponent : public Component {
+public:
+  //updatable
+  bool IsUpdatable() const {
+    return true;
+  }
+  /// Compute gradient and update parameters
+  virtual void Update(const CuMatrixBase<BaseFloat> &input,
+                      const CuMatrixBase<BaseFloat> &diff) = 0;
+ protected:
+  /// Option-class with training hyper-parameters
+  NnetTrainOptions opts_;
+};
+#+END_SRC
+AffineTransform含有bias
+** CNN
+*** keypoint
++ convolution only frequence axis, 卷积窗仅在频域轴上移动
++ feature type, 将时域拼接的上下文帧转换为frequency bands特征
++ convolution over all axis, 即不使用local filter，在整个频域上使用相同核
++ fast implementation, 将二维滤波器（卷积核）拉伸为一维向量
+
+*** 代码解析
+因为卷积核移动和不同的卷积核，输入与输出之间是一对多的关系，一般是按输入顺序查找输出。这里的一个技巧是先确定出输出的维度，查找与之相应的输入，前向，后向，卷积和pooling时均使用该技巧。
+**** 卷积层 nnet-convolution-component.h
+#+BEGIN_EXAMPLE cpp
+  void PropagateFnc(const CuMatrixBase<BaseFloat> &in, CuMatrixBase<BaseFloat> *out) {
+    // useful dims
+    int32 num_splice = input_dim_ / patch_stride_; //帧数
+    int32 num_patches = 1 + (patch_stride_ - patch_dim_) / patch_step_; //patch num
+    int32 num_filters = filters_.NumRows(); //filter数量，一行为一个filter
+    int32 num_frames = in.NumRows(); //batch中的数据数
+    int32 filter_dim = filters_.NumCols(); //filter的核大小
+
+    // we will need the buffers 
+    if (vectorized_feature_patches_.size() == 0) {
+      vectorized_feature_patches_.resize(num_patches);
+      feature_patch_diffs_.resize(num_patches);
+    }
+
+    /* Prepare feature patches, the layout is:
+     * |----------|----------|----------|---------| (in = spliced frames)
+     *   xxx        xxx        xxx        xxx       (x = selected elements)
+     *
+     *   xxx : patch dim
+     *    xxx 
+     *   ^---: patch step
+     * |----------| : patch stride
+     *
+     *   xxx-xxx-xxx-xxx : filter dim
+     *  
+     */
+    for (int32 p=0; p<num_patches; p++) {
+      vectorized_feature_patches_[p].Resize(num_frames, filter_dim, kSetZero);
+      // build-up a column selection mask:
+      std::vector<int32> column_mask;
+	  /*
+       *|-XXX---------|
+       *|-XXX---------|
+       *|-XXX---------|
+       *|-XXX---------|
+	   column_mask的位置, p * patch_step + s * patch_stride_ + d
+	   */
+      for (int32 s=0; s<num_splice; s++) {
+        for (int32 d=0; d<patch_dim_; d++) {
+          column_mask.push_back(p * patch_step_ + s * patch_stride_ + d);
+        }
+      }
+      KALDI_ASSERT(column_mask.size() == filter_dim);
+      // select the current patch columns, 一行为一个输入数据。
+      vectorized_feature_patches_[p].CopyCols(in, column_mask);
+    }
+
+    // compute filter activations
+    for (int32 p=0; p<num_patches; p++) {
+      //patch p 在输出中的位置tgt
+      CuSubMatrix<BaseFloat> tgt(out->ColRange(p * num_filters, num_filters));
+      tgt.AddVecToRows(1.0, bias_, 0.0); // add bias
+      // apply all filters
+      tgt.AddMatMat(1.0, vectorized_feature_patches_[p], kNoTrans, filters_, kTrans, 1.0);
+    }
+  }
+  //后向程序仅是对公式的翻译
+  void BackpropagateFnc(const CuMatrixBase<BaseFloat> &in, const CuMatrixBase<BaseFloat> &out,
+                        const CuMatrixBase<BaseFloat> &out_diff, CuMatrixBase<BaseFloat> *in_diff) {
+  }
+  void Update(const CuMatrixBase<BaseFloat> &input, const CuMatrixBase<BaseFloat> &diff) {
+  }
+#+END_EXAMPLE
+
+**** pooling层 nnet-max-pooling-component.h
+#+BEGIN_SRC cpp
+  void PropagateFnc(const CuMatrixBase<BaseFloat> &in, CuMatrixBase<BaseFloat> *out) {                                                                
+    // useful dims                                                                                                                                    
+    int32 num_patches = input_dim_ / pool_stride_;                                                                                                    
+    int32 num_pools = 1 + (num_patches - pool_size_) / pool_step_;                                                                                    
+    //pool_step_ pool步移， pool_size_，pool步长                                                                                                                                                  
+    // do the max-pooling (pools indexed by q),为每个输出q选择max                                                                                                        
+    for (int32 q = 0; q < num_pools; q++) {                                                                                                           
+      // get output buffer of the pool                                                                                                                
+      CuSubMatrix<BaseFloat> pool(out->ColRange(q*pool_stride_, pool_stride_));                                                                       
+      pool.Set(-1e20); // reset (large negative value)                                                                                                
+      for (int32 r = 0; r < pool_size_; r++) { // max                                                                                                 
+        int32 p = r + q * pool_step_; // p = input patch                                                                                              
+        pool.Max(in.ColRange(p*pool_stride_, pool_stride_)); //*this = max(*this, A)                                                                                      
+      }                                                                                                                                               
+    }                                                                                                                                                 
+  } 
+  //max-pool，若其为max，后向误差乘以1，否则0，这里有个scale的操作
+  //因为中间部分可能多次计算，相对的边缘部分在shift中计算次数较少
+  void BackpropagateFnc(const CuMatrixBase<BaseFloat> &in, const CuMatrixBase<BaseFloat> &out,
+                        const CuMatrixBase<BaseFloat> &out_diff, CuMatrixBase<BaseFloat> *in_diff) {
+    // useful dims
+    int32 num_patches = input_dim_ / pool_stride_;
+    int32 num_pools = 1 + (num_patches - pool_size_) / pool_step_;
+    //scale 数组
+    std::vector<int32> patch_summands(num_patches, 0);
+    in_diff->SetZero(); // reset
+    //遍历所有pool输出
+    for(int32 q=0; q<num_pools; q++) { // sum
+      for(int32 r=0; r<pool_size_; r++) {
+        //对应q时的输入
+        int32 p = r + q * pool_step_; // patch number
+        CuSubMatrix<BaseFloat> in_p(in.ColRange(p*pool_stride_, pool_stride_));
+        CuSubMatrix<BaseFloat> out_q(out.ColRange(q*pool_stride_, pool_stride_));
+        CuSubMatrix<BaseFloat> tgt(in_diff->ColRange(p*pool_stride_, pool_stride_));
+        CuMatrix<BaseFloat> src(out_diff.ColRange(q*pool_stride_, pool_stride_));
+        //find max mask
+        CuMatrix<BaseFloat> mask;
+        in_p.EqualElementMask(out_q, &mask);
+        src.MulElements(mask);
+        tgt.AddMat(1.0, src);
+        patch_summands[p] += 1;
+      }
+    }
+    //scale操作
+    for(int32 p=0; p<num_patches; p++) {
+      CuSubMatrix<BaseFloat> tgt(in_diff->ColRange(p*pool_stride_, pool_stride_));
+      KALDI_ASSERT(patch_summands[p] > 0); // patch at least in one pool
+      tgt.Scale(1.0/patch_summands[p]);
+    }
+  }
+
+#+END_SRC
 ** 一些工具解析
 *** ali-to-post: make_pair<alignment, 1.0>, Convert alignments to viterbi style posteriors
 #+begin_src cpp

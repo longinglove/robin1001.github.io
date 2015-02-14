@@ -1,0 +1,57 @@
+#+TITLE: 卷积神经网络
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/worg.css" />
+#+OPTIONS: ^:{}
+
+* 卷积特征提取
+** 离散卷积
+[[./img/cnn/convolution.jpg]]
+1. 卷积的长度M+N-1,不补0有效长度M-N+1
+2. 重要性质之一：交换律
+#+BEGIN_SRC matlab
+%matlab 卷积函数
+conv(x, h, 'full') %所有长度,M+N-1
+conv(x, h, 'valid') %有效长度,M-N+1
+#+END_SRC
+** 图片特征提取
+1. NN在图像中的问题:参数多，图片的局部性
+2. 卷积提取特征,如均值滤波窗,Gasussion模糊,Laplace算子,梯度算子，SIFT中的LoG
+\begin{equation}
+\begin{bmatrix}
+0 &  -1 &  0  \\ 
+-1 &  4 &  -1\\ 
+0 &  -1 &  0
+\end{bmatrix}
+\end{equation}
+#+BEGIN_CENTER
+[[./img/cnn/lena.jpg]]
+[[./img/cnn/lena_cnn.png]]
+#+END_CENTER
+* 卷积神经网络结构
+[[./img/cnn/mylenet.png]]
+1. 卷积层C，所谓的权值共享
+2. 降采样层S, Pooling
+3. 全连接层，就是NN
+* CNN算法
+** 前向
+*** 卷积层
+[[./img/cnn/con_fp.png]]
+*** 降采样层Pooling
+[[./img/cnn/sub_fp.png]]
+
+down函数降采样的方式max-pooling, mean-pooling
+
+max pooling的意思就是用图像某一区域像素值的最大值来表示该区域的特征，而mean pool的意思用图像某一区域像素值的均值来表示该区域的特征。这两个pooling操作都提高了提取特征的不变性，而特征提取的误差主要来自两个方面：（1）邻域大小受限造成的估计值方差增大；（2）卷积层参数误差造成估计均值的偏移。一般来说，mean-pooling能减小第一种误差，更多的保留图像的背景信息，max-pooling能减小第二种误差，更多的保留纹理信息。在图像处理中，使用max pooling多于mean pooling 
+
+** 后向ebp
+*** 卷积层
+1. 降采样层 $\delta$ 升采样，一一对应
+*** 降采样层
+若降采样层后为全连接层，计算方式与普通NN相同，所以此处仅考虑降采样层后为卷积层的形式。
+* 在语音识别中的应用
++ cnn结构对局部频域结构建模
++ filter-bank特征，按频率分组
+[[./img/cnn/cnn_speech1.png]]
++ 改进：滤波器的局部性，仅对Local filter权值共享
+[[./img/cnn/cnn_speech2.png]]
++ 与图像卷积神经网络不同之处:多个全连接层，Local filter
+[[./img/cnn/cnn_speech3.png]]

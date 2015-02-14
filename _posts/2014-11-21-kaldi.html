@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Kaldi学习笔记</title>
-<!-- 2015-02-12 四 12:44 -->
+<!-- 2015-02-14 六 19:41 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -318,12 +318,22 @@ for the JavaScript code in this tag.
 <li><a href="#sec-4-2-4">4.2.4. tools &amp; core code</a></li>
 </ul>
 </li>
-<li><a href="#sec-4-3">4.3. DNN</a></li>
-<li><a href="#sec-4-4">4.4. 一些工具解析</a>
+<li><a href="#sec-4-3">4.3. DNN</a>
 <ul>
-<li><a href="#sec-4-4-1">4.4.1. ali-to-post: make_pair&lt;alignment, 1.0&gt;, Convert alignments to viterbi style posteriors</a></li>
-<li><a href="#sec-4-4-2">4.4.2. kaldi log(base/kaldi-error.h)</a></li>
-<li><a href="#sec-4-4-3">4.4.3. kaldi中的并行run.pl</a></li>
+<li><a href="#sec-4-3-1">4.3.1. component</a></li>
+</ul>
+</li>
+<li><a href="#sec-4-4">4.4. CNN</a>
+<ul>
+<li><a href="#sec-4-4-1">4.4.1. keypoint</a></li>
+<li><a href="#sec-4-4-2">4.4.2. 代码解析</a></li>
+</ul>
+</li>
+<li><a href="#sec-4-5">4.5. 一些工具解析</a>
+<ul>
+<li><a href="#sec-4-5-1">4.5.1. ali-to-post: make_pair&lt;alignment, 1.0&gt;, Convert alignments to viterbi style posteriors</a></li>
+<li><a href="#sec-4-5-2">4.5.2. kaldi log(base/kaldi-error.h)</a></li>
+<li><a href="#sec-4-5-3">4.5.3. kaldi中的并行run.pl</a></li>
 </ul>
 </li>
 </ul>
@@ -2683,13 +2693,215 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </div>
 <div id="outline-container-sec-4-3" class="outline-3">
 <h3 id="sec-4-3"><span class="section-number-3">4.3</span> DNN</h3>
+<div class="outline-text-3" id="text-4-3">
+</div><div id="outline-container-sec-4-3-1" class="outline-4">
+<h4 id="sec-4-3-1"><span class="section-number-4">4.3.1</span> component</h4>
+<div class="outline-text-4" id="text-4-3-1">
+<p>
+神经网络由多层的Component拼接而成，即Component为其基本组件。Component中引申出UpdatableComponent，即含有连接权值的Component，如：
+</p>
+<ol class="org-ol">
+<li>Component: Sigmoid, Softmax, Tanh, max-pooling等
+</li>
+<li>UpdatableComponent: AffineTransform, LinearTransform, ConvolutionalComponent等。
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #b22222;">//</span><span style="color: #b22222;">Componet&#23376;&#31867;&#38656;&#23454;&#29616;PropagateFnc&#21644;BackpropagateFnc&#25509;&#21475;</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">Sigmoid</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span> {
+ <span style="color: #a020f0;">public</span>:
+  <span style="color: #228b22;">void</span> <span style="color: #0000ff;">PropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">out</span>) {
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">y = 1/(1+e^-x)</span>
+    out-&gt;Sigmoid(in);
+  }
+  <span style="color: #228b22;">void</span> <span style="color: #0000ff;">BackpropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out</span>,
+                        <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out_diff</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">in_diff</span>) {
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">ey = y(1-y)ex</span>
+    in_diff-&gt;DiffSigmoid(out, out_diff);
+  }
+};
+<span style="color: #b22222;">//</span><span style="color: #b22222;">UpdatableComponent&#36824;&#38656;&#23454;&#29616;Update()&#25509;&#21475;</span>
+<span style="color: #a020f0;">class</span> <span style="color: #228b22;">UpdatableComponent</span> : <span style="color: #a020f0;">public</span> <span style="color: #228b22;">Component</span> {
+<span style="color: #a020f0;">public</span>:
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">updatable</span>
+  <span style="color: #228b22;">bool</span> <span style="color: #0000ff;">IsUpdatable</span>() <span style="color: #a020f0;">const</span> {
+    <span style="color: #a020f0;">return</span> <span style="color: #008b8b;">true</span>;
+  }
+  <span style="color: #b22222;">/// </span><span style="color: #b22222;">Compute gradient and update parameters</span>
+  <span style="color: #a020f0;">virtual</span> <span style="color: #228b22;">void</span> <span style="color: #0000ff;">Update</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">input</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">diff</span>) = 0;
+ <span style="color: #a020f0;">protected</span>:
+  <span style="color: #b22222;">/// </span><span style="color: #b22222;">Option-class with training hyper-parameters</span>
+  <span style="color: #228b22;">NnetTrainOptions</span> <span style="color: #a0522d;">opts_</span>;
+};
+</pre>
+</div>
+<p>
+AffineTransform含有bias
+</p>
+</div>
+</div>
 </div>
 <div id="outline-container-sec-4-4" class="outline-3">
-<h3 id="sec-4-4"><span class="section-number-3">4.4</span> 一些工具解析</h3>
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> CNN</h3>
 <div class="outline-text-3" id="text-4-4">
 </div><div id="outline-container-sec-4-4-1" class="outline-4">
-<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> ali-to-post: make_pair&lt;alignment, 1.0&gt;, Convert alignments to viterbi style posteriors</h4>
+<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> keypoint</h4>
 <div class="outline-text-4" id="text-4-4-1">
+<ul class="org-ul">
+<li>convolution only frequence axis, 卷积窗仅在频域轴上移动
+</li>
+<li>feature type, 将时域拼接的上下文帧转换为frequency bands特征
+</li>
+<li>convolution over all axis, 即不使用local filter，在整个频域上使用相同核
+</li>
+<li>fast implementation, 将二维滤波器（卷积核）拉伸为一维向量
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-4-4-2" class="outline-4">
+<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> 代码解析</h4>
+<div class="outline-text-4" id="text-4-4-2">
+<p>
+因为卷积核移动和不同的卷积核，输入与输出之间是一对多的关系，一般是按输入顺序查找输出。这里的一个技巧是先确定出输出的维度，查找与之相应的输入，前向，后向，卷积和pooling时均使用该技巧。
+</p>
+</div>
+<ol class="org-ol"><li><a id="sec-4-4-2-1" name="sec-4-4-2-1"></a>卷积层 nnet-convolution-component.h<br  /><div class="outline-text-5" id="text-4-4-2-1">
+<pre class="example">
+void PropagateFnc(const CuMatrixBase&lt;BaseFloat&gt; &amp;in, CuMatrixBase&lt;BaseFloat&gt; *out) {
+  // useful dims
+  int32 num_splice = input_dim_ / patch_stride_; //帧数
+  int32 num_patches = 1 + (patch_stride_ - patch_dim_) / patch_step_; //patch num
+  int32 num_filters = filters_.NumRows(); //filter数量，一行为一个filter
+  int32 num_frames = in.NumRows(); //batch中的数据数
+  int32 filter_dim = filters_.NumCols(); //filter的核大小
+
+  // we will need the buffers 
+  if (vectorized_feature_patches_.size() == 0) {
+    vectorized_feature_patches_.resize(num_patches);
+    feature_patch_diffs_.resize(num_patches);
+  }
+
+  /* Prepare feature patches, the layout is:
+   * |----------|----------|----------|---------| (in = spliced frames)
+   *   xxx        xxx        xxx        xxx       (x = selected elements)
+   *
+   *   xxx : patch dim
+   *    xxx 
+   *   ^---: patch step
+   * |----------| : patch stride
+   *
+   *   xxx-xxx-xxx-xxx : filter dim
+   *  
+   */
+  for (int32 p=0; p&lt;num_patches; p++) {
+    vectorized_feature_patches_[p].Resize(num_frames, filter_dim, kSetZero);
+    // build-up a column selection mask:
+    std::vector&lt;int32&gt; column_mask;
+	/*
+     *|-XXX---------|
+     *|-XXX---------|
+     *|-XXX---------|
+     *|-XXX---------|
+	 column_mask的位置, p * patch_step + s * patch_stride_ + d
+	 */
+    for (int32 s=0; s&lt;num_splice; s++) {
+      for (int32 d=0; d&lt;patch_dim_; d++) {
+        column_mask.push_back(p * patch_step_ + s * patch_stride_ + d);
+      }
+    }
+    KALDI_ASSERT(column_mask.size() == filter_dim);
+    // select the current patch columns, 一行为一个输入数据。
+    vectorized_feature_patches_[p].CopyCols(in, column_mask);
+  }
+
+  // compute filter activations
+  for (int32 p=0; p&lt;num_patches; p++) {
+    //patch p 在输出中的位置tgt
+    CuSubMatrix&lt;BaseFloat&gt; tgt(out-&gt;ColRange(p * num_filters, num_filters));
+    tgt.AddVecToRows(1.0, bias_, 0.0); // add bias
+    // apply all filters
+    tgt.AddMatMat(1.0, vectorized_feature_patches_[p], kNoTrans, filters_, kTrans, 1.0);
+  }
+}
+//后向程序仅是对公式的翻译
+void BackpropagateFnc(const CuMatrixBase&lt;BaseFloat&gt; &amp;in, const CuMatrixBase&lt;BaseFloat&gt; &amp;out,
+                      const CuMatrixBase&lt;BaseFloat&gt; &amp;out_diff, CuMatrixBase&lt;BaseFloat&gt; *in_diff) {
+}
+void Update(const CuMatrixBase&lt;BaseFloat&gt; &amp;input, const CuMatrixBase&lt;BaseFloat&gt; &amp;diff) {
+}
+</pre>
+</div>
+</li>
+
+<li><a id="sec-4-4-2-2" name="sec-4-4-2-2"></a>pooling层 nnet-max-pooling-component.h<br  /><div class="outline-text-5" id="text-4-4-2-2">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">PropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">out</span>) {                                                                
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims                                                                                                                                    </span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = input_dim_ / pool_stride_;                                                                                                    
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_pools</span> = 1 + (num_patches - pool_size_) / pool_step_;                                                                                    
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">pool_step_ pool&#27493;&#31227;&#65292; pool_size_&#65292;pool&#27493;&#38271;                                                                                                                                                  </span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">do the max-pooling (pools indexed by q),&#20026;&#27599;&#20010;&#36755;&#20986;q&#36873;&#25321;max                                                                                                        </span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">q</span> = 0; q &lt; num_pools; q++) {                                                                                                           
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">get output buffer of the pool                                                                                                                </span>
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">pool</span>(out-&gt;ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));                                                                       
+    pool.Set(-1e20); <span style="color: #b22222;">// </span><span style="color: #b22222;">reset (large negative value)                                                                                                </span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">r</span> = 0; r &lt; pool_size_; r++) { <span style="color: #b22222;">// </span><span style="color: #b22222;">max                                                                                                 </span>
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span> = r + q * pool_step_; <span style="color: #b22222;">// </span><span style="color: #b22222;">p = input patch                                                                                              </span>
+      pool.Max(in.ColRange(p*pool_stride_, pool_stride_)); <span style="color: #b22222;">//</span><span style="color: #b22222;">*this = max(*this, A)                                                                                      </span>
+    }                                                                                                                                               
+  }                                                                                                                                                 
+} 
+<span style="color: #b22222;">//</span><span style="color: #b22222;">max-pool&#65292;&#33509;&#20854;&#20026;max&#65292;&#21518;&#21521;&#35823;&#24046;&#20056;&#20197;1&#65292;&#21542;&#21017;0&#65292;&#36825;&#37324;&#26377;&#20010;scale&#30340;&#25805;&#20316;</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#22240;&#20026;&#20013;&#38388;&#37096;&#20998;&#21487;&#33021;&#22810;&#27425;&#35745;&#31639;&#65292;&#30456;&#23545;&#30340;&#36793;&#32536;&#37096;&#20998;&#22312;shift&#20013;&#35745;&#31639;&#27425;&#25968;&#36739;&#23569;</span>
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">BackpropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out_diff</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">in_diff</span>) {
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = input_dim_ / pool_stride_;
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_pools</span> = 1 + (num_patches - pool_size_) / pool_step_;
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">scale &#25968;&#32452;</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">patch_summands</span>(num_patches, 0);
+  in_diff-&gt;SetZero(); <span style="color: #b22222;">// </span><span style="color: #b22222;">reset</span>
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#36941;&#21382;&#25152;&#26377;pool&#36755;&#20986;</span>
+  <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">q</span>=0; q&lt;num_pools; q++) { <span style="color: #b22222;">// </span><span style="color: #b22222;">sum</span>
+    <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">r</span>=0; r&lt;pool_size_; r++) {
+      <span style="color: #b22222;">//</span><span style="color: #b22222;">&#23545;&#24212;q&#26102;&#30340;&#36755;&#20837;</span>
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span> = r + q * pool_step_; <span style="color: #b22222;">// </span><span style="color: #b22222;">patch number</span>
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">in_p</span>(in.ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">out_q</span>(out.ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(in_diff-&gt;ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">src</span>(out_diff.ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #b22222;">//</span><span style="color: #b22222;">find max mask</span>
+      <span style="color: #228b22;">CuMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">mask</span>;
+      in_p.EqualElementMask(out_q, &amp;mask);
+      src.MulElements(mask);
+      tgt.AddMat(1.0, src);
+      patch_summands[p] += 1;
+    }
+  }
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">scale&#25805;&#20316;</span>
+  <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(in_diff-&gt;ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+    KALDI_ASSERT(patch_summands[p] &gt; 0); <span style="color: #b22222;">// </span><span style="color: #b22222;">patch at least in one pool</span>
+    tgt.Scale(1.0/patch_summands[p]);
+  }
+}
+</pre>
+</div>
+</div>
+</li></ol>
+</div>
+</div>
+<div id="outline-container-sec-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> 一些工具解析</h3>
+<div class="outline-text-3" id="text-4-5">
+</div><div id="outline-container-sec-4-5-1" class="outline-4">
+<h4 id="sec-4-5-1"><span class="section-number-4">4.5.1</span> ali-to-post: make_pair&lt;alignment, 1.0&gt;, Convert alignments to viterbi style posteriors</h4>
+<div class="outline-text-4" id="text-4-5-1">
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">AlignmentToPosterior</span>(<span style="color: #a020f0;">const</span> <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;int32&gt; &amp;<span style="color: #a0522d;">ali</span>,
@@ -2706,9 +2918,9 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </div>
 </div>
 </div>
-<div id="outline-container-sec-4-4-2" class="outline-4">
-<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> kaldi log(base/kaldi-error.h)</h4>
-<div class="outline-text-4" id="text-4-4-2">
+<div id="outline-container-sec-4-5-2" class="outline-4">
+<h4 id="sec-4-5-2"><span class="section-number-4">4.5.2</span> kaldi log(base/kaldi-error.h)</h4>
+<div class="outline-text-4" id="text-4-5-2">
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span style="color: #a020f0;">class</span> <span style="color: #228b22;">KaldiLogMessage</span> {
@@ -2731,10 +2943,10 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </div>
 </div>
 </div>
-<div id="outline-container-sec-4-4-3" class="outline-4">
-<h4 id="sec-4-4-3"><span class="section-number-4">4.4.3</span> kaldi中的并行run.pl</h4>
-<div class="outline-text-4" id="text-4-4-3">
-</div><ol class="org-ol"><li><a id="sec-4-4-3-1" name="sec-4-4-3-1"></a>主要特点<br  /><div class="outline-text-5" id="text-4-4-3-1">
+<div id="outline-container-sec-4-5-3" class="outline-4">
+<h4 id="sec-4-5-3"><span class="section-number-4">4.5.3</span> kaldi中的并行run.pl</h4>
+<div class="outline-text-4" id="text-4-5-3">
+</div><ol class="org-ol"><li><a id="sec-4-5-3-1" name="sec-4-5-3-1"></a>主要特点<br  /><div class="outline-text-5" id="text-4-5-3-1">
 <ol class="org-ol">
 <li>错误日志
 </li>
@@ -2747,7 +2959,7 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </ol>
 </div>
 </li>
-<li><a id="sec-4-4-3-2" name="sec-4-4-3-2"></a>示例<br  /><div class="outline-text-5" id="text-4-4-3-2">
+<li><a id="sec-4-5-3-2" name="sec-4-5-3-2"></a>示例<br  /><div class="outline-text-5" id="text-4-5-3-2">
 <div class="org-src-container">
 
 <pre class="src src-sh">$<span style="color: #a0522d;">cmd</span> <span style="color: #a0522d;">JOB</span>=1:$<span style="color: #a0522d;">nj</span> $<span style="color: #a0522d;">dir</span>/log/acc_tree.JOB.log <span style="color: #8b2252;">\</span>
@@ -2765,7 +2977,7 @@ qo.SetQuestionsOf(kPdfClass, pdfclass_opts);
 </div>
 </div>
 </li>
-<li><a id="sec-4-4-3-3" name="sec-4-4-3-3"></a>run.pl源码<br  /><div class="outline-text-5" id="text-4-4-3-3">
+<li><a id="sec-4-5-3-3" name="sec-4-5-3-3"></a>run.pl源码<br  /><div class="outline-text-5" id="text-4-5-3-3">
 <div class="org-src-container">
 
 <pre class="src src-perl"><span style="color: #b22222;">#</span><span style="color: #b22222;">JOB</span>
@@ -3237,7 +3449,7 @@ dot -Tps binary.dot &gt;binary.ps
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2015-02-12 四 12:44</p>
+<p class="date">Created: 2015-02-14 六 19:41</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
