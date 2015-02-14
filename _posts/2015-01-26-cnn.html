@@ -1,0 +1,520 @@
+---
+title:  卷积神经网络及其在语音识别中的应用
+category:  note
+---
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>卷积神经网络及其在语音识别中的应用</title>
+<!-- 2015-02-14 六 20:31 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="robin1001" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="/css/worg.css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">卷积神经网络及其在语音识别中的应用</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. 参考文献</a></li>
+<li><a href="#sec-2">2. 卷积特征提取</a>
+<ul>
+<li><a href="#sec-2-1">2.1. 离散卷积</a></li>
+<li><a href="#sec-2-2">2.2. 图片特征提取</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. 卷积神经网络结构</a></li>
+<li><a href="#sec-4">4. CNN算法</a>
+<ul>
+<li><a href="#sec-4-1">4.1. 前向</a></li>
+<li><a href="#sec-4-2">4.2. 后向ebp</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5. 在语音识别中的应用</a>
+<ul>
+<li><a href="#sec-5-1">5.1. keypoint</a></li>
+<li><a href="#sec-5-2">5.2. kaldi CNN代码解析</a>
+<ul>
+<li><a href="#sec-5-2-1">5.2.1. 卷积层 nnet-convolution-component.h</a></li>
+<li><a href="#sec-5-2-2">5.2.2. pooling层 nnet-max-pooling-component.h</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 参考文献</h2>
+<div class="outline-text-2" id="text-1">
+<ol class="org-ol">
+<li>Notes on Convolutional Neural Networks
+</li>
+<li>Applying Convolutional Neural Networks Concepts to Hybrid NN-HMM Model for Speech Recognition
+</li>
+<li>IBM-Tara N. Sainath-Deep Convolutional Neural Networks for LVCSR
+</li>
+<li>code guide: DeeplearnToolbox &amp; kaldi CNN
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 卷积特征提取</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 离散卷积</h3>
+<div class="outline-text-3" id="text-2-1">
+
+<div class="figure">
+<p><img src="/img/cnn/convolution.jpg" alt="convolution.jpg" />
+</p>
+</div>
+<ol class="org-ol">
+<li>卷积的长度M+N-1,不补0有效长度M-N+1
+</li>
+<li>重要性质之一：交换律
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-matlab"><span style="color: #b22222;">%matlab &#21367;&#31215;&#20989;&#25968;</span>
+conv(x, h, <span style="color: #8b2252;">'full'</span>) <span style="color: #b22222;">%&#25152;&#26377;&#38271;&#24230;,M+N-1</span>
+conv(x, h, <span style="color: #8b2252;">'valid'</span>) <span style="color: #b22222;">%&#26377;&#25928;&#38271;&#24230;,M-N+1</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 图片特征提取</h3>
+<div class="outline-text-3" id="text-2-2">
+<ol class="org-ol">
+<li>NN在图像中的问题:参数多，图片的局部性
+</li>
+<li>卷积提取特征,如均值滤波窗,Gasussion模糊,Laplace算子,梯度算子，SIFT中的LoG
+</li>
+</ol>
+\begin{equation}
+\begin{bmatrix}
+0 &  -1 &  0  \\ 
+-1 &  4 &  -1\\ 
+0 &  -1 &  0
+\end{bmatrix}
+\end{equation}
+<div class="center">
+<p>
+<img src="/img/cnn/lena.jpg" alt="lena.jpg" />
+<img src="/img/cnn/lena_cnn.png" alt="lena_cnn.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 卷积神经网络结构</h2>
+<div class="outline-text-2" id="text-3">
+
+<div class="figure">
+<p><img src="/img/cnn/mylenet.png" alt="mylenet.png" />
+</p>
+</div>
+<ol class="org-ol">
+<li>卷积层C，所谓的权值共享
+</li>
+<li>降采样层S, Pooling
+</li>
+<li>全连接层，就是NN
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> CNN算法</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+这里主要参考"Notes on Convolutional Neural Networks"中的公式推导,前向和后向算法均以卷积形式给出。 具体的实现也以DeeplearnxToolbox中CNN在mnist库上的应用为例。
+</p>
+</div>
+<div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 前向</h3>
+<div class="outline-text-3" id="text-4-1">
+<ol class="org-ol">
+<li>卷积层：第一层时仅有输入图片一个输入，中间卷积层结果是对输入卷积Kij的累和。
+</li>
+<li>pooling: average, max, stochastic
+</li>
+</ol>
+<p>
+max pooling的意思就是用图像某一区域像素值的最大值来表示该区域的特征，而mean pool的意思用图像某一区域像素值的均值来表示该区域的特征。这两个pooling操作都提高了提取特征的不变性，而特征提取的误差主要来自两个方面：（1）邻域大小受限造成的估计值方差增大；（2）卷积层参数误差造成估计均值的偏移。一般来说，mean-pooling能减小第一种误差，更多的保留图像的背景信息，max-pooling能减小第二种误差，更多的保留纹理信息。在图像处理中，使用max pooling多于mean pooling 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 后向ebp</h3>
+<div class="outline-text-3" id="text-4-2">
+<ol class="org-ol">
+<li>降采样层对 \(\delta\) 升采样，一一对应
+</li>
+<li>若降采样层后为全连接层，计算方式与普通NN相同，所以此处仅考虑降采样层后为卷积层的形式。
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> 在语音识别中的应用</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+卷积窗仅在频域轴上移动，同一个patch不同滤波器作用的结果分为一组(h1, h2, &#x2026;, hn)，max pooling时在patch_step中的hn中取max，例h1 = (1, 3, 2), h2 = (2, 1, 1), h1 h2为一个patch，max pooling的结果为(2, 3, 2)。
+</p>
+</div>
+<div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> keypoint</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li>convolution only frequence axis, 卷积窗仅在频域轴上移动
+</li>
+<li>feature type, filter-bank特征，按频率分组，将时域拼接的上下文帧转换为frequency bands特征
+</li>
+<li>convolution over all axis, 即不使用local filter，在整个频域上使用相同核
+</li>
+<li>fast implementation, 将二维滤波器（卷积核）拉伸为一维向量
+</li>
+</ul>
+
+<div class="figure">
+<p><img src="/img/cnn/cnn_speech1.png" alt="cnn_speech1.png" />
+</p>
+<p><span class="figure-number">Figure 3:</span> 语音识别中卷积（滤波器）的使用</p>
+</div>
+
+<div class="figure">
+<p><img src="/img/cnn/cnn_speech3.png" alt="cnn_speech3.png" />
+</p>
+<p><span class="figure-number">Figure 4:</span> 语音识别卷积神经网络的深度结构</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> kaldi CNN代码解析</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+因为卷积核移动和不同的卷积核，输入与输出之间是一对多的关系，一般是按输入顺序查找输出。这里的一个技巧是先确定出输出的维度，查找与之相应的输入，前向，后向，卷积和pooling时均使用该技巧。
+</p>
+</div>
+<div id="outline-container-sec-5-2-1" class="outline-4">
+<h4 id="sec-5-2-1"><span class="section-number-4">5.2.1</span> 卷积层 nnet-convolution-component.h</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">PropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">out</span>) {
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_splice</span> = input_dim_ / patch_stride_; <span style="color: #b22222;">//</span><span style="color: #b22222;">&#24103;&#25968;</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = 1 + (patch_stride_ - patch_dim_) / patch_step_; <span style="color: #b22222;">//</span><span style="color: #b22222;">patch num</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_filters</span> = filters_.NumRows(); <span style="color: #b22222;">//</span><span style="color: #b22222;">filter&#25968;&#37327;&#65292;&#19968;&#34892;&#20026;&#19968;&#20010;filter</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_frames</span> = in.NumRows(); <span style="color: #b22222;">//</span><span style="color: #b22222;">batch&#20013;&#30340;&#25968;&#25454;&#25968;</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">filter_dim</span> = filters_.NumCols(); <span style="color: #b22222;">//</span><span style="color: #b22222;">filter&#30340;&#26680;&#22823;&#23567;</span>
+
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">we will need the buffers </span>
+  <span style="color: #a020f0;">if</span> (vectorized_feature_patches_.size() == 0) {
+    vectorized_feature_patches_.resize(num_patches);
+    feature_patch_diffs_.resize(num_patches);
+  }
+
+  <span style="color: #b22222;">/* </span><span style="color: #b22222;">Prepare feature patches, the layout is:</span>
+<span style="color: #b22222;">   * |----------|----------|----------|---------| (in = spliced frames)</span>
+<span style="color: #b22222;">   *   xxx        xxx        xxx        xxx       (x = selected elements)</span>
+<span style="color: #b22222;">   *</span>
+<span style="color: #b22222;">   *   xxx : patch dim</span>
+<span style="color: #b22222;">   *    xxx </span>
+<span style="color: #b22222;">   *   ^---: patch step</span>
+<span style="color: #b22222;">   * |----------| : patch stride</span>
+<span style="color: #b22222;">   *</span>
+<span style="color: #b22222;">   *   xxx-xxx-xxx-xxx : filter dim</span>
+<span style="color: #b22222;">   *  </span>
+<span style="color: #b22222;">   */</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
+    vectorized_feature_patches_[p].Resize(num_frames, filter_dim, kSetZero);
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">build-up a column selection mask:</span>
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">column_mask</span>;
+    <span style="color: #b22222;">/*</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     column_mask&#30340;&#20301;&#32622;, p * patch_step + s * patch_stride_ + d</span>
+<span style="color: #b22222;">     */</span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">s</span>=0; s&lt;num_splice; s++) {
+      <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">d</span>=0; d&lt;patch_dim_; d++) {
+        column_mask.push_back(p * patch_step_ + s * patch_stride_ + d);
+      }
+    }
+    KALDI_ASSERT(column_mask.size() == filter_dim);
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">select the current patch columns, &#19968;&#34892;&#20026;&#19968;&#20010;&#36755;&#20837;&#25968;&#25454;&#12290;</span>
+    vectorized_feature_patches_[p].CopyCols(in, column_mask);
+  }
+
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">compute filter activations</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
+    <span style="color: #b22222;">//</span><span style="color: #b22222;">patch p &#22312;&#36755;&#20986;&#20013;&#30340;&#20301;&#32622;tgt</span>
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(out-&gt;ColRange(<span style="color: #228b22;">p</span> * <span style="color: #a0522d;">num_filters</span>, num_filters));
+    tgt.AddVecToRows(1.0, bias_, 0.0); <span style="color: #b22222;">// </span><span style="color: #b22222;">add bias</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">apply all filters</span>
+    tgt.AddMatMat(1.0, vectorized_feature_patches_[p], kNoTrans, filters_, kTrans, 1.0);
+  }
+}
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#21518;&#21521;&#31243;&#24207;&#20165;&#26159;&#23545;&#20844;&#24335;&#30340;&#32763;&#35793;</span>
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">BackpropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out_diff</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">in_diff</span>) {
+}
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">Update</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">input</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">diff</span>) {
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5-2-2" class="outline-4">
+<h4 id="sec-5-2-2"><span class="section-number-4">5.2.2</span> pooling层 nnet-max-pooling-component.h</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">PropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">out</span>) {                                                                
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims                                                                                                                                    </span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = input_dim_ / pool_stride_;                                                                                                    
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_pools</span> = 1 + (num_patches - pool_size_) / pool_step_;                                                                                    
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">pool_step_ pool&#27493;&#31227;&#65292; pool_size_&#65292;pool&#27493;&#38271;                                                                                                                                                  </span>
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">do the max-pooling (pools indexed by q),&#20026;&#27599;&#20010;&#36755;&#20986;q&#36873;&#25321;max                                                                                                        </span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">q</span> = 0; q &lt; num_pools; q++) {                                                                                                           
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">get output buffer of the pool                                                                                                                </span>
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">pool</span>(out-&gt;ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));                                                                       
+    pool.Set(-1e20); <span style="color: #b22222;">// </span><span style="color: #b22222;">reset (large negative value)                                                                                                </span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">r</span> = 0; r &lt; pool_size_; r++) { <span style="color: #b22222;">// </span><span style="color: #b22222;">max                                                                                                 </span>
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span> = r + q * pool_step_; <span style="color: #b22222;">// </span><span style="color: #b22222;">p = input patch                                                                                              </span>
+      pool.Max(in.ColRange(p*pool_stride_, pool_stride_)); <span style="color: #b22222;">//</span><span style="color: #b22222;">*this = max(*this, A)                                                                                      </span>
+    }                                                                                                                                               
+  }                                                                                                                                                 
+} 
+<span style="color: #b22222;">//</span><span style="color: #b22222;">max-pool&#65292;&#33509;&#20854;&#20026;max&#65292;&#21518;&#21521;&#35823;&#24046;&#20056;&#20197;1&#65292;&#21542;&#21017;0&#65292;&#36825;&#37324;&#26377;&#20010;scale&#30340;&#25805;&#20316;</span>
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#22240;&#20026;&#20013;&#38388;&#37096;&#20998;&#21487;&#33021;&#22810;&#27425;&#35745;&#31639;&#65292;&#30456;&#23545;&#30340;&#36793;&#32536;&#37096;&#20998;&#22312;shift&#20013;&#35745;&#31639;&#27425;&#25968;&#36739;&#23569;</span>
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">BackpropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out_diff</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">in_diff</span>) {
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = input_dim_ / pool_stride_;
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_pools</span> = 1 + (num_patches - pool_size_) / pool_step_;
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">scale &#25968;&#32452;</span>
+  <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">patch_summands</span>(num_patches, 0);
+  in_diff-&gt;SetZero(); <span style="color: #b22222;">// </span><span style="color: #b22222;">reset</span>
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">&#36941;&#21382;&#25152;&#26377;pool&#36755;&#20986;</span>
+  <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">q</span>=0; q&lt;num_pools; q++) { <span style="color: #b22222;">// </span><span style="color: #b22222;">sum</span>
+    <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">r</span>=0; r&lt;pool_size_; r++) {
+      <span style="color: #b22222;">//</span><span style="color: #b22222;">&#23545;&#24212;q&#26102;&#30340;&#36755;&#20837;</span>
+      <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span> = r + q * pool_step_; <span style="color: #b22222;">// </span><span style="color: #b22222;">patch number</span>
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">in_p</span>(in.ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">out_q</span>(out.ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(in_diff-&gt;ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #228b22;">CuMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">src</span>(out_diff.ColRange(<span style="color: #228b22;">q</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+      <span style="color: #b22222;">//</span><span style="color: #b22222;">find max mask</span>
+      <span style="color: #228b22;">CuMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">mask</span>;
+      in_p.EqualElementMask(out_q, &amp;mask);
+      src.MulElements(mask);
+      tgt.AddMat(1.0, src);
+      patch_summands[p] += 1;
+    }
+  }
+  <span style="color: #b22222;">//</span><span style="color: #b22222;">scale&#25805;&#20316;</span>
+  <span style="color: #a020f0;">for</span>(<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(in_diff-&gt;ColRange(<span style="color: #228b22;">p</span>*<span style="color: #a0522d;">pool_stride_</span>, pool_stride_));
+    KALDI_ASSERT(patch_summands[p] &gt; 0); <span style="color: #b22222;">// </span><span style="color: #b22222;">patch at least in one pool</span>
+    tgt.Scale(1.0/patch_summands[p]);
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: robin1001</p>
+<p class="date">Created: 2015-02-14 六 20:31</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
