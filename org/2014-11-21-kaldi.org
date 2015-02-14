@@ -1518,7 +1518,7 @@ AffineTransform含有bias
 *** 代码解析
 因为卷积核移动和不同的卷积核，输入与输出之间是一对多的关系，一般是按输入顺序查找输出。这里的一个技巧是先确定出输出的维度，查找与之相应的输入，前向，后向，卷积和pooling时均使用该技巧。
 **** 卷积层 nnet-convolution-component.h
-#+BEGIN_EXAMPLE cpp
+#+BEGIN_SRC cpp
   void PropagateFnc(const CuMatrixBase<BaseFloat> &in, CuMatrixBase<BaseFloat> *out) {
     // useful dims
     int32 num_splice = input_dim_ / patch_stride_; //帧数
@@ -1581,7 +1581,7 @@ AffineTransform含有bias
   }
   void Update(const CuMatrixBase<BaseFloat> &input, const CuMatrixBase<BaseFloat> &diff) {
   }
-#+END_EXAMPLE
+#+END_SRC
 
 **** pooling层 nnet-max-pooling-component.h
 #+BEGIN_SRC cpp

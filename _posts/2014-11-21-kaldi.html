@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Kaldi学习笔记</title>
-<!-- 2015-02-14 六 19:41 -->
+<!-- 2015-02-14 六 19:48 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -2770,70 +2770,72 @@ AffineTransform含有bias
 </p>
 </div>
 <ol class="org-ol"><li><a id="sec-4-4-2-1" name="sec-4-4-2-1"></a>卷积层 nnet-convolution-component.h<br  /><div class="outline-text-5" id="text-4-4-2-1">
-<pre class="example">
-void PropagateFnc(const CuMatrixBase&lt;BaseFloat&gt; &amp;in, CuMatrixBase&lt;BaseFloat&gt; *out) {
-  // useful dims
-  int32 num_splice = input_dim_ / patch_stride_; //帧数
-  int32 num_patches = 1 + (patch_stride_ - patch_dim_) / patch_step_; //patch num
-  int32 num_filters = filters_.NumRows(); //filter数量，一行为一个filter
-  int32 num_frames = in.NumRows(); //batch中的数据数
-  int32 filter_dim = filters_.NumCols(); //filter的核大小
+<div class="org-src-container">
 
-  // we will need the buffers 
-  if (vectorized_feature_patches_.size() == 0) {
+<pre class="src src-cpp"><span style="color: #228b22;">void</span> <span style="color: #0000ff;">PropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">out</span>) {
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">useful dims</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_splice</span> = input_dim_ / patch_stride_; <span style="color: #b22222;">//</span><span style="color: #b22222;">&#24103;&#25968;</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_patches</span> = 1 + (patch_stride_ - patch_dim_) / patch_step_; <span style="color: #b22222;">//</span><span style="color: #b22222;">patch num</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_filters</span> = filters_.NumRows(); <span style="color: #b22222;">//</span><span style="color: #b22222;">filter&#25968;&#37327;&#65292;&#19968;&#34892;&#20026;&#19968;&#20010;filter</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">num_frames</span> = in.NumRows(); <span style="color: #b22222;">//</span><span style="color: #b22222;">batch&#20013;&#30340;&#25968;&#25454;&#25968;</span>
+  <span style="color: #228b22;">int32</span> <span style="color: #a0522d;">filter_dim</span> = filters_.NumCols(); <span style="color: #b22222;">//</span><span style="color: #b22222;">filter&#30340;&#26680;&#22823;&#23567;</span>
+
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">we will need the buffers </span>
+  <span style="color: #a020f0;">if</span> (vectorized_feature_patches_.size() == 0) {
     vectorized_feature_patches_.resize(num_patches);
     feature_patch_diffs_.resize(num_patches);
   }
 
-  /* Prepare feature patches, the layout is:
-   * |----------|----------|----------|---------| (in = spliced frames)
-   *   xxx        xxx        xxx        xxx       (x = selected elements)
-   *
-   *   xxx : patch dim
-   *    xxx 
-   *   ^---: patch step
-   * |----------| : patch stride
-   *
-   *   xxx-xxx-xxx-xxx : filter dim
-   *  
-   */
-  for (int32 p=0; p&lt;num_patches; p++) {
+  <span style="color: #b22222;">/* </span><span style="color: #b22222;">Prepare feature patches, the layout is:</span>
+<span style="color: #b22222;">   * |----------|----------|----------|---------| (in = spliced frames)</span>
+<span style="color: #b22222;">   *   xxx        xxx        xxx        xxx       (x = selected elements)</span>
+<span style="color: #b22222;">   *</span>
+<span style="color: #b22222;">   *   xxx : patch dim</span>
+<span style="color: #b22222;">   *    xxx </span>
+<span style="color: #b22222;">   *   ^---: patch step</span>
+<span style="color: #b22222;">   * |----------| : patch stride</span>
+<span style="color: #b22222;">   *</span>
+<span style="color: #b22222;">   *   xxx-xxx-xxx-xxx : filter dim</span>
+<span style="color: #b22222;">   *  </span>
+<span style="color: #b22222;">   */</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
     vectorized_feature_patches_[p].Resize(num_frames, filter_dim, kSetZero);
-    // build-up a column selection mask:
-    std::vector&lt;int32&gt; column_mask;
-	/*
-     *|-XXX---------|
-     *|-XXX---------|
-     *|-XXX---------|
-     *|-XXX---------|
-	 column_mask的位置, p * patch_step + s * patch_stride_ + d
-	 */
-    for (int32 s=0; s&lt;num_splice; s++) {
-      for (int32 d=0; d&lt;patch_dim_; d++) {
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">build-up a column selection mask:</span>
+    <span style="color: #008b8b;">std</span>::<span style="color: #228b22;">vector</span>&lt;<span style="color: #228b22;">int32</span>&gt; <span style="color: #a0522d;">column_mask</span>;
+    <span style="color: #b22222;">/*</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     *|-XXX---------|</span>
+<span style="color: #b22222;">     column_mask&#30340;&#20301;&#32622;, p * patch_step + s * patch_stride_ + d</span>
+<span style="color: #b22222;">     */</span>
+    <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">s</span>=0; s&lt;num_splice; s++) {
+      <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">d</span>=0; d&lt;patch_dim_; d++) {
         column_mask.push_back(p * patch_step_ + s * patch_stride_ + d);
       }
     }
     KALDI_ASSERT(column_mask.size() == filter_dim);
-    // select the current patch columns, 一行为一个输入数据。
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">select the current patch columns, &#19968;&#34892;&#20026;&#19968;&#20010;&#36755;&#20837;&#25968;&#25454;&#12290;</span>
     vectorized_feature_patches_[p].CopyCols(in, column_mask);
   }
 
-  // compute filter activations
-  for (int32 p=0; p&lt;num_patches; p++) {
-    //patch p 在输出中的位置tgt
-    CuSubMatrix&lt;BaseFloat&gt; tgt(out-&gt;ColRange(p * num_filters, num_filters));
-    tgt.AddVecToRows(1.0, bias_, 0.0); // add bias
-    // apply all filters
+  <span style="color: #b22222;">// </span><span style="color: #b22222;">compute filter activations</span>
+  <span style="color: #a020f0;">for</span> (<span style="color: #228b22;">int32</span> <span style="color: #a0522d;">p</span>=0; p&lt;num_patches; p++) {
+    <span style="color: #b22222;">//</span><span style="color: #b22222;">patch p &#22312;&#36755;&#20986;&#20013;&#30340;&#20301;&#32622;tgt</span>
+    <span style="color: #228b22;">CuSubMatrix</span>&lt;BaseFloat&gt; <span style="color: #a0522d;">tgt</span>(out-&gt;ColRange(<span style="color: #228b22;">p</span> * <span style="color: #a0522d;">num_filters</span>, num_filters));
+    tgt.AddVecToRows(1.0, bias_, 0.0); <span style="color: #b22222;">// </span><span style="color: #b22222;">add bias</span>
+    <span style="color: #b22222;">// </span><span style="color: #b22222;">apply all filters</span>
     tgt.AddMatMat(1.0, vectorized_feature_patches_[p], kNoTrans, filters_, kTrans, 1.0);
   }
 }
-//后向程序仅是对公式的翻译
-void BackpropagateFnc(const CuMatrixBase&lt;BaseFloat&gt; &amp;in, const CuMatrixBase&lt;BaseFloat&gt; &amp;out,
-                      const CuMatrixBase&lt;BaseFloat&gt; &amp;out_diff, CuMatrixBase&lt;BaseFloat&gt; *in_diff) {
+<span style="color: #b22222;">//</span><span style="color: #b22222;">&#21518;&#21521;&#31243;&#24207;&#20165;&#26159;&#23545;&#20844;&#24335;&#30340;&#32763;&#35793;</span>
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">BackpropagateFnc</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">in</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out</span>,
+                      <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">out_diff</span>, <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; *<span style="color: #a0522d;">in_diff</span>) {
 }
-void Update(const CuMatrixBase&lt;BaseFloat&gt; &amp;input, const CuMatrixBase&lt;BaseFloat&gt; &amp;diff) {
+<span style="color: #228b22;">void</span> <span style="color: #0000ff;">Update</span>(<span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">input</span>, <span style="color: #a020f0;">const</span> <span style="color: #228b22;">CuMatrixBase</span>&lt;BaseFloat&gt; &amp;<span style="color: #a0522d;">diff</span>) {
 }
 </pre>
+</div>
 </div>
 </li>
 
@@ -3449,7 +3451,7 @@ dot -Tps binary.dot &gt;binary.ps
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2015-02-14 六 19:41</p>
+<p class="date">Created: 2015-02-14 六 19:48</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
