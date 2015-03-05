@@ -1546,10 +1546,12 @@ void Nnet::Backpropagate(const CuMatrixBase<BaseFloat> &out_diff, CuMatrix<BaseF
 Perform one iteration of Neural Network training by mini-batch Stochastic Gradient Descent
 1. 先对特征打乱，并按组分为minibatch大小
 2. 利用suffle的数据训练DNN
+#+BEGIN_EXAMPLE
 --cross-validate:  Perform cross-validation (don't backpropagate)
 --objective-function: xent or mes
 –feature-transform, this can be a Nnet which does on-the-fly feature transformation
 --minibatch-size
+#+END_EXAMPLE
 #+BEGIN_SRC cpp
   //minibatch在这里面
   NnetDataRandomizerOptions rnd_opts;
