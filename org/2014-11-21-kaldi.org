@@ -1478,6 +1478,7 @@ BaseFloat ComputeInitialSplit(const std::vector<Clusterable*> &summed_stats,
 神经网络由多层的Component拼接而成，即Component为其基本组件。Component中引申出UpdatableComponent，即含有连接权值的Component，如：
 1. Component: Sigmoid, Softmax, Tanh, max-pooling等
 2. UpdatableComponent: AffineTransform, LinearTransform, ConvolutionalComponent等。
+3. loss: Mse, Xent（交叉熵）
 #+BEGIN_SRC cpp
 //Componet子类需实现PropagateFnc和BackpropagateFnc接口
 class Sigmoid : public Component {
@@ -1506,10 +1507,54 @@ public:
   /// Option-class with training hyper-parameters
   NnetTrainOptions opts_;
 };
+//UpdatableComponent参数初始化
+void InitData(std::istream &is)
 #+END_SRC
-AffineTransform含有bias
 *** nnet
+一个神经网络的封装，将components及其前向后向拼接起来。
+#+BEGIN_SRC cpp
+private:
+  std::vector<Component*> components_; 
+  std::vector<CuMatrix<BaseFloat> > propagate_buf_; ///< buffers for forward pass
+  std::vector<CuMatrix<BaseFloat> > backpropagate_buf_; ///< buffers for backward pass
+
+void Nnet::Propagate(const CuMatrixBase<BaseFloat> &in, CuMatrix<BaseFloat> *out) {
+  propagate_buf_[0].Resize(in.NumRows(), in.NumCols());
+  propagate_buf_[0].CopyFromMat(in);
+  for(int32 i=0; i<(int32)components_.size(); i++) {
+    components_[i]->Propagate(propagate_buf_[i], &propagate_buf_[i+1]);
+  }
+  (*out) = propagate_buf_[components_.size()];
+}
+void Nnet::Backpropagate(const CuMatrixBase<BaseFloat> &out_diff, CuMatrix<BaseFloat> *in_diff) {
+  // copy out_diff to last buffer
+  backpropagate_buf_[NumComponents()] = out_diff;
+  // backpropagate using buffers
+  for (int32 i = NumComponents()-1; i >= 0; i--) {
+    components_[i]->Backpropagate(propagate_buf_[i], propagate_buf_[i+1],
+                            backpropagate_buf_[i+1], &backpropagate_buf_[i]);
+    if (components_[i]->IsUpdatable()) {
+      UpdatableComponent *uc = dynamic_cast<UpdatableComponent*>(components_[i]);
+      uc->Update(propagate_buf_[i], backpropagate_buf_[i+1]);
+    }
+  }
+  // eventually export the derivative
+  if (NULL != in_diff) (*in_diff) = backpropagate_buf_[0];
+}
+#+END_SRC
 *** nnet-train-frmshuff
+Perform one iteration of Neural Network training by mini-batch Stochastic Gradient Descent
+1. 先对特征打乱，并按组分为minibatch大小
+2. 利用suffle的数据训练DNN
+--cross-validate:  Perform cross-validation (don't backpropagate)
+--objective-function: xent or mes
+–feature-transform, this can be a Nnet which does on-the-fly feature transformation
+--minibatch-size
+#+BEGIN_SRC cpp
+  //minibatch在这里面
+  NnetDataRandomizerOptions rnd_opts;
+  rnd_opts.Register(&po);
+#+END_SRC
 ** CNN
 *** keypoint
 + convolution only frequence axis, 卷积窗仅在频域轴上移动
