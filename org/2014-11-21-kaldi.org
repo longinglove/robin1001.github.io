@@ -253,6 +253,17 @@ void LdaEstimate::Estimate(const LdaEstimateOptions &opts,
   }  
 }
 #+end_src
+** karel's dnn
+*** feature
+#+BEGIN_EXAMPLE
+#zss splice feature
+feats_cv="ark,s,cs:utils/filter_scp.pl $dir/valid_uttlist $data/feats.scp | apply-cmvn --norm-vars=$norm_vars $data/norm_global_mv.ark scp:- ark:- | splice-feats ark:- ark:-|"
+#dnn Generate the splice transform
+echo "Using splice +/- $splice , step $splice_step"
+feature_transform=$dir/tr_splice$splice-$splice_step.nnet
+utils/nnet/gen_splice.py --fea-dim=$feat_dim --splice=$splice --splice-step=$splice_step > $feature_transform
+#+END_EXAMPLE
+
 ** DNN Hybrid Training & Decoding
 *** 网络结构(输入、输出、隐层）
 + num_epochs=15, numjobs_nnet = 16, hidden_layer_dim=300, minibatch_size=128, shuffle_buffer_size

@@ -8,7 +8,7 @@ category:  note
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Kaldi学习笔记</title>
-<!-- 2015-03-05 四 17:31 -->
+<!-- 2015-03-08 日 11:23 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="robin1001" />
@@ -224,15 +224,20 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-6-1">1.6.1. steps/train_lda_mllt.sh</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-7">1.7. DNN Hybrid Training &amp; Decoding</a>
+<li><a href="#sec-1-7">1.7. karel's dnn</a>
 <ul>
-<li><a href="#sec-1-7-1">1.7.1. 网络结构(输入、输出、隐层）</a></li>
-<li><a href="#sec-1-7-2">1.7.2. get_lda.sh</a></li>
-<li><a href="#sec-1-7-3">1.7.3. get_egs.sh</a></li>
-<li><a href="#sec-1-7-4">1.7.4. 训练</a></li>
+<li><a href="#sec-1-7-1">1.7.1. feature</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-8">1.8. Getting Results</a></li>
+<li><a href="#sec-1-8">1.8. DNN Hybrid Training &amp; Decoding</a>
+<ul>
+<li><a href="#sec-1-8-1">1.8.1. 网络结构(输入、输出、隐层）</a></li>
+<li><a href="#sec-1-8-2">1.8.2. get_lda.sh</a></li>
+<li><a href="#sec-1-8-3">1.8.3. get_egs.sh</a></li>
+<li><a href="#sec-1-8-4">1.8.4. 训练</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-9">1.9. Getting Results</a></li>
 </ul>
 </li>
 <li><a href="#sec-2">2. kaldi中的数据文件及其作用</a>
@@ -841,11 +846,29 @@ ConvertPosteriorToPdfs(trans_model, post, &amp;pdf_post);
 </div>
 </div>
 <div id="outline-container-sec-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> DNN Hybrid Training &amp; Decoding</h3>
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> karel's dnn</h3>
 <div class="outline-text-3" id="text-1-7">
 </div><div id="outline-container-sec-1-7-1" class="outline-4">
-<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> 网络结构(输入、输出、隐层）</h4>
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> feature</h4>
 <div class="outline-text-4" id="text-1-7-1">
+<pre class="example">
+#zss splice feature
+feats_cv="ark,s,cs:utils/filter_scp.pl $dir/valid_uttlist $data/feats.scp | apply-cmvn --norm-vars=$norm_vars $data/norm_global_mv.ark scp:- ark:- | splice-feats ark:- ark:-|"
+#dnn Generate the splice transform
+echo "Using splice +/- $splice , step $splice_step"
+feature_transform=$dir/tr_splice$splice-$splice_step.nnet
+utils/nnet/gen_splice.py --fea-dim=$feat_dim --splice=$splice --splice-step=$splice_step &gt; $feature_transform
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> DNN Hybrid Training &amp; Decoding</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> 网络结构(输入、输出、隐层）</h4>
+<div class="outline-text-4" id="text-1-8-1">
 <ul class="org-ul">
 <li>num_epochs=15, numjobs_nnet = 16, hidden_layer_dim=300, minibatch_size=128, shuffle_buffer_size
 </li>
@@ -862,18 +885,18 @@ ConvertPosteriorToPdfs(trans_model, post, &amp;pdf_post);
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-1-7-2" class="outline-4">
-<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> get_lda.sh</h4>
-<div class="outline-text-4" id="text-1-7-2">
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> get_lda.sh</h4>
+<div class="outline-text-4" id="text-1-8-2">
 <ul class="org-ul">
 <li>输出lda.mat
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-1-7-3" class="outline-4">
-<h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> get_egs.sh</h4>
-<div class="outline-text-4" id="text-1-7-3">
+<div id="outline-container-sec-1-8-3" class="outline-4">
+<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> get_egs.sh</h4>
+<div class="outline-text-4" id="text-1-8-3">
 <ol class="org-ol">
 <li>transform_dir=$alidir
 </li>
@@ -898,25 +921,25 @@ ConvertPosteriorToPdfs(trans_model, post, &amp;pdf_post);
 </ol>
 </div>
 </div>
-<div id="outline-container-sec-1-7-4" class="outline-4">
-<h4 id="sec-1-7-4"><span class="section-number-4">1.7.4</span> 训练</h4>
-<div class="outline-text-4" id="text-1-7-4">
-</div><ol class="org-ol"><li><a id="sec-1-7-4-1" name="sec-1-7-4-1"></a>问题<br  /><ol class="org-ol"><li><a id="sec-1-7-4-1-1" name="sec-1-7-4-1-1"></a><span class="todo TODO">TODO</span> shuffle是什么？<br  /></li>
-<li><a id="sec-1-7-4-1-2" name="sec-1-7-4-1-2"></a><span class="todo TODO">TODO</span> 如何利用hmm初始化,feature is not equal dimension<br  /></li>
-<li><a id="sec-1-7-4-1-3" name="sec-1-7-4-1-3"></a><span class="todo TODO">TODO</span> 如何使用nnet的priors_<br  /><div class="outline-text-6" id="text-1-7-4-1-3">
+<div id="outline-container-sec-1-8-4" class="outline-4">
+<h4 id="sec-1-8-4"><span class="section-number-4">1.8.4</span> 训练</h4>
+<div class="outline-text-4" id="text-1-8-4">
+</div><ol class="org-ol"><li><a id="sec-1-8-4-1" name="sec-1-8-4-1"></a>问题<br  /><ol class="org-ol"><li><a id="sec-1-8-4-1-1" name="sec-1-8-4-1-1"></a><span class="todo TODO">TODO</span> shuffle是什么？<br  /></li>
+<li><a id="sec-1-8-4-1-2" name="sec-1-8-4-1-2"></a><span class="todo TODO">TODO</span> 如何利用hmm初始化,feature is not equal dimension<br  /></li>
+<li><a id="sec-1-8-4-1-3" name="sec-1-8-4-1-3"></a><span class="todo TODO">TODO</span> 如何使用nnet的priors_<br  /><div class="outline-text-6" id="text-1-8-4-1-3">
 <p>
 给网络加上先验，训练时并没有用，用于识别时。
 </p>
 </div>
 </li>
-<li><a id="sec-1-7-4-1-4" name="sec-1-7-4-1-4"></a><span class="todo TODO">TODO</span> dropout, bottleneck如何使用<br  /><div class="outline-text-6" id="text-1-7-4-1-4">
+<li><a id="sec-1-8-4-1-4" name="sec-1-8-4-1-4"></a><span class="todo TODO">TODO</span> dropout, bottleneck如何使用<br  /><div class="outline-text-6" id="text-1-8-4-1-4">
 <p>
 Dropout Component
 </p>
 </div>
 </li></ol>
 </li>
-<li><a id="sec-1-7-4-2" name="sec-1-7-4-2"></a>数据结构<br  /><div class="outline-text-5" id="text-1-7-4-2">
+<li><a id="sec-1-8-4-2" name="sec-1-8-4-2"></a>数据结构<br  /><div class="outline-text-5" id="text-1-8-4-2">
 <ul class="org-ul">
 <li>Example
 </li>
@@ -1004,7 +1027,7 @@ BeginNewPhase(first_time);
 </div>
 </div>
 </li>
-<li><a id="sec-1-7-4-3" name="sec-1-7-4-3"></a>训练工具<br  /><div class="outline-text-5" id="text-1-7-4-3">
+<li><a id="sec-1-8-4-3" name="sec-1-8-4-3"></a>训练工具<br  /><div class="outline-text-5" id="text-1-8-4-3">
 <ul class="org-ul">
 <li>nnet-init: Initialize the neural network from a config file with a line for each component
 </li>
@@ -1103,7 +1126,7 @@ example_writer-&gt;Write(key, eg);
 </ul>
 </div>
 </li>
-<li><a id="sec-1-7-4-4" name="sec-1-7-4-4"></a>解码<br  /><ol class="org-ol"><li><a id="sec-1-7-4-4-1" name="sec-1-7-4-4-1"></a>nnet2/decode.sh<br  /><div class="outline-text-6" id="text-1-7-4-4-1">
+<li><a id="sec-1-8-4-4" name="sec-1-8-4-4"></a>解码<br  /><ol class="org-ol"><li><a id="sec-1-8-4-4-1" name="sec-1-8-4-4-1"></a>nnet2/decode.sh<br  /><div class="outline-text-6" id="text-1-8-4-4-1">
 <ul class="org-ul">
 <li>nnet-latgen-faste
 </li>
@@ -1113,9 +1136,9 @@ example_writer-&gt;Write(key, eg);
 </li></ol>
 </div>
 </div>
-<div id="outline-container-sec-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> Getting Results</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> Getting Results</h3>
+<div class="outline-text-3" id="text-1-9">
 <p>
 运行RESULTS文件， RESULTS中含有统计识别率脚本和标准测试结果
 </p>
@@ -3521,7 +3544,7 @@ dot -Tps binary.dot &gt;binary.ps
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: robin1001</p>
-<p class="date">Created: 2015-03-05 四 17:31</p>
+<p class="date">Created: 2015-03-08 日 11:23</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
