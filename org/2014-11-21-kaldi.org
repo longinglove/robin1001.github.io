@@ -1061,6 +1061,20 @@ make valgrind
 + Karel's:效果好，不并行，使用预训练和交叉验证集。
 + Dan's: 并行，无预训练，使用固定训练轮数
 
+* kaldi cuda
++ 是否使用cuda编译
+#+BEGIN_EXAMPLE
+ldd nnet2bin/nnet-train-simple | grep cu
+#+END_EXAMPLE
++ nnet2使用cuda
+#+BEGIN_EXAMPLE
+steps/nnet2/train_tanh.sh
+--num-threads 1 --parallel-opts "-l gpu=1"
+#+END_EXAMPLE
++ 训练时间统计
+| cpu/gpu             | time |
+| nnet2 cpu 16 thread | 45m  |
+| nnet2 gpu           |      |
 * kaldi 部分代码解析
 ** 解码
 *** DecodableInterface
