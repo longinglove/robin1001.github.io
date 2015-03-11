@@ -1074,7 +1074,7 @@ steps/nnet2/train_tanh.sh
 + 训练时间统计
 | cpu/gpu             | time |
 | nnet2 cpu 16 thread | 45m  |
-| nnet2 gpu           |      |
+| nnet2 gpu 1         | 81m  |
 * kaldi 部分代码解析
 ** 解码
 *** DecodableInterface
